@@ -1,4 +1,9 @@
 # Clustering
+  - Without UMIs
+
+## FastQ parser
+
+## 
 
 ## Targets:
 - Decide meter of measurement
@@ -7,4 +12,6 @@
   - K-mer
 
 ## Decide clustering idea
+- K-means
+- Hierarchical clustering
 
