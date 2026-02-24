@@ -59,38 +59,44 @@ public class FASTQ {
         FASTQ fastq = FASTQ.readFastq("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R2_001.fastq.gz");
         System.out.println("Counting UMIs...");
         HashMap<String, Integer> umis = new HashMap<>();
-        for  (Sequence seq : fastq.fastq.values()) {
+        for (Sequence seq : fastq.fastq.values()) {
             int c = umis.getOrDefault(seq.sequence, 0);
-            if (c != 0) umis.put(seq.sequence, c+1);
-            else{
+            boolean put = false;
+            if (c != 0) umis.put(seq.sequence, c + 1);
+            else {
                 long start = System.currentTimeMillis();
-                for(String key : umis.keySet()){
+                for (String key : umis.keySet()) {
                     int dist = 0;
                     for (int i = 0; i < key.length(); i++) {
                         if (key.charAt(i) == seq.sequence.charAt(i)) dist++;
                         if (dist > 2) break;
                     }
                     if (dist <= 2) {
-                        c = umis.get(key);
-                        umis.put(key, c+1);
-                        break;
+                        if (dist < 2) {
+                            put = true;
+                            c = umis.get(key);
+                            umis.put(key, c + 1);
+                            break;
+                        }
                     }
+                    long end = System.currentTimeMillis();
+                    search += end - start;
                 }
-                long end = System.currentTimeMillis();
-                search += end - start;
+                if (!put) umis.put(seq.sequence, 1);
+
             }
-        }
-        System.out.println("Writing output file...");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped.tsv"))) {
-            writer.write("umi\tcount\n");
-            for (String key : umis.keySet()) {
-                writer.write(String.format("%s\t%d\n", key, umis.get(key)));
+            System.out.println("Writing output file...");
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped.tsv"))) {
+                writer.write("umi\tcount\n");
+                for (String key : umis.keySet()) {
+                    writer.write(String.format("%s\t%d\n", key, umis.get(key)));
+                }
+            } catch (Exception e) {
+                System.out.println("Error writing file");
+                throw new RuntimeException(e);
             }
-        }catch (Exception e){
-            System.out.println("Error writing file");
-            throw new RuntimeException(e);
+            System.out.println("search took: " + search);
         }
-        System.out.println("search took: " + search);
     }
 
 }
