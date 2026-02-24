@@ -33,4 +33,8 @@ public class Cluster<T> {
         return distanceMetric;
     }
 
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
 }
