@@ -28,7 +28,7 @@ public class FASTQ {
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("+")) continue;
 
-                if (line.startsWith("@") && header==null) {
+                if (header==null && line.startsWith("@")) {
                     header = line.substring(1);
                     continue;
                 }
@@ -39,9 +39,6 @@ public class FASTQ {
                 if (header != null) {
                     phred = line;
                     fastq.putIfAbsent(header, new Sequence(header, sequence, phred));
-                    if (phred.length() != sequence.length()) {
-                        System.out.println(header + "has unequal sequence lengths");
-                    }
                     header = null;
                     sequence = null;
                 }
@@ -56,14 +53,16 @@ public class FASTQ {
 
     static void main() {
         FASTQ fastq = new FASTQ();
+        System.out.println("Reading fastq file...");
         fastq.readFastq("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R2_001.fastq.gz");
+        System.out.println("Counting UMIs...");
         HashMap<String, Integer> umis = new HashMap<>();
         for  (Sequence seq : fastq.fastq.values()) {
             int c = umis.getOrDefault(seq.sequence, 0);
             umis.put(seq.sequence, c+1);
         }
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil"))){
+        System.out.println("Writing output file...");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts.tsv"))) {
             writer.write("umi\tcount\n");
             for (String key : umis.keySet()) {
                 writer.write(String.format("%s\t%d\n", key, umis.get(key)));
