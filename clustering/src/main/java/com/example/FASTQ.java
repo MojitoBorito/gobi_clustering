@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
 public class FASTQ {
-    HashMap<String, Sequence> fastq;
+    HashMap<String, Sequence> fastq = new HashMap<>();
 
     public void readFastq(String fileName) {
         try (
@@ -30,7 +30,7 @@ public class FASTQ {
                     header = line.substring(1);
                     continue;
                 }
-                if (header != null && sequence==null) {
+                if (header != null && sequence == null) {
                     sequence = line;
                     continue;
                 }
