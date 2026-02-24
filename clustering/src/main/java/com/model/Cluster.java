@@ -1,9 +1,13 @@
+package com.model;
+
+import java.util.ArrayList;
+
 public class Cluster<T> {
     private final int id;
     private final ArrayList<T> items;
     private final DistanceMetric<T> distanceMetric;
 
-    public Bucket(int id, DistanceMetric<T> distanceMetric) {
+    public Cluster(int id, DistanceMetric<T> distanceMetric) {
         this.id = id;
         this.distanceMetric = distanceMetric;
         this.items = new ArrayList<>();
@@ -25,8 +29,12 @@ public class Cluster<T> {
         return items.size();
     }
 
-    public DistanceMetric<T> geDistanceMetric() {
+    public DistanceMetric<T> getDistanceMetric() {
         return distanceMetric;
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
     }
 
 }
