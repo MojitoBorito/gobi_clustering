@@ -14,7 +14,8 @@ import java.util.zip.GZIPInputStream;
 public class FASTQ {
     HashMap<String, Sequence> fastq = new HashMap<>();
 
-    public void readFastq(String fileName) {
+    public static FASTQ readFastq(String fileName) {
+        FASTQ fast = new FASTQ();
         try (
                 InputStream fileStream = new FileInputStream(fileName);
                 InputStream gzipStream = new GZIPInputStream(fileStream);
@@ -38,7 +39,7 @@ public class FASTQ {
                 }
                 if (header != null) {
                     phred = line;
-                    fastq.putIfAbsent(header, new Sequence(header, sequence, phred));
+                    fast.fastq.putIfAbsent(header, new Sequence(header, sequence, phred));
                     header = null;
                     sequence = null;
                 }
@@ -49,20 +50,35 @@ public class FASTQ {
             throw new RuntimeException(e);
         }
         System.out.println("finished reading fastq file");
+        return fast;
     }
 
     static void main() {
-        FASTQ fastq = new FASTQ();
+
         System.out.println("Reading fastq file...");
-        fastq.readFastq("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R2_001.fastq.gz");
+        FASTQ fastq = FASTQ.readFastq("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R2_001.fastq.gz");
         System.out.println("Counting UMIs...");
         HashMap<String, Integer> umis = new HashMap<>();
         for  (Sequence seq : fastq.fastq.values()) {
             int c = umis.getOrDefault(seq.sequence, 0);
-            umis.put(seq.sequence, c+1);
+            if (c != 0) umis.put(seq.sequence, c+1);
+            else{
+                for(String key : umis.keySet()){
+                    int dist = 0;
+                    for (int i = 0; i < key.length(); i++) {
+                        if (key.charAt(i) == seq.sequence.charAt(i)) dist++;
+                        if (dist > 2) break;
+                    }
+                    if (dist < 2) {
+                        c = umis.get(key);
+                        umis.put(key, c+1);
+                        break;
+                    }
+                }
+            }
         }
         System.out.println("Writing output file...");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts.tsv"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped.tsv"))) {
             writer.write("umi\tcount\n");
             for (String key : umis.keySet()) {
                 writer.write(String.format("%s\t%d\n", key, umis.get(key)));
