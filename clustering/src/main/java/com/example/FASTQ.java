@@ -72,19 +72,17 @@ public class FASTQ {
                         if (dist > 2) break;
                     }
                     if (dist <= 2) {
-                        if (dist < 2) {
-                            put = true;
-                            c = umis.get(key);
-                            umis.put(key, c + 1);
-                            break;
-                        }
+                        put = true;
+                        c = umis.get(key);
+                        umis.put(key, c + 1);
+                        break;
                     }
-                    long end = System.currentTimeMillis();
-                    search += end - start;
                 }
-                if (!put) umis.put(seq.sequence, 1);
+                long end = System.currentTimeMillis();
+                search += end - start;
             }
-            }
+            if (!put) umis.put(seq.sequence, 1);
+        }
             System.out.println("Writing output file...");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped.tsv"))) {
                 writer.write("umi\tcount\n");
