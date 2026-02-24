@@ -54,7 +54,7 @@ public class FASTQ {
     }
 
     static void main() {
-
+        long search = 0;
         System.out.println("Reading fastq file...");
         FASTQ fastq = FASTQ.readFastq("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R2_001.fastq.gz");
         System.out.println("Counting UMIs...");
@@ -64,6 +64,7 @@ public class FASTQ {
             boolean put = false;
             if (c != 0) umis.put(seq.sequence, c+1);
             else{
+                long start = System.currentTimeMillis();
                 for(String key : umis.keySet()){
                     int dist = 0;
                     for (int i = 0; i < key.length(); i++) {
@@ -77,6 +78,8 @@ public class FASTQ {
                         break;
                     }
                 }
+                long end = System.currentTimeMillis();
+                search += end - start;
             }
             if (!put) umis.put(seq.sequence, 1);
             
@@ -91,6 +94,7 @@ public class FASTQ {
             System.out.println("Error writing file");
             throw new RuntimeException(e);
         }
+        System.out.println("search took: " + search);
     }
 
 }
