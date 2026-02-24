@@ -61,6 +61,7 @@ public class FASTQ {
         HashMap<String, Integer> umis = new HashMap<>();
         for  (Sequence seq : fastq.fastq.values()) {
             int c = umis.getOrDefault(seq.sequence, 0);
+            boolean put = false;
             if (c != 0) umis.put(seq.sequence, c+1);
             else{
                 for(String key : umis.keySet()){
@@ -70,12 +71,15 @@ public class FASTQ {
                         if (dist > 2) break;
                     }
                     if (dist < 2) {
+                        put = true;
                         c = umis.get(key);
                         umis.put(key, c+1);
                         break;
                     }
                 }
             }
+            if (!put) umis.put(seq.sequence, 1);
+            
         }
         System.out.println("Writing output file...");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped.tsv"))) {
