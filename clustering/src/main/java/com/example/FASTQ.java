@@ -83,7 +83,7 @@ public class FASTQ {
                     search += end - start;
                 }
                 if (!put) umis.put(seq.sequence, 1);
-
+            }
             }
             System.out.println("Writing output file...");
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped.tsv"))) {
@@ -96,7 +96,6 @@ public class FASTQ {
                 throw new RuntimeException(e);
             }
             System.out.println("search took: " + search);
-        }
     }
 
 }
