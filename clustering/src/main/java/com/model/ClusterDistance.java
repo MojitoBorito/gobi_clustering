@@ -1,4 +1,4 @@
-public package com.model;
+package com.model;
 
 import java.util.Collection;
 
