@@ -1,7 +1,9 @@
 package com.example;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -54,12 +56,22 @@ public class FASTQ {
 
     static void main() {
         FASTQ fastq = new FASTQ();
-        long startTime = System.currentTimeMillis();
-        System.out.println("starting to read fastq file");
-        fastq.readFastq("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R1_001.fastq.gz");
-        long endTime = System.currentTimeMillis();
-        long duration = endTime - startTime;
-        System.out.println("Time taken to read FASTQ file: " + duration + " milliseconds");
+        fastq.readFastq("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R2_001.fastq.gz");
+        HashMap<String, Integer> umis = new HashMap<>();
+        for  (Sequence seq : fastq.fastq.values()) {
+            int c = umis.getOrDefault(seq.sequence, 0);
+            umis.put(seq.sequence, c+1);
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil"))){
+            writer.write("umi\tcount\n");
+            for (String key : umis.keySet()) {
+                writer.write(String.format("%s\t%d\n", key, umis.get(key)));
+            }
+        }catch (Exception e){
+            System.out.println("Error writing file");
+            throw new RuntimeException(e);
+        }
     }
 
 }
