@@ -49,11 +49,17 @@ public class FASTQ {
             System.out.println("Error opening file: " + fileName);
             throw new RuntimeException(e);
         }
+        System.out.println("finished reading fastq file");
     }
 
     static void main() {
         FASTQ fastq = new FASTQ();
+        long startTime = System.currentTimeMillis();
+        System.out.println("starting to read fastq file");
         fastq.readFastq("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R1_001.fastq.gz");
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        System.out.println("Time taken to read FASTQ file: " + duration + " milliseconds");
     }
 
 }
