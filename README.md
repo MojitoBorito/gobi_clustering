@@ -15,6 +15,8 @@
 - K-means
 - Hierarchical clustering
 
+## Minimizers
+
 ## Idea 1: 
 - Extract k-mers (Decide on fixed random positions or all)
 - look up k-mers in the bucket of each cluster, if buckets match:
