@@ -70,7 +70,7 @@ public class FASTQ {
                         if (key.charAt(i) == seq.sequence.charAt(i)) dist++;
                         if (dist > 2) break;
                     }
-                    if (dist < 2) {
+                    if (dist <= 2) {
                         c = umis.get(key);
                         umis.put(key, c+1);
                         break;
