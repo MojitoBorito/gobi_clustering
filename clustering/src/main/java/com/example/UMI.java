@@ -67,7 +67,7 @@ public class UMI {
         for(UMIseq u : umis.keySet()){
             int dist = 0;
             for (int i = 0; i < curSeq.length; i++){
-                if (curSeq[i] != u.seq[i]){
+                if (curSeq[i] != u.consensus[i]){
                     dist++;
                 }
                 if (dist > 2) break;

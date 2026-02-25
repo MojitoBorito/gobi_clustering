@@ -9,6 +9,7 @@ import java.util.HashSet;
 public class UMIseq {
     byte[] seq;
     int hash;
+    byte[] consensus;
 
     HashSet<String> headers;
     int[][] scores;
@@ -21,12 +22,14 @@ public class UMIseq {
         if (real){
             headers = new HashSet<>();
             scores = new int[5][seq.length];
+            consensus = Arrays.copyOf(seq, seq.length);
         }
     }
 
     public void makeStructures(){
         headers = new HashSet<>();
         scores = new int[5][seq.length];
+        consensus = Arrays.copyOf(seq, seq.length);
     }
 
     public void addSequence(byte[] seq, byte[] phred, String header){
@@ -46,7 +49,7 @@ public class UMIseq {
     public void updateSequence(){
         int bestIndex;
         int bestScore;
-        for (int i = 0; i < seq.length; i++){
+        for (int i = 0; i < consensus.length; i++){
             bestIndex = 0;
             bestScore = scores[0][i];
             for (int j = 1; j < 4; j++){
@@ -56,9 +59,9 @@ public class UMIseq {
                 }
             }
             if (bestScore > 0){
-                seq[i] = INDEX_TO_BASE[bestIndex];
+                consensus[i] = INDEX_TO_BASE[bestIndex];
             } else {
-                seq[i] = 'N';
+                consensus[i] = 'N';
             }
         }
     }
