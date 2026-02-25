@@ -3,6 +3,7 @@ package com.example;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
@@ -10,8 +11,12 @@ public class UMI {
 
     HashMap<UMIseq, UMIseq> umis = new HashMap<>();
     HashMap<String, UMIseq> header2Umis = new HashMap<>();
+    int thresh;
+    HashMap<UMIseq, Integer> counts = new HashMap<>();
+    HashMap<String, String> problematicUmis = new HashMap<>();
 
-    public UMI (String fileName){
+    public UMI (String fileName, int thresh){
+        this.thresh = thresh;
         readFastq(fileName);
     }
 
@@ -60,6 +65,7 @@ public class UMI {
         byte[] phredArray = phred.getBytes(StandardCharsets.US_ASCII);
         if (match != null){
             header2Umis.put(header, match);
+            incrUMi(match);
             return;
         }
         byte[] curSeq = temp.seq;
@@ -70,13 +76,16 @@ public class UMI {
                 if (curSeq[i] != u.consensus[i]){
                     dist++;
                 }
-                if (dist > 2) break;
+                if (dist > thresh) break;
             }
-            if (dist <= 2){
+            if (dist <= thresh && !put){
                 put = true;
                 u.addSequence(curSeq, phredArray, header);
                 header2Umis.put(header, u);
-                break;
+                incrUMi(u);
+            }
+            else if (dist <= thresh){
+                problematicUmis.put(header, sequence);
             }
         }
         if (!put){
@@ -84,6 +93,7 @@ public class UMI {
             temp.updateScore(curSeq, phredArray);
             header2Umis.put(header, temp);
             umis.put(temp, temp);
+            incrUMi(temp);
         }
     }
 
@@ -115,6 +125,10 @@ public class UMI {
             packed = (packed << 3) | bits;
         }
         return packed;
+    }
+
+    public void incrUMi(UMIseq umi){
+        counts.put(umi, counts.getOrDefault(umi, 0)+1);
     }
 
 }

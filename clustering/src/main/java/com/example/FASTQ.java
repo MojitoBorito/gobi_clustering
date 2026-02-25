@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
 public class FASTQ {
-    HashMap<String, Sequence> fastq = new HashMap<>();
+    private HashMap<String, Sequence> fastq = new HashMap<>();
 
     public static FASTQ readFastq(String fileName) {
         FASTQ fast = new FASTQ();
@@ -96,4 +96,7 @@ public class FASTQ {
             System.out.println("search took: " + search);
     }
 
+    public HashMap<String, Sequence> getFastq() {
+        return fastq;
+    }
 }

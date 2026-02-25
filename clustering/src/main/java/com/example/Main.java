@@ -1,35 +1,49 @@
 package com.example;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class Main {
-    static void main() {
-        long start = System.currentTimeMillis();
-        System.out.println("Reading fastq file...");
-        UMI fastq = new UMI("/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H1-12936-T2_R2_001.fastq.gz");
-        System.out.println("Counting UMIs...");
-        long end = System.currentTimeMillis();
-        long readTime = end - start;
+    static void main(String[] args) {
+        CmdParser cmdParser = new CmdParser("-umi", "-h", "-probs", "-counts", "-f");
+        cmdParser.setFile("-umi");
+        cmdParser.setInt("-h");
+        cmdParser.setFile("-probs");
+        cmdParser.setInt("-counts");
+        cmdParser.setSwitches("-f");
+        cmdParser.parse(args);
 
-        HashSet<String> umiSet = new HashSet<>();
+        String file = cmdParser.getValue("-umi");
+        int thresh = cmdParser.getInt("-h");
+        String probs = cmdParser.getValue("-out");
+        String counts = cmdParser.getValue("-counts");
+        boolean filter = cmdParser.isSet(".f");
 
-        System.out.println("Reading time: "+ (readTime/1000)+" s");
+        UMI fastq = new UMI(file, thresh);
 
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(probs))){
+            writer.write("header\tseq\n");
+            for (String header : fastq.problematicUmis.keySet()){
+                writer.write(header+"\t"+fastq.problematicUmis.get(header)+"\n");
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
 
-        start = System.currentTimeMillis();
-        fastq.filterUMI();
-        end = System.currentTimeMillis();
-        long filterTime = end - start;
-        System.out.println("Filtering time: "+ (filterTime/1000)+" s");
-
-        System.out.println("Number of UMIS: " + fastq.header2Umis.size());
-
-        long uniqueConsensus = fastq.header2Umis.values().stream()
-                .map(umi -> new String(umi.consensus, StandardCharsets.US_ASCII))
-                .distinct()
-                .count();
-        System.out.println("Number of unique UMis: "+ uniqueConsensus);
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(counts))){
+            writer.write("seq\tcounts\n");
+            for (Map.Entry<UMIseq, Integer> entry : fastq.counts.entrySet()){
+                writer.write(new String(entry.getKey().consensus, StandardCharsets.US_ASCII)+
+                        "\t"+entry.getValue()+"\n");
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
 
     }
 }
