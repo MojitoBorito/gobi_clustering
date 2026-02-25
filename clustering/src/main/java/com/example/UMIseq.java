@@ -61,6 +61,7 @@ public class UMIseq {
                 seq[i] = 'N';
             }
         }
+        this.hash = fnv1a(seq);
     }
 
     public static int fnv1a(byte[] data) {
