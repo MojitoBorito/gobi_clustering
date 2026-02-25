@@ -1,6 +1,5 @@
 package com.model;
 
-import java.util.Collection;
 
 public interface ClusterDistance<T> {
     double distanceToCluster(T elem, Cluster<T> cluster);
