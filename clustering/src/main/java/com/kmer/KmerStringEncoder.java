@@ -8,7 +8,7 @@ public class KmerStringEncoder extends KmerEncoder<String>{
         super(k);
     }
     @Override
-    KSet<String> encode(String sequence) {
+    public KSet<String> encode(String sequence) {
         int k = k();
         if (sequence == null)
             throw new IllegalArgumentException("Sequence cannot be null");
