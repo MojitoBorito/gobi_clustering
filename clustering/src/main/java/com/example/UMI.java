@@ -14,6 +14,7 @@ public class UMI {
     int thresh;
     HashMap<UMIseq, Integer> counts = new HashMap<>();
     HashMap<String, String> problematicUmis = new HashMap<>();
+    HashMap<String, Integer> problematicUmisCounts = new HashMap<>();
 
     public UMI (String fileName, int thresh){
         this.thresh = thresh;
@@ -86,6 +87,7 @@ public class UMI {
             }
             else if (dist <= thresh){
                 problematicUmis.put(header, sequence);
+                incrProbs(header);
             }
         }
         if (!put){
@@ -129,6 +131,9 @@ public class UMI {
 
     public void incrUMi(UMIseq umi){
         counts.put(umi, counts.getOrDefault(umi, 0)+1);
+    }
+    public void incrProbs(String header){
+        problematicUmisCounts.put(header, problematicUmisCounts.getOrDefault(header, 1)+1);
     }
 
 }

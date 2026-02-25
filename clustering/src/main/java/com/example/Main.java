@@ -25,9 +25,10 @@ public class Main {
         UMI fastq = new UMI(file, thresh);
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(probs))){
-            writer.write("header\tseq\n");
+            writer.write("header\tseq\tclusters\n");
             for (String header : fastq.problematicUmis.keySet()){
-                writer.write(header+"\t"+fastq.problematicUmis.get(header)+"\n");
+                writer.write(header+"\t"+fastq.problematicUmis.get(header)+"\t"+
+                        fastq.problematicUmisCounts.get(header)+"\n");
             }
         }catch (IOException e){
             e.printStackTrace();
