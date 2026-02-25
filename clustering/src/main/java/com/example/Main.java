@@ -19,7 +19,7 @@ public class Main {
 
         String file = cmdParser.getValue("-umi");
         int thresh = cmdParser.getInt("-h");
-        String probs = cmdParser.getValue("-out");
+        String probs = cmdParser.getValue("-probs");
         String counts = cmdParser.getValue("-counts");
 
         UMI fastq = new UMI(file, thresh);
