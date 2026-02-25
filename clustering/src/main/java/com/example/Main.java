@@ -4,7 +4,6 @@ package com.example;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class Main {
     static void main() {
@@ -17,7 +16,7 @@ public class Main {
 
         start = System.currentTimeMillis();
         System.out.println("Writing output file...");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped.tsv"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped_new.tsv"))) {
             writer.write("umi\tcount\n");
             for (UMIseq umi: fastq.umis.keySet()) {
                 writer.write(String.format("%s\t%d\n", new String(umi.seq, StandardCharsets.US_ASCII), umi.headers.size()));
