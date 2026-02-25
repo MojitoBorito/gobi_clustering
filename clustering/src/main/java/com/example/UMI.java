@@ -29,7 +29,7 @@ public class UMI {
                 if (line.startsWith("+")) continue;
 
                 if (header==null && line.startsWith("@")) {
-                    header = line.substring(1);
+                    header = line.substring(1).split(" ")[0];
                     continue;
                 }
                 if (header != null && sequence == null) {
@@ -58,8 +58,7 @@ public class UMI {
         UMIseq match = umis.get(temp);
         byte[] phredArray = phred.getBytes(StandardCharsets.US_ASCII);
         if (match != null){
-            match.sequences.put(header, temp.seq);
-            match.phredScores.put(header, phredArray);
+            match.headers.add(header);
             header2Umis.put(header, match);
             return;
         }
@@ -82,8 +81,8 @@ public class UMI {
         }
         if (!put){
             temp.makeStructures();
-            temp.sequences.put(header, phredArray);
-            temp.phredScores.put(header, phredArray);
+            temp.headers.add(header);
+            temp.updateScore(curSeq, phredArray);
             header2Umis.put(header, temp);
             umis.put(temp, temp);
         }
