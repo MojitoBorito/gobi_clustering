@@ -3,6 +3,7 @@ package com.example;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 public class UMI {
@@ -58,7 +59,6 @@ public class UMI {
         UMIseq match = umis.get(temp);
         byte[] phredArray = phred.getBytes(StandardCharsets.US_ASCII);
         if (match != null){
-            match.headers.add(header);
             header2Umis.put(header, match);
             return;
         }
@@ -81,11 +81,40 @@ public class UMI {
         }
         if (!put){
             temp.makeStructures();
-            temp.headers.add(header);
             temp.updateScore(curSeq, phredArray);
             header2Umis.put(header, temp);
             umis.put(temp, temp);
         }
+    }
+
+    public void filterUMI(){
+        HashMap<Long, UMIseq> consensusMap = new HashMap<>();
+        for (UMIseq u : umis.keySet()){
+            long cHash = packSequence(u.consensus);
+            consensusMap.putIfAbsent(cHash, u);
+        }
+        for (Map.Entry<String, UMIseq> entry : header2Umis.entrySet()){
+            UMIseq u = entry.getValue();
+            UMIseq existing = consensusMap.get(packSequence(u.consensus));
+            if (existing != null){
+                entry.setValue(existing);
+            }
+        }
+    }
+
+    public static long packSequence(byte[] seq) {
+        long packed = 0;
+        for (byte b : seq) {
+            long bits = switch (b) {
+                case 'A', 'a' -> 0L;
+                case 'C', 'c' -> 1L;
+                case 'G', 'g' -> 2L;
+                case 'T', 't' -> 3L;
+                default -> 4L;  // N
+            };
+            packed = (packed << 3) | bits;
+        }
+        return packed;
     }
 
 }

@@ -11,7 +11,6 @@ public class UMIseq {
     int hash;
     byte[] consensus;
 
-    HashSet<String> headers;
     int[][] scores;
 
     private static final byte[] INDEX_TO_BASE = {'A', 'C', 'G', 'T', 'N'};
@@ -20,20 +19,17 @@ public class UMIseq {
         seq = sequence.getBytes(StandardCharsets.US_ASCII);
         this.hash = fnv1a(seq);
         if (real){
-            headers = new HashSet<>();
             scores = new int[5][seq.length];
             consensus = Arrays.copyOf(seq, seq.length);
         }
     }
 
     public void makeStructures(){
-        headers = new HashSet<>();
         scores = new int[5][seq.length];
         consensus = Arrays.copyOf(seq, seq.length);
     }
 
     public void addSequence(byte[] seq, byte[] phred, String header){
-        headers.add(header);
         updateScore(seq, phred);
         updateSequence();
     }
