@@ -10,19 +10,17 @@ import java.util.Map;
 
 public class Main {
     static void main(String[] args) {
-        CmdParser cmdParser = new CmdParser("-umi", "-h", "-probs", "-counts", "-f");
+        CmdParser cmdParser = new CmdParser("-umi", "-h", "-probs", "-counts");
         cmdParser.setFile("-umi");
         cmdParser.setInt("-h");
         cmdParser.setFile("-probs");
         cmdParser.setInt("-counts");
-        cmdParser.setSwitches("-f");
         cmdParser.parse(args);
 
         String file = cmdParser.getValue("-umi");
         int thresh = cmdParser.getInt("-h");
         String probs = cmdParser.getValue("-out");
         String counts = cmdParser.getValue("-counts");
-        boolean filter = cmdParser.isSet(".f");
 
         UMI fastq = new UMI(file, thresh);
 
