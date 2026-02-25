@@ -1,8 +1,5 @@
 package com.example;
 
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 
@@ -15,28 +12,24 @@ public class Main {
         long end = System.currentTimeMillis();
         long readTime = end - start;
 
-        start = System.currentTimeMillis();
-        System.out.println("Writing output file...");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("/mnt/biocluster/praktikum/genprakt/patil/Blockteil/umi_counts_grouped_new.tsv"))) {
-            writer.write("umi\tcount\n");
-            for (UMIseq umi: fastq.umis.keySet()) {
-                writer.write(String.format("%s\t%d\n", new String(umi.consensus, StandardCharsets.US_ASCII), umi.headers.size()));
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        end = System.currentTimeMillis();
-        long writeTime = end - start;
-
         HashSet<String> umiSet = new HashSet<>();
-        for (UMIseq umi: fastq.umis.keySet()) {
-            if (!umiSet.add(new String(umi.consensus, StandardCharsets.US_ASCII))) {
-                System.out.println(new String(umi.consensus, StandardCharsets.US_ASCII));
-            }
-        }
 
         System.out.println("Reading time: "+ (readTime/1000)+" s");
-        System.out.println("Writing time: "+ (writeTime/1000)+" s");
+
+
+        start = System.currentTimeMillis();
+        fastq.filterUMI();
+        end = System.currentTimeMillis();
+        long filterTime = end - start;
+        System.out.println("Filtering time: "+ (filterTime/1000)+" s");
+
+        System.out.println("Number of UMIS: " + fastq.header2Umis.size());
+
+        long uniqueConsensus = fastq.header2Umis.values().stream()
+                .map(umi -> new String(umi.consensus, StandardCharsets.US_ASCII))
+                .distinct()
+                .count();
+        System.out.println("Number of unique UMis: "+ uniqueConsensus);
 
     }
 }
