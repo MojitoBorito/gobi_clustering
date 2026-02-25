@@ -4,6 +4,7 @@ package com.example;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 
 public class Main {
     static void main() {
@@ -26,6 +27,13 @@ public class Main {
         }
         end = System.currentTimeMillis();
         long writeTime = end - start;
+
+        HashSet<String> umiSet = new HashSet<>();
+        for (UMIseq umi: fastq.umis.keySet()) {
+            if (!umiSet.add(new String(umi.seq, StandardCharsets.US_ASCII))) {
+                System.out.println(new String(umi.seq, StandardCharsets.US_ASCII));
+            }
+        }
 
         System.out.println("Reading time: "+ (readTime/1000)+" s");
         System.out.println("Writing time: "+ (writeTime/1000)+" s");
