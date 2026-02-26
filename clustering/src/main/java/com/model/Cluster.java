@@ -2,17 +2,17 @@ package com.model;
 
 import java.util.ArrayList;
 
-public class Cluster<K, E> {
-    private final K id;
+public class Cluster<E> {
+    private final int id;
     private final ArrayList<E> elements;
 
 
-    public Cluster(K id) {
+    public Cluster(int id) {
         this.id = id;
         this.elements = new ArrayList<>();
     }
 
-    public K getId() {
+    public int getId() {
         return id;
     }
     

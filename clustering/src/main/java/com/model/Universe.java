@@ -1,27 +1,28 @@
 package com.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class Universe<K, C extends Cluster<K, E>, E> implements Iterable<C>{
-    private final HashMap<K, C> clusters;
+public class Universe<C extends Cluster<E>, E> implements Iterable<C>{
+    private final ArrayList<C> clusters;
     private final DistanceMetric<E> metric;
-    private final ClusterLinkage<K, C, E> linkage;
-    private final ClusterFactory<K, C> factory;
+    private final ClusterLinkage<C, E> linkage;
+    private final ClusterFactory<C> factory;
+    private int nextId = 0;
 
-    public Universe(ClusterFactory<K, C> factory,
+    public Universe(ClusterFactory<C> factory,
                     DistanceMetric<E> metric,
-                    ClusterLinkage<K, C, E> linkage) {
-        this.clusters = new HashMap<>();
+                    ClusterLinkage<C, E> linkage) {
+        this.clusters = new ArrayList<>();
         this.factory = factory;
         this.metric = metric;
         this.linkage = linkage;
     }
 
-    public C createCluster(K id) {
-        if (clusters.containsKey(id)) throw new RuntimeException("Cluster already exists");
-        C newCluster = factory.create(id);
-        clusters.put(id, newCluster);
+    public C createCluster() {
+        C newCluster = factory.create(nextId);
+        clusters.add(nextId++, newCluster);
         return newCluster;
     }
 
@@ -36,12 +37,12 @@ public class Universe<K, C extends Cluster<K, E>, E> implements Iterable<C>{
 
     @Override
     public Iterator<C> iterator() {
-        return clusters.values().iterator();
+        return clusters.iterator();
     }
 
 
     @FunctionalInterface
-    public interface ClusterFactory<K, C> {
-        C create(K id);
+    public interface ClusterFactory<C> {
+        C create(int id);
     }
 }

@@ -9,13 +9,13 @@ import com.model.Universe;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class GreedyClusters<K, C extends Cluster<K, E>, E> {
-    private final Universe<K, C, E> universe;
+public class GreedyClusters<C extends Cluster<E>, E> {
+    private final Universe<C, E> universe;
     private final double threshold;
 
-    public GreedyClusters(Universe.ClusterFactory<K, C> factory,
+    public GreedyClusters(Universe.ClusterFactory<C> factory,
                           DistanceMetric<E> metric,
-                          ClusterLinkage<K, C, E> linkage,
+                          ClusterLinkage<C, E> linkage,
                           double threshold) {
         this.universe = new Universe<>(factory, metric, linkage);
         this.threshold = threshold;
