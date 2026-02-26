@@ -2,39 +2,33 @@ package com.model;
 
 import java.util.ArrayList;
 
-public class Cluster<T> {
-    private final int id;
-    private final ArrayList<T> items;
-    private final DistanceMetric<T> distanceMetric;
+public class Cluster<K, E> {
+    private final K id;
+    private final ArrayList<E> elements;
 
-    public Cluster(int id, DistanceMetric<T> distanceMetric) {
+
+    public Cluster(K id) {
         this.id = id;
-        this.distanceMetric = distanceMetric;
-        this.items = new ArrayList<>();
+        this.elements = new ArrayList<>();
     }
 
-    public int getId() {
+    public K getId() {
         return id;
     }
     
-    public void addItem(T item) {
-        items.add(item);
+    public void addElement(E elem) {
+        elements.add(elem);
     }
 
-    public ArrayList<T> getItems() {
-        return items;
+    public ArrayList<E> getElements() {
+        return elements;
     }
 
     public int size() {
-        return items.size();
-    }
-
-    public DistanceMetric<T> getDistanceMetric() {
-        return distanceMetric;
+        return elements.size();
     }
 
     public boolean isEmpty() {
         return size() == 0;
     }
-
 }

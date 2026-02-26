@@ -1,6 +1,6 @@
 package com.model;
 
-public interface DistanceMetric<T> {
+public interface DistanceMetric<E> {
     // Must be symmetric
-    double compute(T t1, T t2);
+    double compute(E e1, E e2);
 }

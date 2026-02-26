@@ -1,12 +1,12 @@
 package com.model;
 
-public class AverageLinkage<T> implements ClusterDistance<T>{
+public class AverageLinkage<C extends Cluster<E>, E> implements ClusterLinkage<C, E> {
     @Override
-    public double distanceToCluster(T elem, Cluster<T> cluster) {
+    public double distanceToCluster(DistanceMetric<E> metric, E elem, C cluster) {
         if (cluster.isEmpty()) throw new RuntimeException("Can't calculate distance to empty cluster");
         double sum = 0;
-        for (T item : cluster.getItems()) {
-           sum += cluster.getDistanceMetric().compute(elem, item);
+        for (E item : cluster.getElements()) {
+           sum += metric.compute(elem, item);
         }
         return sum / cluster.size();
     }

@@ -1,12 +1,12 @@
 package com.model;
 
-public class SingleLinkage<T> implements ClusterDistance<T>{
+public class SingleLinkage<C extends Cluster<E>, E> implements ClusterLinkage<C, E> {
     @Override
-    public double distanceToCluster(T elem, Cluster<T> cluster) {
+    public double distanceToCluster(DistanceMetric<E> metric, E elem, C cluster) {
         if (cluster.isEmpty()) throw new RuntimeException("Can't calculate distance to empty cluster");
         double minDistance = Double.POSITIVE_INFINITY;
-        for (T item : cluster.getItems()) {
-            minDistance = Math.min(minDistance, cluster.getDistanceMetric().compute(elem, item));
+        for (E item : cluster.getElements()) {
+            minDistance = Math.min(minDistance, metric.compute(elem, item));
         }
         return minDistance;
     }
