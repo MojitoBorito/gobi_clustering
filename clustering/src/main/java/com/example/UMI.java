@@ -79,11 +79,12 @@ public class UMI {
                 }
                 if (dist > thresh) break;
             }
-            if (dist <= thresh && !put){
+            if (dist <= thresh){
                 put = true;
                 u.addSequence(curSeq, phredArray, header);
                 header2Umis.put(header, u);
                 incrUMi(u);
+                break;
             }
 //            else if (dist <= thresh){
 //                problematicUmis.put(header, sequence);
