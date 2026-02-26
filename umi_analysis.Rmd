@@ -1,0 +1,63 @@
+---
+title: "Untitled"
+author: "Mohit and Nikos"
+date: "2026-02-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(stringr)
+library(scales)
+
+counts0 <- read_tsv("umi_outs/count_0.txt")
+counts1 <- read_tsv("umi_outs/count_1.txt")
+counts2 <- read_tsv("umi_outs/count_2.txt")
+counts3 <- read_tsv("umi_outs/count_3.txt")
+
+counts <- list(counts0, counts1, counts2, counts3)
+names(counts) <- c(0,1,2,3)
+
+probs1 <- read_tsv("umi_probs/prob_1.txt")
+probs2 <- read_tsv("umi_probs/prob_2.txt")
+probs3 <- read_tsv("umi_probs/prob_3.txt")
+
+
+probs <- list(probs1, probs2, probs3)
+
+```
+
+```{r}
+counts_data <- imap_dfr(counts, ~mutate(.x, source =.y))
+probs_data <- imap_dfr(probs, ~mutate(.x, source= .y))
+```
+
+```{r}
+counts_data %>% ggplot(aes(x = counts)) + 
+  geom_histogram() + 
+  facet_wrap(vars(source)) + 
+  scale_x_log10(labels = label_number()) + 
+  labs(x = "Number of UMIS in umi cluster", title = "Distribution of number of UMIS assigned per cluster")
+```
+
+
+```{r}
+seq_prob <- probs_data %>%
+  group_by(source, seq) %>%
+  summarise(n = n(), .groups = "drop")
+
+
+seq_prob %>% ggplot(aes(x=n)) + 
+  geom_histogram() + 
+  facet_wrap(vars(source)) + 
+  scale_x_log10(labels = label_number()) + 
+  labs(title = "Number of times a unique UMI sequence appeared and was\nassigned to multiple clusters", x = "UMI frequency")
+```
+```{r}
+probs_data %>% ggplot(aes(x=clusters)) + 
+  geom_histogram() + 
+  facet_wrap(vars(source)) + 
+  scale_x_log10(labels = label_number()) + 
+  labs(x = "Number of clusters", title = "Distribution of no. of clusters a sequence was clustered to,\nif assigned to multipile clusters")
+```
+

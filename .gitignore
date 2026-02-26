@@ -40,3 +40,7 @@ build/
 
 ### files ###
 *.tsv
+
+umi_outs
+umi_probs
+umi_results
