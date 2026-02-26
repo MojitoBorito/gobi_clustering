@@ -10,5 +10,5 @@ public abstract class KmerEncoder<E> {
     public int k() {
         return k;
     }
-    abstract KSet<E> encode(String sequence);
+    public abstract KSet<E> encode(String sequence);
 }
