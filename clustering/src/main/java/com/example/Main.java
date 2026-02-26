@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 public class Main {
@@ -24,15 +22,15 @@ public class Main {
 
         UMI fastq = new UMI(file, thresh);
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(probs))){
-            writer.write("header\tseq\tclusters\n");
-            for (String header : fastq.problematicUmis.keySet()){
-                writer.write(header+"\t"+fastq.problematicUmis.get(header)+"\t"+
-                        fastq.problematicUmisCounts.get(header)+"\n");
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+//        try(BufferedWriter writer = new BufferedWriter(new FileWriter(probs))){
+//            writer.write("header\tseq\tclusters\n");
+//            for (String header : fastq.problematicUmis.keySet()){
+//                writer.write(header+"\t"+fastq.problematicUmis.get(header)+"\t"+
+//                        fastq.problematicUmisCounts.get(header)+"\n");
+//            }
+//        }catch (IOException e){
+//            e.printStackTrace();
+//        }
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(counts))){
             writer.write("seq\tcounts\n");

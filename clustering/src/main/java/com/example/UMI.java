@@ -13,8 +13,8 @@ public class UMI {
     HashMap<String, UMIseq> header2Umis = new HashMap<>();
     int thresh;
     HashMap<UMIseq, Integer> counts = new HashMap<>();
-    HashMap<String, String> problematicUmis = new HashMap<>();
-    HashMap<String, Integer> problematicUmisCounts = new HashMap<>();
+//    HashMap<String, String> problematicUmis = new HashMap<>();
+//    HashMap<String, Integer> problematicUmisCounts = new HashMap<>();
 
     public UMI (String fileName, int thresh){
         this.thresh = thresh;
@@ -85,10 +85,10 @@ public class UMI {
                 header2Umis.put(header, u);
                 incrUMi(u);
             }
-            else if (dist <= thresh){
-                problematicUmis.put(header, sequence);
-                incrProbs(header);
-            }
+//            else if (dist <= thresh){
+//                problematicUmis.put(header, sequence);
+//                incrProbs(header);
+//            }
         }
         if (!put){
             temp.makeStructures();
@@ -132,8 +132,8 @@ public class UMI {
     public void incrUMi(UMIseq umi){
         counts.put(umi, counts.getOrDefault(umi, 0)+1);
     }
-    public void incrProbs(String header){
-        problematicUmisCounts.put(header, problematicUmisCounts.getOrDefault(header, 1)+1);
-    }
+//    public void incrProbs(String header){
+//        problematicUmisCounts.put(header, problematicUmisCounts.getOrDefault(header, 1)+1);
+//    }
 
 }
