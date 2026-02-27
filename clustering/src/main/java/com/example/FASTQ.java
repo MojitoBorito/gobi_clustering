@@ -13,6 +13,7 @@ import java.util.zip.GZIPInputStream;
 
 public class FASTQ {
     private HashMap<String, Sequence> fastq = new HashMap<>();
+    private HashMap<String, SubCluster> clusters = new HashMap<>();
 
     public static FASTQ readFastq(String fileName) {
         FASTQ fast = new FASTQ();
@@ -52,6 +53,8 @@ public class FASTQ {
         System.out.println("finished reading fastq file");
         return fast;
     }
+
+
 
     static void main() {
         long search = 0;
