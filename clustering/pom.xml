@@ -25,6 +25,11 @@
             <version>1.37</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava-alignment</artifactId>
+            <version>7.2.2</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>clustering</finalName>
