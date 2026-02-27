@@ -1,4 +1,4 @@
-package com.model;
+package com.metrics;
 
 public interface DistanceMetric<E> {
     // Must be symmetric
