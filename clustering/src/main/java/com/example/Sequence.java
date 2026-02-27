@@ -14,4 +14,12 @@ public class Sequence {
     public String getSequence() {
         return sequence;
     }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public String getPhredSequence() {
+        return phredSequence;
+    }
 }
