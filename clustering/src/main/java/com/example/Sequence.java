@@ -2,10 +2,10 @@ package com.example;
 
 public class Sequence {
     String header;
-    String sequence;
-    String phredSequence;
+    byte[] sequence;
+    byte[] phredSequence;
 
-    public Sequence(String header, String sequence, String phredSequence) {
+    public Sequence(String header, byte[] sequence, byte[] phredSequence) {
         this.header = header;
         this.sequence = sequence;
         this.phredSequence = phredSequence;

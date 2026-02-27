@@ -4,13 +4,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 
-public class BaseClusterSeq {
+public class UMICluster {
     byte[] seq;
     int n;
 
     HashMap<SeqKey, SubCluster> sub50cluster = null;
 
-    public BaseClusterSeq(byte[] sequence) {
+    public UMICluster(byte[] sequence) {
         this.seq = sequence;
         n=1;
     }
@@ -22,7 +22,7 @@ public class BaseClusterSeq {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof BaseClusterSeq other) {
+        if (obj instanceof UMICluster other) {
             return Arrays.equals(seq, other.seq);
         }
         return false;

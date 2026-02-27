@@ -5,12 +5,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
-public class BaseCluster {
+public class UMI {
 
-    HashMap<String, BaseClusterSeq> umis = new HashMap<>();
-    HashMap<String, BaseClusterSeq> header2Umis = new HashMap<>();
+    HashMap<String, UMICluster> umis = new HashMap<>();
+    HashMap<String, UMICluster> header2Umis = new HashMap<>();
+    HashMap<String, byte[]> header2phred = new HashMap<>();
 
-    public BaseCluster(String fileName){
+    public UMI(String fileName){
         readFastq(fileName);
     }
 
@@ -37,7 +38,7 @@ public class BaseCluster {
                 }
                 if (header != null) {
                     addUMI(sequence, header);
-
+                    header2phred.put(header, line.getBytes(StandardCharsets.US_ASCII));
                     header = null;
                     sequence = null;
                 }
@@ -51,13 +52,13 @@ public class BaseCluster {
     }
 
     public void addUMI(String sequence, String header){
-        BaseClusterSeq match = umis.get(sequence);
+        UMICluster match = umis.get(sequence);
         if (match != null){
             header2Umis.put(header, match);
             match.n++;
             return;
         }
-        BaseClusterSeq umi = new BaseClusterSeq(sequence.getBytes(StandardCharsets.US_ASCII));
+        UMICluster umi = new UMICluster(sequence.getBytes(StandardCharsets.US_ASCII));
         header2Umis.put(header, umi);
         umis.put(sequence, umi);
     }

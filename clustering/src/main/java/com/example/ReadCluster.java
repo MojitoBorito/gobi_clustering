@@ -1,21 +1,15 @@
 package com.example;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
-public class FASTQ {
-    private HashMap<String, Sequence> fastq = new HashMap<>();
+public class ReadCluster {
 
-    public static FASTQ readFastq(String fileName) {
-        FASTQ fast = new FASTQ();
+    HashMap<String, Sequence> sequences = new HashMap<>();
+
+    public void readFastq(String fileName) {
         try (
                 InputStream fileStream = new FileInputStream(fileName);
                 InputStream gzipStream = new GZIPInputStream(fileStream);
@@ -24,13 +18,12 @@ public class FASTQ {
         ) {
             String header = null;
             String sequence = null;
-            String phred;
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("+")) continue;
 
                 if (header==null && line.startsWith("@")) {
-                    header = line.substring(1);
+                    header = line.substring(1).split(" ")[0];
                     continue;
                 }
                 if (header != null && sequence == null) {
@@ -38,12 +31,8 @@ public class FASTQ {
                     continue;
                 }
                 if (header != null) {
-                    phred = line;
-                    fast.fastq.putIfAbsent(header, new Sequence(
-                            header,
-                            sequence.getBytes(StandardCharsets.US_ASCII),
-                            phred.getBytes(StandardCharsets.US_ASCII)
-                    ));
+//                    addUMI(sequence, header);
+//                    header2phred.put(header, line.getBytes(StandardCharsets.US_ASCII));
                     header = null;
                     sequence = null;
                 }
@@ -54,11 +43,5 @@ public class FASTQ {
             throw new RuntimeException(e);
         }
         System.out.println("finished reading fastq file");
-        return fast;
-    }
-
-
-    public HashMap<String, Sequence> getFastq() {
-        return fastq;
     }
 }

@@ -15,11 +15,11 @@ public class Main {
         String file = cmdParser.getValue("-umi");
         String counts = cmdParser.getValue("-counts");
 
-        BaseCluster fastq = new BaseCluster(file);
+        UMI fastq = new UMI(file);
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(counts))){
             writer.write("seq\tcounts\n");
-            for (BaseClusterSeq seq : fastq.umis.values()){
+            for (UMICluster seq : fastq.umis.values()){
                 writer.write(new String(seq.seq, StandardCharsets.US_ASCII)+
                         "\t"+seq.n+"\n");
             }
