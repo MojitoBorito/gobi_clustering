@@ -1,4 +1,7 @@
-package com.model;
+package com.linkage;
+
+import com.model.Cluster;
+import com.metrics.DistanceMetric;
 
 public class CompleteLinkage<C extends Cluster<E>, E> implements ClusterLinkage<C, E> {
 

@@ -1,6 +1,6 @@
-package com.kmer;
+package com.metrics;
 
-import com.model.DistanceMetric;
+import com.kmer.KSet;
 
 public class Jaccard<T> implements DistanceMetric<KSet<T>> {
     @Override
