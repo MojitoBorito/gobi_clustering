@@ -11,7 +11,7 @@ public class Sequence {
         this.phredSequence = phredSequence;
     }
 
-    public String getSequence() {
+    public byte[] getSequence() {
         return sequence;
     }
 }
