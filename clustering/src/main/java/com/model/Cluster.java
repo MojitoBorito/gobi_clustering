@@ -31,4 +31,9 @@ public class Cluster<E> {
     public boolean isEmpty() {
         return size() == 0;
     }
+
+    @Override
+    public String toString() {
+        return "Cluster: " + id + " of size: " + size();
+    }
 }

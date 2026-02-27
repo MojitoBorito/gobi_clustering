@@ -1,7 +1,9 @@
 package com.model;
 
+import com.linkage.ClusterLinkage;
+import com.metrics.DistanceMetric;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 public class Universe<C extends Cluster<E>, E> implements Iterable<C>{
