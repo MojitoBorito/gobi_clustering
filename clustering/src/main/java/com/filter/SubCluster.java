@@ -1,4 +1,4 @@
-package com.example;
+package com.filter;
 
 public class SubCluster {
     int[][] score;

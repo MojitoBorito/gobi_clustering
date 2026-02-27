@@ -1,13 +1,16 @@
-package com.example;
+package com.filter;
+
+import com.example.Sequence;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
-public class ReadCluster {
+public class Reads {
 
-    HashMap<String, Sequence> sequences = new HashMap<>();
+    HashMap<String, HashReads> sequences = new HashMap<>();
+    HashMap<HashReads, ReadCluster> clusters = new HashMap<>();
 
     public void readFastq(String fileName) {
         try (
@@ -19,6 +22,7 @@ public class ReadCluster {
             String header = null;
             String sequence = null;
             String line;
+            String phred;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("+")) continue;
 
@@ -31,8 +35,16 @@ public class ReadCluster {
                     continue;
                 }
                 if (header != null) {
-//                    addUMI(sequence, header);
-//                    header2phred.put(header, line.getBytes(StandardCharsets.US_ASCII));
+                    phred = line;
+
+                    HashReads read = sequences.put(header, new HashReads(
+                            header,
+                            sequence.getBytes(StandardCharsets.US_ASCII),
+                            phred.getBytes(StandardCharsets.US_ASCII)
+                    ));
+                    ReadCluster readCluster = clusters.computeIfAbsent(read, k -> new ReadCluster());
+                    readCluster.n++;
+
                     header = null;
                     sequence = null;
                 }

@@ -1,4 +1,4 @@
-package com.example;
+package com.filter;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,4 +28,11 @@ public class UMICluster {
         return false;
     }
 
+    public byte[] getSeq() {
+        return seq;
+    }
+
+    public int getN() {
+        return n;
+    }
 }

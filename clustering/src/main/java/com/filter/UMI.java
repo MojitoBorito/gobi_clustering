@@ -1,4 +1,4 @@
-package com.example;
+package com.filter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -63,4 +63,15 @@ public class UMI {
         umis.put(sequence, umi);
     }
 
+    public HashMap<String, byte[]> getHeader2phred() {
+        return header2phred;
+    }
+
+    public HashMap<String, UMICluster> getHeader2Umis() {
+        return header2Umis;
+    }
+
+    public HashMap<String, UMICluster> getUmis() {
+        return umis;
+    }
 }

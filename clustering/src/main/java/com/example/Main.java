@@ -1,5 +1,8 @@
 package com.example;
 
+import com.filter.UMI;
+import com.filter.UMICluster;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,9 +22,9 @@ public class Main {
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(counts))){
             writer.write("seq\tcounts\n");
-            for (UMICluster seq : fastq.umis.values()){
-                writer.write(new String(seq.seq, StandardCharsets.US_ASCII)+
-                        "\t"+seq.n+"\n");
+            for (UMICluster seq : fastq.getUmis().values()){
+                writer.write(new String(seq.getSeq(), StandardCharsets.US_ASCII)+
+                        "\t"+seq.getN()+"\n");
             }
         }catch (IOException e){
             e.printStackTrace();
