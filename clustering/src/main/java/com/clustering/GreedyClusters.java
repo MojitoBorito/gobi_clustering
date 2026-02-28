@@ -52,15 +52,15 @@ public class GreedyClusters<C extends Cluster<E>, E> {
     }
 
     static void main() {
-        HashMap<String, Sequence> fast = FASTQ.readFastq("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/fw.fastq.gz").getFastq();
-        List<String> sequences = fast.values().stream().map(Sequence::getSequence).toList();
-        System.out.println(fast.size());
-        SmithWatermanDistance metric = new SmithWatermanDistance();
-        AverageLinkage<Cluster<String>, String> linkage = new AverageLinkage<>();
-        double threshold = 0.01;
-        GreedyClusters<Cluster<String>, String> greedy =
-                new GreedyClusters<>(Cluster::new, metric, linkage, threshold);
-        greedy.computeClusters(sequences.iterator());
+//        HashMap<String, Sequence> fast = FASTQ.readFastq("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/fw.fastq.gz").getFastq();
+//        List<String> sequences = fast.values().stream().map(Sequence::getSequence).toList();
+//        System.out.println(fast.size());
+//        SmithWatermanDistance metric = new SmithWatermanDistance();
+//        AverageLinkage<Cluster<String>, String> linkage = new AverageLinkage<>();
+//        double threshold = 0.01;
+//        GreedyClusters<Cluster<String>, String> greedy =
+//                new GreedyClusters<>(Cluster::new, metric, linkage, threshold);
+//        greedy.computeClusters(sequences.iterator());
 
     }
 }

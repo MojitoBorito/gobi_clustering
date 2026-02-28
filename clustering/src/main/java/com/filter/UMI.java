@@ -9,7 +9,6 @@ public class UMI {
 
     HashMap<String, UMICluster> umis = new HashMap<>();
     HashMap<String, UMICluster> header2Umis = new HashMap<>();
-    HashMap<String, byte[]> header2phred = new HashMap<>();
 
     public UMI(String fileName){
         readFastq(fileName);
@@ -37,8 +36,7 @@ public class UMI {
                     continue;
                 }
                 if (header != null) {
-                    addUMI(sequence, header);
-                    header2phred.put(header, line.getBytes(StandardCharsets.US_ASCII));
+                    addUMI(sequence, header, line);
                     header = null;
                     sequence = null;
                 }
@@ -51,20 +49,16 @@ public class UMI {
         System.out.println("finished reading fastq file");
     }
 
-    public void addUMI(String sequence, String header){
+    public void addUMI(String sequence, String header, String phred){
         UMICluster match = umis.get(sequence);
         if (match != null){
             header2Umis.put(header, match);
-            match.n++;
+            match.updatePhred(phred.getBytes(StandardCharsets.US_ASCII));
             return;
         }
-        UMICluster umi = new UMICluster(sequence.getBytes(StandardCharsets.US_ASCII));
+        UMICluster umi = new UMICluster(sequence.getBytes(StandardCharsets.US_ASCII), phred.getBytes(StandardCharsets.US_ASCII));
         header2Umis.put(header, umi);
         umis.put(sequence, umi);
-    }
-
-    public HashMap<String, byte[]> getHeader2phred() {
-        return header2phred;
     }
 
     public HashMap<String, UMICluster> getHeader2Umis() {
