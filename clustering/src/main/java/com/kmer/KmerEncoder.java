@@ -1,6 +1,6 @@
 package com.kmer;
 
-public abstract class KmerEncoder<E> {
+public abstract class KmerEncoder{
     private final int k;
 
     protected KmerEncoder(int k) {
@@ -10,5 +10,7 @@ public abstract class KmerEncoder<E> {
     public int k() {
         return k;
     }
-    public abstract KSet<E> encode(String sequence);
+
+    public abstract KmerSet encode(String sequence);
+
 }

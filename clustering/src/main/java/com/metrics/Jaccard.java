@@ -1,11 +1,11 @@
 package com.metrics;
 
-import com.kmer.KSet;
+import com.kmer.KmerSet;
 
-public class Jaccard<T> implements DistanceMetric<KSet<T>> {
+public class Jaccard<T> implements DistanceMetric<KmerSet> {
     @Override
-    public double compute(KSet<T> t1, KSet<T> t2) {
-        int intersectionSize = KSet.intersectSize(t1, t2);
-        return (double) intersectionSize / (t1.size() + t2.size() - intersectionSize);
+    public double compute(KmerSet t1, KmerSet t2) {
+        int intersectionSize = t1.intersectSize(t2);
+        return 1 - ((double) intersectionSize / (t1.size() + t2.size() - intersectionSize));
     }
 }
