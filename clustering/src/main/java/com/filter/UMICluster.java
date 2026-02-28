@@ -8,7 +8,7 @@ public class UMICluster {
     byte[] seq;
     int n;
 
-    HashMap<SeqKey, SubCluster> sub50cluster = null;
+    HashMap<HashReads, SubCluster> sub50cluster = null;
 
     public UMICluster(byte[] sequence) {
         this.seq = sequence;

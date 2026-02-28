@@ -4,11 +4,14 @@ public class SubCluster {
     int[][] score;
     byte[] consensus;
 
+    int n;
+
     private static final byte[] INDEX_TO_BASE = {'A', 'C', 'G', 'T', 'N'};
 
-    public SubCluster(byte[] phred, byte[] seq) {
-        score = new int[5][phred.length];
-        updateScore(phred, seq);
+    public SubCluster(int length) {
+        score = new int[5][length];
+        consensus = new byte[length];
+        n=0;
     }
 
     public void updateScore(byte[] phred, byte[] seq){
@@ -41,6 +44,7 @@ public class SubCluster {
     public void updateSequence(){
         int bestIndex;
         int bestScore;
+
         for (int i = 0; i < consensus.length; i++){
             bestIndex = 0;
             bestScore = score[0][i];

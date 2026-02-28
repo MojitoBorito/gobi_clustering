@@ -42,7 +42,7 @@ public class Reads {
                             sequence.getBytes(StandardCharsets.US_ASCII),
                             phred.getBytes(StandardCharsets.US_ASCII)
                     ));
-                    ReadCluster readCluster = clusters.computeIfAbsent(read, k -> new ReadCluster());
+                    ReadCluster readCluster = clusters.computeIfAbsent(read, _ -> new ReadCluster());
                     readCluster.n++;
 
                     header = null;
