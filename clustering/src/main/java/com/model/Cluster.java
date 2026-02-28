@@ -1,39 +1,33 @@
 package com.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class Cluster<E> {
+public abstract class Cluster<V> {
     private final int id;
-    private final ArrayList<E> elements;
+    private final List<String> elementIds;
 
-
-    public Cluster(int id) {
+    protected Cluster(int id) {
         this.id = id;
-        this.elements = new ArrayList<>();
+        this.elementIds = new ArrayList<>();
     }
 
     public int getId() {
         return id;
     }
-    
-    public void addElement(E elem) {
-        elements.add(elem);
-    }
-
-    public ArrayList<E> getElements() {
-        return elements;
-    }
 
     public int size() {
-        return elements.size();
+        return elementIds.size();
     }
 
     public boolean isEmpty() {
         return size() == 0;
     }
 
-    @Override
-    public String toString() {
-        return "Cluster: " + id + " of size: " + size();
+    public void addElement(String id, V value) {
+        elementIds.add(id);
+        onElementAdded(value);
     }
+
+    protected abstract void onElementAdded(V value);
 }

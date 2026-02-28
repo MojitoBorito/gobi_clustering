@@ -14,4 +14,12 @@ public class Sequence {
     public byte[] getSequence() {
         return sequence;
     }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public byte[] getPhredSequence() {
+        return phredSequence;
+    }
 }

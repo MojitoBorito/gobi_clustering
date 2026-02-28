@@ -1,6 +1,7 @@
 package com.benchmark;
 import com.kmer.KmerBitEncoder;
 import com.kmer.KmerEncoder;
+import com.kmer.KmerLongSetEncoder;
 import org.openjdk.jmh.annotations.*;
 import java.util.concurrent.TimeUnit;
 
@@ -10,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Thread)
 public class KmerBenchmark {
     private String sequence;
-    private KmerEncoder<Long> encoder = new KmerBitEncoder(17);
+    private KmerEncoder encoder = new KmerLongSetEncoder(17);
 
     @Setup(Level.Trial)
     public void setup() {

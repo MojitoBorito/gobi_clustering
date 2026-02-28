@@ -2,23 +2,27 @@ package com.kmer;
 
 import java.util.*;
 
-public class KmerBitEncoder extends KmerEncoder<Long>{
+public class KmerBitEncoder extends KmerEncoder{
     // MASKS
     private static long A = 0;
     private static long T = 1;
     private static long C = 2;
     private static long G = 3;
+    private final long[] lookup;
 
     public KmerBitEncoder(int k) {
         if (k > 32) {
             throw new IllegalArgumentException("Max kmer size: 32");
         }
         super(k);
+        lookup = new long[128];
+        Arrays.fill(lookup, -1);
+        lookup['A'] = A; lookup['T'] = T; lookup['C'] = C; lookup['G'] = G;
     }
 
     @Override
-    public KSet<Long> encode(String sequence) {
-        Set<Long> kmers = new HashSet<>();
+    public KmerHashSet<Long> encode(String sequence) {
+        HashSet<Long> kmers = new HashSet<>();
         int k = k();
         for (int i = 0; i < sequence.length() - k + 1; i++) {
             long kmer = 0L;
@@ -35,13 +39,22 @@ public class KmerBitEncoder extends KmerEncoder<Long>{
             }
             if (valid) kmers.add(kmer);
         }
-        return new KSet<>(kmers);
+        return new KmerHashSet<>(kmers);
     }
 
-    public Set<String> decode(KSet<Long> kmers) {
-        int k = k();
+
+
+    public Set<String> decode(KmerHashSet<Long> kmers) {
         Set<String> decoded = new HashSet<>();
-        for (Long kmer : kmers.getKmers()) {
+        for (Long kmer : kmers.getSet()) {
+            decoded.add(decodeKmer(kmer));
+        }
+        return decoded;
+    }
+
+    public Set<String> decodeC(long[] kmers) {
+        Set<String> decoded = new HashSet<>();
+        for (long kmer : kmers) {
             decoded.add(decodeKmer(kmer));
         }
         return decoded;
@@ -62,5 +75,10 @@ public class KmerBitEncoder extends KmerEncoder<Long>{
             sb.append(base);
         }
         return sb.toString();
+    }
+
+    static void main() {
+        long a = -1;
+        System.out.println(Long.toBinaryString(a));
     }
 }
