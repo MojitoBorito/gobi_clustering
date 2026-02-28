@@ -19,7 +19,7 @@ public class Sequence {
         return header;
     }
 
-    public String getPhredSequence() {
+    public byte[] getPhredSequence() {
         return phredSequence;
     }
 }
