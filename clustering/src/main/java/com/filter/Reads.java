@@ -1,18 +1,16 @@
-package com.example;
+package com.filter;
+
+import com.example.Sequence;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
-public class BaseCluster {
+public class Reads {
 
-    HashMap<String, BaseClusterSeq> umis = new HashMap<>();
-    HashMap<String, BaseClusterSeq> header2Umis = new HashMap<>();
-
-    public BaseCluster(String fileName){
-        readFastq(fileName);
-    }
+    HashMap<String, HashReads> sequences = new HashMap<>();
+    HashMap<HashReads, ReadCluster> clusters = new HashMap<>();
 
     public void readFastq(String fileName) {
         try (
@@ -24,6 +22,7 @@ public class BaseCluster {
             String header = null;
             String sequence = null;
             String line;
+            String phred;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("+")) continue;
 
@@ -36,7 +35,15 @@ public class BaseCluster {
                     continue;
                 }
                 if (header != null) {
-                    addUMI(sequence, header);
+                    phred = line;
+
+                    HashReads read = sequences.put(header, new HashReads(
+                            header,
+                            sequence.getBytes(StandardCharsets.US_ASCII),
+                            phred.getBytes(StandardCharsets.US_ASCII)
+                    ));
+                    ReadCluster readCluster = clusters.computeIfAbsent(read, _ -> new ReadCluster());
+                    readCluster.n++;
 
                     header = null;
                     sequence = null;
@@ -49,17 +56,4 @@ public class BaseCluster {
         }
         System.out.println("finished reading fastq file");
     }
-
-    public void addUMI(String sequence, String header){
-        BaseClusterSeq match = umis.get(sequence);
-        if (match != null){
-            header2Umis.put(header, match);
-            match.n++;
-            return;
-        }
-        BaseClusterSeq umi = new BaseClusterSeq(sequence.getBytes(StandardCharsets.US_ASCII));
-        header2Umis.put(header, umi);
-        umis.put(sequence, umi);
-    }
-
 }
