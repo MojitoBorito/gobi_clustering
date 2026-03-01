@@ -45,6 +45,8 @@ public class DualClustering {
                 readCluster.correctUmi(umiCluster.seq, umiPhred, umiCluster.n);
 //                header2Umi.put(header, readCluster.umis);
                 umiClusters.add(readCluster.umis);
+                read.phred = null;
+                read.header = null;
             }
 
         } catch (IOException e) {
