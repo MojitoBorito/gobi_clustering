@@ -1,6 +1,13 @@
 package com.filter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -16,6 +23,7 @@ public class HashReadsIterator implements Iterator<HashReads>, Closeable {
         InputStream gzipStream = new GZIPInputStream(fileStream);
         Reader decoder = new InputStreamReader(gzipStream, StandardCharsets.UTF_8);
         this.reader = new BufferedReader(decoder);
+        advance(); // Load the first read
     }
 
     private void advance() {

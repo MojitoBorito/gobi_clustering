@@ -10,10 +10,10 @@ library(tidyverse)
 library(stringr)
 library(scales)
 
-counts0 <- read_tsv("umi_outs/count_0.txt")
-counts1 <- read_tsv("umi_outs/count_1.txt")
-counts2 <- read_tsv("umi_outs/count_2.txt")
-counts3 <- read_tsv("umi_outs/count_3.txt")
+counts0 <- read_tsv("umi_results/H1-12936-T2/counts/count_0.txt")
+counts1 <- read_tsv("umi_results/H1-12936-T2/counts/count_1.txt")
+counts2 <- read_tsv("umi_results/H1-12936-T2/counts/count_2.txt")
+counts3 <- read_tsv("umi_results/H1-12936-T2/counts/count_3.txt")
 
 counts <- list(counts0, counts1, counts2, counts3)
 names(counts) <- c(0,1,2,3)
@@ -59,5 +59,47 @@ probs_data %>% ggplot(aes(x=clusters)) +
   facet_wrap(vars(source)) + 
   scale_x_log10(labels = label_number()) + 
   labs(x = "Number of clusters", title = "Distribution of no. of clusters a sequence was clustered to,\nif assigned to multipile clusters")
+```
+
+
+```{r}
+# Get all sample directories under umi_results/
+sample_dirs <- list.dirs("umi_results", recursive = FALSE)
+
+for (sample_dir in sample_dirs) {
+
+  sample_name <- basename(sample_dir)
+
+  # Read all count files (count_0.txt through count_3.txt)
+  count_files <- list.files(file.path(sample_dir, "counts"),
+                            pattern = "^count_\\d+\\.txt$",
+                            full.names = TRUE)
+
+  # Sort to ensure 0, 1, 2, 3 ordering
+  count_files <- sort(count_files)
+
+  # Read each file into a list
+  counts <- map(count_files, read_tsv)
+
+  # Name each list element by extracting the number from the filename
+  names(counts) <- str_extract(basename(count_files), "\\d+")
+
+  # Combine into a single data frame with a 'source' column
+  counts_data <- imap_dfr(counts, ~ mutate(.x, source = .y))
+
+  # Generate the plot
+  p <- counts_data %>%
+    ggplot(aes(x = counts)) +
+    geom_histogram(bins = 30) +
+    facet_wrap(vars(source)) +
+    scale_x_log10(labels = label_number()) +
+    labs(
+      x = "Number of UMIs in UMI cluster",
+      title = paste0(sample_name,
+                     ": Distribution of number of UMIs assigned per cluster")
+    )
+
+  print(p)
+}
 ```
 
