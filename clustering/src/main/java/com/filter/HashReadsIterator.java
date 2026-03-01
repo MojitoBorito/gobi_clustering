@@ -3,6 +3,7 @@ package com.filter;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.zip.GZIPInputStream;
 
 public class HashReadsIterator implements Iterator<HashReads>, Closeable {
@@ -63,16 +64,21 @@ public class HashReadsIterator implements Iterator<HashReads>, Closeable {
 
     @Override
     public void close() throws IOException {
-
+        reader.close();
     }
 
     @Override
     public boolean hasNext() {
-        return false;
+        return !finished && nextRead != null;
     }
 
     @Override
     public HashReads next() {
-        return null;
+        if (!hasNext()) {
+            throw new NoSuchElementException("No more reads in the FASTQ file");
+        }
+        HashReads current = nextRead;
+        advance(); // pre-fetch the next record
+        return current;
     }
 }
