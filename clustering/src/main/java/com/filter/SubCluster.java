@@ -3,7 +3,6 @@ package com.filter;
 public class SubCluster {
     int[][] score;
     byte[] consensus;
-
     int n;
 
     private static final byte[] INDEX_TO_BASE = {'A', 'C', 'G', 'T', 'N'};
@@ -14,12 +13,22 @@ public class SubCluster {
         n=0;
     }
 
-    public void updateScore(byte[] phred, byte[] seq){
+    public void updateScore(int[] phred, byte[] seq, int m){
         int index;
         for (int i = 0; i < seq.length; i++){
             index = baseToIndex(seq[i]);
-            score[index][i] = phred[i];
+            score[index][i] = (score[index][i] * n + phred[i] * m) / (n+m);
         }
+        n+=m;
+    }
+
+    public void updateScore(byte[] phred, byte[] seq, int m){
+        int index;
+        for (int i = 0; i < seq.length; i++){
+            index = baseToIndex(seq[i]);
+            score[index][i] = (score[index][i] * n + phred[i] * m) / (n+m);
+        }
+        n+=m;
     }
 
     private static int baseToIndex(byte base) {

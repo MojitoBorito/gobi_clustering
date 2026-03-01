@@ -7,12 +7,24 @@ import java.util.HashMap;
 public class UMICluster {
     byte[] seq;
     int n;
+    int[] phred;
 
     HashMap<HashReads, SubCluster> sub50cluster = null;
 
-    public UMICluster(byte[] sequence) {
+    public UMICluster(byte[] sequence, byte[] phredScore) {
         this.seq = sequence;
-        n=1;
+        this.phred = new int[phredScore.length];
+        for (int i = 0; i < phredScore.length; i++) {
+            phred[i] = phredScore[i];
+        }
+        this.n=1;
+    }
+    
+    public void updatePhred(byte[] phred){
+        for (int i = 0; i < phred.length; i++) {
+            this.phred[i] = ((this.phred[i]*n) + phred[i]) / (n+1);
+        }
+        this.n++;
     }
 
     @Override
