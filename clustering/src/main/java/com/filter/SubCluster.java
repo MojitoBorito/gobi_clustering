@@ -93,4 +93,11 @@ public class SubCluster {
         idCreator = 0;
     }
 
+    public byte[] getConsensus() {
+        return consensus;
+    }
+
+    public int getN() {
+        return n;
+    }
 }
