@@ -2,21 +2,19 @@ package com.filter;
 
 public class SeqKey {
     final byte[] source;
-    final int offset;
     final int length;
     final long hash;
 
     public SeqKey(byte[] seq, int last) {
         int start = seq.length - last;
         this.source = java.util.Arrays.copyOfRange(seq, start, seq.length);
-        this.offset = seq.length - last;
         this.length = last;
         this.hash = computeHash();
     }
 
     private long computeHash() {
         long h = 0xcbf29ce484222325L;
-        for (int i = offset; i < offset + length; i++) {
+        for (int i = 0; i < length; i++) {
             h ^= source[i];
             h *= 0x100000001b3L;
         }
@@ -33,7 +31,7 @@ public class SeqKey {
         if (obj instanceof SeqKey other) {
             if (this.length != other.length) return false;
             for (int i = 0; i < length; i++) {
-                if (source[offset + i] != other.source[other.offset + i]) return false;
+                if (source[i] != other.source[i]) return false;
             }
             return true;
         }
