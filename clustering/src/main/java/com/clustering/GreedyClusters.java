@@ -1,5 +1,6 @@
 package com.clustering;
 
+import com.example.Sequence;
 import com.model.Cluster;
 import com.linkage.ClusterLinkage;
 import com.metrics.DistanceMetric;
@@ -20,7 +21,7 @@ public class GreedyClusters<C extends Cluster<V>, V> {
     }
 
     public void computeClusters(Iterator<V> elements) {
-//        Element<V> elem;
+//        Sequence elem;
 //        int count = 0;
 //        while (elements.hasNext()) {
 //            elem = elements.next();
