@@ -1,13 +1,19 @@
 package com.filter;
 
-import com.example.FastqIterator;
-
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class DualClustering {
     HashMap<String, SubCluster> header2Seq = new HashMap<>();
     HashMap<String, SubCluster> header2Umi = new HashMap<>();
+
+    HashSet<SubCluster> umiClusters = new HashSet<>();
+    HashSet<SubCluster> seqClusters = new HashSet<>();
+
     Reads readClustering = new Reads();
 
     public DualClustering(UMI umis, String readFile){
@@ -33,10 +39,12 @@ public class DualClustering {
                 cluster.updateScore(read.phred, read.source, readCluster.n);
                 cluster.n++;
                 header2Seq.put(header, cluster);
+                seqClusters.add(cluster);
 
                 //cluster the UMIs for sequence correction with the clustered 50bp sequences.
                 readCluster.correctUmi(umiCluster.seq, umiPhred, umiCluster.n);
                 header2Umi.put(header, readCluster.umis);
+                umiClusters.add(readCluster.umis);
             }
 
         } catch (IOException e) {
@@ -48,7 +56,48 @@ public class DualClustering {
         for (String header : umis.header2Umis.keySet()){
             umis.umis.get(header).sub50cluster = null;
         }
+        SubCluster.resetIdCreator();
     }
 
+    static void main() throws IOException {
+        String umi = "/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R2_001.fastq.gz";
+        String fw = "/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/H5-12939-T2_R1_001.fastq.gz";
 
+        String umiOut = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out/umi.txt";
+        String fwOut = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out/fw.txt";
+
+        UMI umiGroup = new UMI(umi);
+
+        DualClustering dualClustering = new DualClustering(umiGroup, fw);
+
+        long starTime = System.currentTimeMillis();
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(fw))){
+            writer.write("seq\tcounts\n");
+            for (SubCluster seq : dualClustering.seqClusters){
+                seq.updateSequence();
+                writer.write(new String(seq.consensus, StandardCharsets.US_ASCII) + "\t" + seq.n + "\n");
+            }
+        }
+        long endTime = System.currentTimeMillis();
+
+        long first = endTime - starTime;
+
+        starTime = System.currentTimeMillis();
+
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(umi))){
+            writer.write("seq\tcounts\n");
+            for (SubCluster seq : dualClustering.umiClusters){
+                seq.updateSequence();
+                writer.write(new String(seq.consensus, StandardCharsets.US_ASCII) + "\t" + seq.n + "\n");
+            }
+        }
+        endTime = System.currentTimeMillis();
+
+        long second = endTime - starTime;
+
+        System.out.println("Umi cluster time: "+(first/1000));
+        System.out.println("Dual cluster time: "+(second/1000));
+
+    }
 }

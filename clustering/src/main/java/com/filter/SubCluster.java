@@ -1,6 +1,9 @@
 package com.filter;
 
 public class SubCluster {
+    private static int idCreator = 0;
+
+    final int id;
     int[][] score;
     byte[] consensus;
     int n;
@@ -11,6 +14,7 @@ public class SubCluster {
         score = new int[5][length];
         consensus = new byte[length];
         n=0;
+        id = idCreator++;
     }
 
     public void updateScore(int[] phred, byte[] seq, int m){
@@ -69,6 +73,24 @@ public class SubCluster {
                 consensus[i] = 'N';
             }
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj instanceof SubCluster other) {
+            return this.id == other.id;
+        }
+        return false;
+    }
+
+    public static void resetIdCreator() {
+        idCreator = 0;
     }
 
 }
