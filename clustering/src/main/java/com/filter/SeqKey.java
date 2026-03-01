@@ -7,7 +7,8 @@ public class SeqKey {
     final long hash;
 
     public SeqKey(byte[] seq, int last) {
-        this.source = seq;
+        int start = seq.length - last;
+        this.source = java.util.Arrays.copyOfRange(seq, start, seq.length);
         this.offset = seq.length - last;
         this.length = last;
         this.hash = computeHash();

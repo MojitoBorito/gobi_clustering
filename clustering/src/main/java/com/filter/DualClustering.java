@@ -24,7 +24,7 @@ public class DualClustering {
         try (HashReadsIterator fastq = new HashReadsIterator(readFile)){
             while (fastq.hasNext()) {
                 HashReads read = fastq.next();
-                ReadCluster readCluster = readClustering.clusters.computeIfAbsent(read, _ -> new ReadCluster());
+                ReadCluster readCluster = readClustering.clusters.computeIfAbsent(read.hash, _ -> new ReadCluster());
                 readCluster.n++;
 
                 String header = read.header;
@@ -35,8 +35,8 @@ public class DualClustering {
                 if (umiCluster.sub50cluster == null){
                     umiCluster.sub50cluster = new HashMap<>();
                 }
-                SubCluster cluster = umiCluster.sub50cluster.computeIfAbsent(read, r -> new SubCluster(r.phred.length));
-                cluster.updateScore(read.phred, read.source, readCluster.n);
+                SubCluster cluster = umiCluster.sub50cluster.computeIfAbsent(read.hash, r -> new SubCluster(read.phred.length));
+                cluster.updateScore(read.phred, read.seq, readCluster.n);
                 cluster.n++;
 //                header2Seq.put(header, cluster);
                 seqClusters.add(cluster);
@@ -45,8 +45,6 @@ public class DualClustering {
                 readCluster.correctUmi(umiCluster.seq, umiPhred, umiCluster.n);
 //                header2Umi.put(header, readCluster.umis);
                 umiClusters.add(readCluster.umis);
-                read.phred = null;
-                read.header = null;
             }
 
         } catch (IOException e) {
