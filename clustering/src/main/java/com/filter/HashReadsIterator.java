@@ -1,18 +1,16 @@
-package com.example;
-
-import com.filter.HashReads;
+package com.filter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 
-public class FastqIterator implements Iterator<HashReads>, Closeable {
+public class HashReadsIterator implements Iterator<HashReads>, Closeable {
     private BufferedReader reader;
     private HashReads nextRead;
     private boolean finished = false;
 
-    public FastqIterator(String filename) throws IOException {
+    public HashReadsIterator(String filename) throws IOException {
         InputStream fileStream = new FileInputStream(filename);
         InputStream gzipStream = new GZIPInputStream(fileStream);
         Reader decoder = new InputStreamReader(gzipStream, StandardCharsets.UTF_8);
