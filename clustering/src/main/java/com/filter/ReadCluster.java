@@ -5,7 +5,7 @@ public class ReadCluster{
 
     SubCluster umis = null;
 
-    public void correctUmi(byte[] seq, int[] phred){
+    public void correctUmi(String seq, int[] phred){
         if (umis == null) {
             umis = new SubCluster(phred.length);
         }

@@ -4,70 +4,55 @@ public class SubCluster {
     private static int idCreator = 0;
 
     final int id;
-    int[][] score;
+    int[] bestScore;
     byte[] consensus;
     int n;
-
-    private static final byte[] INDEX_TO_BASE = {'A', 'C', 'G', 'T', 'N'};
+    int k;
 
     public SubCluster(int length) {
-        score = new int[5][length];
+        bestScore = new int[length];
         consensus = new byte[length];
-        n=0;
+        n = 0;
+        k=0;
         id = idCreator++;
     }
 
-    public void updateScore(int[] phred, byte[] seq){
-        int index;
-        for (int i = 0; i < seq.length; i++){
-            index = baseToIndex(seq[i]);
-            score[index][i] = phred[i];
-        }
-    }
-
-    public void updateScore(byte[] phred, byte[] seq){
-        int index;
-        for (int i = 0; i < seq.length; i++){
-            index = baseToIndex(seq[i]);
-            score[index][i] += phred[i];
-        }
-    }
-
-    private static int baseToIndex(byte base) {
-        switch (base) {
-            case 'A':
-            case 'a':
-                return 0;
-            case 'C':
-            case 'c':
-                return 1;
-            case 'G':
-            case 'g':
-                return 2;
-            case 'T':
-            case 't':
-                return 3;
-            default:
-                return 4;
-        }
-    }
-
-    public void updateSequence(){
-        int bestIndex;
-        int bestScore;
-
-        for (int i = 0; i < consensus.length; i++){
-            bestIndex = 0;
-            bestScore = score[0][i];
-            for (int j = 1; j < 4; j++){
-                if (score[j][i] > bestScore){
-                    bestIndex = j;
-                    bestScore = score[j][i];
-                }
+    public void updateScore(int[] phred, String seq) {
+        for (int i = 0; i < seq.length(); i++) {
+            byte base = (byte) seq.charAt(i);
+            if (consensus[i] == 0 || consensus[i] == base) {
+                consensus[i] = base;
+                bestScore[i] = (bestScore[i] * k + phred[i]) / (k+1);
+                k++;
+            } else if (phred[i] > bestScore[i]) {
+                consensus[i] = base;
+                bestScore[i] = phred[i];
+                k=0;
             }
-            if (bestScore > 0){
-                consensus[i] = INDEX_TO_BASE[bestIndex];
-            } else {
+        }
+        n++;
+    }
+
+    public void updateScore(byte[] phred, String seq) {
+        for (int i = 0; i < seq.length(); i++) {
+            byte base = (byte) seq.charAt(i);
+            if (consensus[i] == 0 || consensus[i] == base) {
+                consensus[i] = base;
+                bestScore[i] = (bestScore[i] * k + phred[i]) / (k+1);
+                k++;
+            } else if (phred[i] > bestScore[i]) {
+                consensus[i] = base;
+                bestScore[i] = phred[i];
+                k=0;
+            }
+        }
+        n++;
+    }
+
+
+    public void updateSequence() {
+        for (int i = 0; i < consensus.length; i++) {
+            if (consensus[i] == 0) {
                 consensus[i] = 'N';
             }
         }

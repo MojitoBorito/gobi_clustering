@@ -1,15 +1,14 @@
 package com.filter;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Objects;
 
 
 public class UMICluster {
-    byte[] seq;
+    String seq;
     int n;
     int[] phred;
 
-    public UMICluster(byte[] sequence, byte[] phredScore) {
+    public UMICluster(String sequence, byte[] phredScore) {
         this.seq = sequence;
         this.phred = new int[phredScore.length];
         for (int i = 0; i < phredScore.length; i++) {
@@ -27,18 +26,18 @@ public class UMICluster {
 
     @Override
     public int hashCode() {
-        return SeqKey.fnv1a(seq);
+        return Objects.hash(seq);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof UMICluster other) {
-            return Arrays.equals(seq, other.seq);
+            return seq.equals(other.seq);
         }
         return false;
     }
 
-    public byte[] getSeq() {
+    public String getSeq() {
         return seq;
     }
 

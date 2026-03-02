@@ -31,12 +31,11 @@ public class DualClustering {
                 String header = read.header;
                 UMICluster umiCluster = umis.header2Umis.get(header);
                 int[] umiPhred = umiCluster.phred;
-                UMI50BP corrHash = new UMI50BP(umiCluster.seq, read.hash.source);
 
                 //start by clustering the sequences within the UMIs
-                SubCluster cluster = umis.subClusters.computeIfAbsent(corrHash, _ -> new SubCluster(read.phred.length));
+                SubCluster cluster = umis.subClusters.computeIfAbsent(read.hash + umiCluster.seq,
+                        _ -> new SubCluster(read.phred.length));
                 cluster.updateScore(read.phred, read.seq);
-                cluster.n++;
 //                header2Seq.put(header, cluster);
 
                 //cluster the UMIs for sequence correction with the clustered 50bp sequences.

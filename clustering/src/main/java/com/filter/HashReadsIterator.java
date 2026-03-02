@@ -56,7 +56,7 @@ public class HashReadsIterator implements Iterator<HashReads>, Closeable {
                     String phred = line;
                     nextRead = new HashReads(
                             header,
-                            sequence.getBytes(StandardCharsets.US_ASCII),
+                            sequence,
                             phred.getBytes(StandardCharsets.US_ASCII)
                     );
                     return;
