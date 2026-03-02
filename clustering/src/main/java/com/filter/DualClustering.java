@@ -5,19 +5,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class DualClustering {
 //    HashMap<String, SubCluster> header2Seq = new HashMap<>();
 //    HashMap<String, SubCluster> header2Umi = new HashMap<>();
 
-    HashSet<SubCluster> umiClusters = new HashSet<>();
-    HashSet<SubCluster> seqClusters = new HashSet<>();
+//    HashSet<SubCluster> umiClusters = new HashSet<>();
+//    HashSet<SubCluster> seqClusters = new HashSet<>();
 
     Reads readClustering = new Reads();
+    UMI umiClustering;
 
     public DualClustering(UMI umis, String readFile){
         dualCluster(umis, readFile);
+        this.umiClustering = umis;
     }
 
     public void dualCluster(UMI umis, String readFile){
@@ -30,21 +31,17 @@ public class DualClustering {
                 String header = read.header;
                 UMICluster umiCluster = umis.header2Umis.get(header);
                 int[] umiPhred = umiCluster.phred;
+                UMI50BP corrHash = new UMI50BP(umiCluster.seq, read.hash.source);
 
                 //start by clustering the sequences within the UMIs
-                if (umiCluster.sub50cluster == null){
-                    umiCluster.sub50cluster = new HashMap<>();
-                }
-                SubCluster cluster = umiCluster.sub50cluster.computeIfAbsent(read.hash, r -> new SubCluster(read.phred.length));
-                cluster.updateScore(read.phred, read.seq, readCluster.n);
+                SubCluster cluster = umis.subClusters.computeIfAbsent(corrHash, _ -> new SubCluster(read.phred.length));
+                cluster.updateScore(read.phred, read.seq);
                 cluster.n++;
 //                header2Seq.put(header, cluster);
-                seqClusters.add(cluster);
 
                 //cluster the UMIs for sequence correction with the clustered 50bp sequences.
-                readCluster.correctUmi(umiCluster.seq, umiPhred, umiCluster.n);
+                readCluster.correctUmi(umiCluster.seq, umiPhred);
 //                header2Umi.put(header, readCluster.umis);
-                umiClusters.add(readCluster.umis);
             }
 
         } catch (IOException e) {
@@ -53,9 +50,7 @@ public class DualClustering {
     }
 
     public static void resetDualClustering(UMI umis){
-        for (String header : umis.header2Umis.keySet()){
-            umis.umis.get(header).sub50cluster = null;
-        }
+        umis.subClusters = new HashMap<>();
         SubCluster.resetIdCreator();
     }
 
@@ -67,12 +62,13 @@ public class DualClustering {
 //        return header2Umi;
 //    }
 
-    public HashSet<SubCluster> getSeqClusters() {
-        return seqClusters;
+
+    public Reads getReadClustering() {
+        return readClustering;
     }
 
-    public HashSet<SubCluster> getUmiClusters() {
-        return umiClusters;
+    public UMI getUmiClustering() {
+        return umiClustering;
     }
 
     public static void main(String[] args) throws IOException {
@@ -97,17 +93,18 @@ public class DualClustering {
         long second = endTime - starTime;
 
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(fwOut))){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(umiOut))){
             writer.write("seq\tcounts\n");
-            for (SubCluster seq : dualClustering.seqClusters){
+            for (ReadCluster reads : dualClustering.readClustering.clusters.values()){
+                SubCluster seq = reads.umis;
                 seq.updateSequence();
                 writer.write(new String(seq.consensus, StandardCharsets.US_ASCII) + "\t" + seq.n + "\n");
             }
         }
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(umiOut))){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(fwOut))){
             writer.write("seq\tcounts\n");
-            for (SubCluster seq : dualClustering.umiClusters){
+            for (SubCluster seq : dualClustering.umiClustering.subClusters.values()){
                 seq.updateSequence();
                 writer.write(new String(seq.consensus, StandardCharsets.US_ASCII) + "\t" + seq.n + "\n");
             }

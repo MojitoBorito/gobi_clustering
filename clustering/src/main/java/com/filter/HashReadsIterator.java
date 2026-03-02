@@ -40,7 +40,10 @@ public class HashReadsIterator implements Iterator<HashReads>, Closeable {
                 }
 
                 if (header == null && line.startsWith("@")) {
-                    header = line.substring(1).split(" ")[0];
+                    int spaceIdx = line.indexOf(' ');
+                    header = (spaceIdx == -1)
+                            ? line.substring(1)
+                            : line.substring(1, spaceIdx);
                     continue;
                 }
 

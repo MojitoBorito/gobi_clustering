@@ -17,22 +17,20 @@ public class SubCluster {
         id = idCreator++;
     }
 
-    public void updateScore(int[] phred, byte[] seq, int m){
+    public void updateScore(int[] phred, byte[] seq){
         int index;
         for (int i = 0; i < seq.length; i++){
             index = baseToIndex(seq[i]);
-            score[index][i] = (score[index][i] * n + phred[i] * m) / (n+m);
+            score[index][i] = phred[i];
         }
-        n+=m;
     }
 
-    public void updateScore(byte[] phred, byte[] seq, int m){
+    public void updateScore(byte[] phred, byte[] seq){
         int index;
         for (int i = 0; i < seq.length; i++){
             index = baseToIndex(seq[i]);
-            score[index][i] = (score[index][i] * n + phred[i] * m) / (n+m);
+            score[index][i] += phred[i];
         }
-        n+=m;
     }
 
     private static int baseToIndex(byte base) {

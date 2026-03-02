@@ -9,8 +9,6 @@ public class UMICluster {
     int n;
     int[] phred;
 
-    HashMap<SeqKey, SubCluster> sub50cluster = null;
-
     public UMICluster(byte[] sequence, byte[] phredScore) {
         this.seq = sequence;
         this.phred = new int[phredScore.length];

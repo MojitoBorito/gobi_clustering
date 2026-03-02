@@ -5,11 +5,11 @@ public class ReadCluster{
 
     SubCluster umis = null;
 
-    public void correctUmi(byte[] seq, int[] phred, int m){
+    public void correctUmi(byte[] seq, int[] phred){
         if (umis == null) {
             umis = new SubCluster(phred.length);
         }
-        umis.updateScore(phred, seq, m);
+        umis.updateScore(phred, seq);
     }
 
     public byte[] getCorrectedUmi(){
@@ -17,4 +17,7 @@ public class ReadCluster{
         return umis.consensus;
     }
 
+    public SubCluster getUmis() {
+        return umis;
+    }
 }

@@ -55,4 +55,8 @@ public class Reads {
         }
         System.out.println("finished reading fastq file");
     }
+
+    public HashMap<SeqKey, ReadCluster> getClusters() {
+        return clusters;
+    }
 }

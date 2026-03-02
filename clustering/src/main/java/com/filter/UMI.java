@@ -9,6 +9,7 @@ public class UMI {
 
     HashMap<String, UMICluster> umis = new HashMap<>();
     HashMap<String, UMICluster> header2Umis = new HashMap<>();
+    HashMap<UMI50BP, SubCluster> subClusters = new HashMap<>();
 
     public UMI(String fileName){
         readFastq(fileName);
@@ -28,7 +29,10 @@ public class UMI {
                 if (line.startsWith("+")) continue;
 
                 if (header==null && line.startsWith("@")) {
-                    header = line.substring(1).split(" ")[0];
+                    int spaceIdx = line.indexOf(' ');
+                    header = (spaceIdx == -1)
+                            ? line.substring(1)
+                            : line.substring(1, spaceIdx);
                     continue;
                 }
                 if (header != null && sequence == null) {
@@ -67,5 +71,9 @@ public class UMI {
 
     public HashMap<String, UMICluster> getUmis() {
         return umis;
+    }
+
+    public HashMap<UMI50BP, SubCluster> getSubClusters() {
+        return subClusters;
     }
 }
