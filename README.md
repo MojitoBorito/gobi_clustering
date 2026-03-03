@@ -1,8 +1,6 @@
 # Clustering
   - Without UMIs
 
-## FastQ parser
-
 ## Simulation:
 The parameters are same as Readsimulator, but with 3 extra parameters. 
 1. -fragFreq: tells how often a fragment should appear
