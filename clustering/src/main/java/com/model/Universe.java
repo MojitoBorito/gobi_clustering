@@ -1,5 +1,6 @@
 package com.model;
 
+import com.bucket.SmartBuckets;
 import com.linkage.ClusterLinkage;
 import com.metrics.DistanceMetric;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Universe<V, C extends Cluster<V>> implements Iterable<C>{
-    private final ArrayList<C> clusters; //TODO: Change this to bucket based, to hash kmer to suitable cluster bucket
+    private final ArrayList<C> clusters;
     private final DistanceMetric<V> metric;
     private final ClusterLinkage<V, C> linkage;
     private final ClusterFactory<C> factory;
