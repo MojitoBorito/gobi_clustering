@@ -43,6 +43,10 @@ public class Universe<V, C extends Cluster<V>>{
         return buckets.getClusters(key);
     }
 
+    public Set<C> getAllClusters() {
+        return buckets.getAllClusters();
+    }
+
     @FunctionalInterface
     public interface ClusterFactory<C> {
         C create(int id);

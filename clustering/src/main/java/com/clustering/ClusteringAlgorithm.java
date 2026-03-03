@@ -28,18 +28,18 @@ public abstract class ClusteringAlgorithm<V, C extends Cluster<V>> {
 
     public void writeClusters() {}
 
-//    public void writeClustersCompact(Path path) {
-//        try (BufferedWriter writer = new BufferedWriter(Files.newBufferedWriter(path, StandardOpenOption.CREATE), 512 * 1024)) {
-//            StringBuilder sb = new StringBuilder();
-//            for (Cluster<V> cluster : universe) {
-//                List<String> ids = cluster.getElementIds();
-//                if (ids.isEmpty()) continue;
-//                sb.append(String.join("\t", ids));
-//                sb.append('\n');
-//            }
-//            writer.write(sb.toString());
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public void writeClustersCompact(Path path) {
+        try (BufferedWriter writer = new BufferedWriter(Files.newBufferedWriter(path, StandardOpenOption.CREATE), 512 * 1024)) {
+            StringBuilder sb = new StringBuilder();
+            for (Cluster<V> cluster : universe.getAllClusters()) {
+                List<String> ids = cluster.getElementIds();
+                if (ids.isEmpty()) continue;
+                sb.append(String.join("\t", ids));
+                sb.append('\n');
+            }
+            writer.write(sb.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
