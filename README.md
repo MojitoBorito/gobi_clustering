@@ -3,7 +3,13 @@
 
 ## FastQ parser
 
-## 
+## Simulation:
+The parameters are same as Readsimulator, but with 3 extra parameters. 
+1. -fragFreq: tells how often a fragment should appear
+2. -shifted: tells how many fragments we want to produce for the fragment from transcript
+3. -diff: tells the offset between shifted fragments
+
+Remember: ReadCounts needs to be reduced, because the the number of created Sequences per transcript is readcounts * fragFreq * shifted
 
 ## Targets:
 - Decide meter of measurement
