@@ -41,7 +41,7 @@ public class FASTQ {
                     phred = line;
                     fast.fastq.putIfAbsent(header, new Sequence(
                             header,
-                            sequence.getBytes(StandardCharsets.US_ASCII),
+                            sequence,
                             phred.getBytes(StandardCharsets.US_ASCII)
                     ));
                     header = null;

@@ -11,13 +11,16 @@ public class FastqIterator implements Iterator<Sequence>, AutoCloseable {
     private final BufferedReader reader;
     private Sequence nextSequence;
 
-    public FastqIterator(String fileName) throws IOException {
-        InputStream fileStream = new FileInputStream(fileName);
-        InputStream gzipStream = new GZIPInputStream(fileStream);
-        Reader decoder = new InputStreamReader(gzipStream, StandardCharsets.UTF_8);
-        this.reader = new BufferedReader(decoder);
-
-        advance(); // preload first sequence
+    public FastqIterator(String fileName)  {
+        try {
+            InputStream fileStream = new FileInputStream(fileName);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            Reader decoder = new InputStreamReader(gzipStream, StandardCharsets.UTF_8);
+            this.reader = new BufferedReader(decoder);
+            advance(); // preload first sequence
+        } catch (RuntimeException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void advance() {
@@ -39,7 +42,7 @@ public class FastqIterator implements Iterator<Sequence>, AutoCloseable {
 
             nextSequence = new Sequence(
                     header.substring(1),
-                    sequence.getBytes(StandardCharsets.US_ASCII),
+                    sequence,
                     phred.getBytes(StandardCharsets.US_ASCII)
             );
 

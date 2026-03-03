@@ -18,7 +18,7 @@ public class KmerLongSetEncoder extends KmerEncoder{
     Important: ASCII encoded
      **/
     @Override
-    public KmerSet encode(String sequence) {
+    public KmerLongSet encode(String sequence) {
         int k = k();
         long mask = (1L << 2*k) - 1;
         long kmer = 0L;

@@ -29,5 +29,9 @@ public abstract class Cluster<V> {
         onElementAdded(value);
     }
 
+    public List<String> getElementIds() {
+        return elementIds;
+    }
+
     protected abstract void onElementAdded(V value);
 }

@@ -3,7 +3,7 @@ package com.linkage;
 import com.metrics.DistanceMetric;
 import com.model.MaterializedCluster;
 
-public class CompleteLinkage<C extends MaterializedCluster<V>, V> implements ClusterLinkage<C, V> {
+public class CompleteLinkage<V, C extends MaterializedCluster<V>> implements ClusterLinkage<V, C> {
 
     @Override
     public double distanceToCluster(DistanceMetric<V> metric, V value, C cluster) {

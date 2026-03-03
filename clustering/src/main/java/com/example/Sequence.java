@@ -1,25 +1,20 @@
 package com.example;
 
-public class Sequence {
-    String header;
-    byte[] sequence;
+import com.model.Element;
+
+public class Sequence extends Element<String> {
     byte[] phredSequence;
 
-    public Sequence(String header, byte[] sequence, byte[] phredSequence) {
-        this.header = header;
-        this.sequence = sequence;
+    public Sequence(String header, String sequence, byte[] phredSequence) {
+        super(header, sequence);
         this.phredSequence = phredSequence;
-    }
-
-    public byte[] getSequence() {
-        return sequence;
-    }
-
-    public String getHeader() {
-        return header;
     }
 
     public byte[] getPhredSequence() {
         return phredSequence;
+    }
+
+    static void main() {
+
     }
 }

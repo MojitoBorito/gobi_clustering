@@ -1,6 +1,6 @@
 package com.model;
 
-public abstract class Element<V> {
+public class Element<V> {
     private final String id;
     private final V value;
 

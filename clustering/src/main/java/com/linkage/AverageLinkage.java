@@ -5,7 +5,7 @@ import com.metrics.DistanceMetric;
 import com.model.MaterializedCluster;
 
 
-public class AverageLinkage<C extends MaterializedCluster<V>, V> implements ClusterLinkage<C, V> {
+public class AverageLinkage<V, C extends MaterializedCluster<V>> implements ClusterLinkage<V, C> {
     @Override
     public double distanceToCluster(DistanceMetric<V> metric, V value, C cluster) {
         if (cluster.isEmpty()) throw new RuntimeException("Can't calculate distance to empty cluster");

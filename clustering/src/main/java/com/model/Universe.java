@@ -6,16 +6,16 @@ import com.metrics.DistanceMetric;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Universe<C extends Cluster<V>, V> implements Iterable<C>{
+public class Universe<V, C extends Cluster<V>> implements Iterable<C>{
     private final ArrayList<C> clusters;
     private final DistanceMetric<V> metric;
-    private final ClusterLinkage<C, V> linkage;
+    private final ClusterLinkage<V, C> linkage;
     private final ClusterFactory<C> factory;
     private int nextId = 0;
 
     public Universe(ClusterFactory<C> factory,
                     DistanceMetric<V> metric,
-                    ClusterLinkage<C, V> linkage) {
+                    ClusterLinkage<V, C> linkage) {
         this.clusters = new ArrayList<>();
         this.factory = factory;
         this.metric = metric;

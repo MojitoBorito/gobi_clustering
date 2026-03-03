@@ -1,56 +1,68 @@
 package com.clustering;
 
+import com.example.FastqIterator;
 import com.example.Sequence;
-import com.model.Cluster;
+import com.kmer.KmerLongSet;
+import com.kmer.KmerLongSetEncoder;
+import com.linkage.AverageLinkage;
+import com.linkage.SeededLinkage;
+import com.metrics.Jaccard;
+import com.model.*;
 import com.linkage.ClusterLinkage;
 import com.metrics.DistanceMetric;
-import com.model.Universe;
+import com.pipeline.ValueMappingIterator;
+import com.seeds.MinHashSeed;
 
+import java.nio.file.Path;
 import java.util.Iterator;
 
-public class GreedyClusters<C extends Cluster<V>, V> {
-    private final Universe<C, V> universe;
+public class GreedyClusters<V, C extends Cluster<V>> extends ClusteringAlgorithm<V, C>{
     private final double threshold;
 
     public GreedyClusters(Universe.ClusterFactory<C> factory,
                           DistanceMetric<V> metric,
-                          ClusterLinkage<C, V> linkage,
+                          ClusterLinkage<V, C> linkage,
                           double threshold) {
-        this.universe = new Universe<>(factory, metric, linkage);
+        super(factory, metric, linkage);
         this.threshold = threshold;
     }
 
-    public void computeClusters(Iterator<V> elements) {
-//        Sequence elem;
-//        int count = 0;
-//        while (elements.hasNext()) {
-//            elem = elements.next();
-//            double minDist = Double.POSITIVE_INFINITY;
-//            C bestCluster = null;
-//            for (C cluster : universe) {
-//                if (cluster.isEmpty()) continue;
-//                double currentDist = universe.distanceToCluster(elem, cluster);
-//                if (currentDist < minDist) {
-//                    minDist = currentDist;
-//                    bestCluster = cluster;
-//                }
-//            }
-//            if (bestCluster == null || minDist >= threshold) {
-//                universe.createCluster().addElement(elem);
-//            } else {
-//                bestCluster.addElement(elem);
-//            }
-//            count++;
-//            if (count % 1000 == 0) System.out.println(count);
-//        }
+    public void computeClusters(Iterator<? extends Element<V>> elements) {
+        Element<V> elem;
+        int count = 0;
+
+        while (elements.hasNext()) {
+            elem = elements.next();
+            double minDist = Double.POSITIVE_INFINITY;
+            C bestCluster = null;
+            for (C cluster : universe) {
+                if (cluster.isEmpty()) continue;
+                double currentDist = universe.distanceToCluster(elem.getValue(), cluster);
+                if (currentDist < minDist) {
+                    minDist = currentDist;
+                    bestCluster = cluster;
+                }
+            }
+            if (bestCluster == null || minDist >= threshold) {
+                universe.createCluster().addElement(elem.getId(), elem.getValue());
+            } else {
+                bestCluster.addElement(elem.getId(), elem.getValue());
+            }
+            count++;
+            if (count % 1000 == 0)
+                System.out.println(count);
+        }
     }
 
     static void main() {
-        //HashMap<String, Sequence> fast = FASTQ.readFastq("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/fw.fastq.gz").getFastq();
-        Long num = 300L;
-        long time = System.nanoTime();
-        num.hashCode();
-        long end = System.nanoTime();
-        System.out.println(end - time);
+        FastqIterator reads = new FastqIterator("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/fw.fastq.gz");
+        KmerLongSetEncoder enc = new KmerLongSetEncoder(17);
+        Iterator<Element<KmerLongSet>> kmers = new ValueMappingIterator<>(reads, enc::encode);
+        SeededCluster.ClusterSeedFactory<KmerLongSet> seedFactory = () -> new MinHashSeed<>(200);
+        Universe.ClusterFactory<SeededCluster<KmerLongSet>> clusterFactory = (id) -> new SeededCluster<>(id, seedFactory);
+        GreedyClusters<KmerLongSet, SeededCluster<KmerLongSet>> clusters =
+                new GreedyClusters<>(clusterFactory, new Jaccard<>(), new SeededLinkage<>(), 0.3);
+        clusters.computeClusters(kmers);
+        clusters.writeClustersCompact(Path.of("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/clusters.txt"));
     }
 }
