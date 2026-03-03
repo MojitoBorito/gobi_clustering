@@ -46,4 +46,13 @@ public class KmerLongSetBuckets <C extends Cluster<KmerLongSet>> implements Smar
             clusterSet.remove(cluster);
         }
     }
+
+    @Override
+    public Set<C> getAllClusters() {
+        Set<C> resCluster = new HashSet<>();
+        for (HashSet<C> clusterSet : clusters.values()) {
+            resCluster.addAll(clusterSet);
+        }
+        return resCluster;
+    }
 }

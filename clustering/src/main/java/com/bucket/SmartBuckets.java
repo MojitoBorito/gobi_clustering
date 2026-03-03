@@ -10,4 +10,5 @@ public interface SmartBuckets<K, C extends Cluster<K>> {
     Set<C> getClusters(K key);
     void add(K key, C cluster);
     void removeCluster(K key, C cluster);
+    Set<C> getAllClusters();
 }
