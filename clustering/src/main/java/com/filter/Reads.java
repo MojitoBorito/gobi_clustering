@@ -9,8 +9,7 @@ import java.util.zip.GZIPInputStream;
 
 public class Reads {
 
-    HashMap<String, HashReads> sequences = new HashMap<>();
-    HashMap<HashReads, ReadCluster> clusters = new HashMap<>();
+    HashMap<String, ReadCluster> clusters = new HashMap<>();
 
     public void readFastq(String fileName) {
         try (
@@ -37,12 +36,12 @@ public class Reads {
                 if (header != null) {
                     phred = line;
 
-                    HashReads read = sequences.put(header, new HashReads(
+                    HashReads read = new HashReads(
                             header,
-                            sequence.getBytes(StandardCharsets.US_ASCII),
+                            sequence.substring(sequence.length() - 50),
                             phred.getBytes(StandardCharsets.US_ASCII)
-                    ));
-                    ReadCluster readCluster = clusters.computeIfAbsent(read, _ -> new ReadCluster());
+                    );
+                    ReadCluster readCluster = clusters.computeIfAbsent(read.hash, _ -> new ReadCluster());
                     readCluster.n++;
 
                     header = null;
@@ -55,5 +54,9 @@ public class Reads {
             throw new RuntimeException(e);
         }
         System.out.println("finished reading fastq file");
+    }
+
+    public HashMap<String, ReadCluster> getClusters() {
+        return clusters;
     }
 }
