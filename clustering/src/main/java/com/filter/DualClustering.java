@@ -39,7 +39,7 @@ public class DualClustering {
 //                header2Seq.put(header, cluster);
 
                 //cluster the UMIs for sequence correction with the clustered 50bp sequences.
-                readCluster.correctUmi(umiCluster.seq, umiPhred);
+                readCluster.correctSequence(umiCluster.seq, umiPhred);
 //                header2Umi.put(header, readCluster.umis);
             }
 
