@@ -77,5 +77,7 @@ public class KmerLongSet implements KmerSet<KmerLongSet>{
         return new KmerLongSet(idx < n ? Arrays.copyOf(out, idx) : out);
     }
 
-
+    public long[] getSet() {
+        return set;
+    }
 }
