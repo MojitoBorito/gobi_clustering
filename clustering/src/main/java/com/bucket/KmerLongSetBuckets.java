@@ -2,18 +2,17 @@ package com.bucket;
 
 import com.kmer.KmerLongSet;
 import com.model.Cluster;
-import com.model.Element;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class KmerLongSetBucket <C extends Cluster<KmerLongSet>> implements SmartBuckets<KmerLongSet, C>{
+public class KmerLongSetBuckets <C extends Cluster<KmerLongSet>> implements SmartBuckets<KmerLongSet, C>{
 
     int n;
     HashMap<Long, HashSet<C>> clusters;
 
-    public KmerLongSetBucket(int n) {
+    public KmerLongSetBuckets(int n) {
         this.n = n;
         clusters = new HashMap<>();
     }

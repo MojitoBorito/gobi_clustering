@@ -6,26 +6,28 @@ import com.metrics.DistanceMetric;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 
-public class Universe<V, C extends Cluster<V>> implements Iterable<C>{
-    private final ArrayList<C> clusters;
+public class Universe<V, C extends Cluster<V>>{
+    private final SmartBuckets<V, C> buckets;
     private final DistanceMetric<V> metric;
     private final ClusterLinkage<V, C> linkage;
     private final ClusterFactory<C> factory;
     private int nextId = 0;
 
-    public Universe(ClusterFactory<C> factory,
+    public Universe(SmartBuckets<V, C> buckets,
+                    ClusterFactory<C> factory,
                     DistanceMetric<V> metric,
                     ClusterLinkage<V, C> linkage) {
-        this.clusters = new ArrayList<>();
+        this.buckets = buckets;
         this.factory = factory;
         this.metric = metric;
         this.linkage = linkage;
     }
 
-    public C createCluster() {
+    public C createCluster(V key) {
         C newCluster = factory.create(nextId);
-        clusters.add(nextId++, newCluster);
+        buckets.add(key, newCluster);
         return newCluster;
     }
 
@@ -37,14 +39,13 @@ public class Universe<V, C extends Cluster<V>> implements Iterable<C>{
         return linkage.distanceBetweenClusters(a, b);
     }
 
-    @Override
-    public Iterator<C> iterator() {
-        return clusters.iterator();
+    public Set<C> getClusterCandidates(V key) {
+        return buckets.getClusters(key);
     }
-
 
     @FunctionalInterface
     public interface ClusterFactory<C> {
         C create(int id);
     }
+
 }

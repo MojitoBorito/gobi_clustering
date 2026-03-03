@@ -15,6 +15,7 @@ import com.seeds.MinHashSeed;
 
 import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.Set;
 
 public class GreedyClusters<V, C extends Cluster<V>> extends ClusteringAlgorithm<V, C>{
     private final double threshold;
@@ -34,19 +35,24 @@ public class GreedyClusters<V, C extends Cluster<V>> extends ClusteringAlgorithm
         while (elements.hasNext()) {
             elem = elements.next();
             double minDist = Double.POSITIVE_INFINITY;
+            Set<C> candidates = universe.getClusterCandidates(elem.getValue());
             C bestCluster = null;
-            for (C cluster : universe) {
+            String id = elem.getId();
+            V value = elem.getValue();
+
+
+            for (C cluster : candidates) {
                 if (cluster.isEmpty()) continue;
-                double currentDist = universe.distanceToCluster(elem.getValue(), cluster);
+                double currentDist = universe.distanceToCluster(value, cluster);
                 if (currentDist < minDist) {
                     minDist = currentDist;
                     bestCluster = cluster;
                 }
             }
             if (bestCluster == null || minDist >= threshold) {
-                universe.createCluster().addElement(elem.getId(), elem.getValue());
+                universe.createCluster(value).addElement(id, value);
             } else {
-                bestCluster.addElement(elem.getId(), elem.getValue());
+                bestCluster.addElement(id, value);
             }
             count++;
             if (count % 1000 == 0)
