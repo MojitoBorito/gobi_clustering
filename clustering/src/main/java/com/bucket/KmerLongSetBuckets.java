@@ -11,10 +11,12 @@ public class KmerLongSetBuckets <C extends Cluster<KmerLongSet>> implements Smar
 
     int n;
     HashMap<Long, HashSet<C>> clusters;
+    boolean addAll;
 
-    public KmerLongSetBuckets(int n) {
+    public KmerLongSetBuckets(int n, boolean addAll) {
         this.n = n;
         clusters = new HashMap<>();
+        this.addAll = addAll;
     }
 
     @Override
@@ -31,16 +33,18 @@ public class KmerLongSetBuckets <C extends Cluster<KmerLongSet>> implements Smar
 
     @Override
     public void add(KmerLongSet key, C cluster) {
+        int length = addAll ? key.getSet().length : n;
         long[] set = key.getSet();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < length; i++) {
             clusters.computeIfAbsent(set[i], _ -> new HashSet<>()).add(cluster);
         }
     }
 
     @Override
     public void removeCluster(KmerLongSet key, C cluster) {
+        int length = addAll ? key.getSet().length : n;
         long[] set = key.getSet();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < length; i++) {
             HashSet<C> clusterSet = clusters.getOrDefault(set[i], null);
             if (cluster == null) continue;
             clusterSet.remove(cluster);
