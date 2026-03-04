@@ -1,5 +1,7 @@
 package com.clustering;
 
+import com.bucket.KmerLongSetBuckets;
+import com.bucket.SmartBuckets;
 import com.example.FastqIterator;
 import com.example.Sequence;
 import com.kmer.KmerLongSet;
@@ -20,11 +22,12 @@ import java.util.Set;
 public class GreedyClusters<V, C extends Cluster<V>> extends ClusteringAlgorithm<V, C>{
     private final double threshold;
 
-    public GreedyClusters(Universe.ClusterFactory<C> factory,
+    public GreedyClusters(SmartBuckets<V, C> buckets,
+                          Universe.ClusterFactory<C> factory,
                           DistanceMetric<V> metric,
                           ClusterLinkage<V, C> linkage,
                           double threshold) {
-        super(factory, metric, linkage);
+        super(buckets, factory, metric, linkage);
         this.threshold = threshold;
     }
 
@@ -61,13 +64,14 @@ public class GreedyClusters<V, C extends Cluster<V>> extends ClusteringAlgorithm
     }
 
     static void main() {
-        FastqIterator reads = new FastqIterator("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/fw.fastq.gz");
+        KmerLongSetBuckets<SeededCluster<KmerLongSet>> buckets = new KmerLongSetBuckets<>(5);
+        FastqIterator reads = new FastqIterator("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/simulation2/rw.fastq.gz");
         KmerLongSetEncoder enc = new KmerLongSetEncoder(17);
         Iterator<Element<KmerLongSet>> kmers = new ValueMappingIterator<>(reads, enc::encode);
         SeededCluster.ClusterSeedFactory<KmerLongSet> seedFactory = () -> new MinHashSeed<>(200);
         Universe.ClusterFactory<SeededCluster<KmerLongSet>> clusterFactory = (id) -> new SeededCluster<>(id, seedFactory);
         GreedyClusters<KmerLongSet, SeededCluster<KmerLongSet>> clusters =
-                new GreedyClusters<>(clusterFactory, new Jaccard<>(), new SeededLinkage<>(), 0.3);
+                new GreedyClusters<>(buckets, clusterFactory, new Jaccard<>(), new SeededLinkage<>(), 0.3);
         clusters.computeClusters(kmers);
         clusters.writeClustersCompact(Path.of("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/clusters.txt"));
     }

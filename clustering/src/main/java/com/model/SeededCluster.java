@@ -12,8 +12,8 @@ public class SeededCluster<V> extends Cluster<V>{
 
     @Override
     protected void onElementAdded(V value) {
-        if (seed == null) seed = seedFactory.create();
-        seed.update(value);
+        if (seed == null) initSeed();
+        updateSeed(value);
     }
 
     public V getSeed(){
@@ -23,6 +23,14 @@ public class SeededCluster<V> extends Cluster<V>{
     @FunctionalInterface
     public interface ClusterSeedFactory<V> {
         ClusterSeed<V> create();
+    }
+
+    protected void initSeed() {
+        seed = seedFactory.create();
+    }
+
+    protected void updateSeed(V value) {
+        seed.update(value);
     }
 
 }

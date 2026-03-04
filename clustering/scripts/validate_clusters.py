@@ -3,6 +3,8 @@ import pandas as pd
 import networkx as nx
 import os
 
+print("A")
+
 def parse_reg_vec(rv: str):
     out = []
     for block in rv.split('|'):
@@ -119,7 +121,7 @@ def write_clusters(clusters, output_path):
 
 
 
-get_all_clusters('files/simulation/read.mappinginfo', 'files/ideal', 0.5)
+get_all_clusters('files/simulation/read.mappinginfo', 'files/ideal', 0.8)
 
 
 

@@ -42,4 +42,8 @@ public abstract class ClusteringAlgorithm<V, C extends Cluster<V>> {
             throw new RuntimeException(e);
         }
     }
+
+    public void writeClustersWithSeqs(Path path) {
+
+    }
 }
