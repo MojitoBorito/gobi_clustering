@@ -31,11 +31,16 @@ public abstract class ClusteringAlgorithm<V, C extends Cluster<V>> {
     public void writeClustersCompact(Path path) {
         try (BufferedWriter writer = new BufferedWriter(Files.newBufferedWriter(path, StandardOpenOption.CREATE), 512 * 1024)) {
             StringBuilder sb = new StringBuilder();
+            writer.write("cluster_id");
+            writer.write('\t');
+            writer.write("read_id");
+            writer.write('\n');
             for (Cluster<V> cluster : universe.getAllClusters()) {
                 List<String> ids = cluster.getElementIds();
                 if (ids.isEmpty()) continue;
-                sb.append(String.join("\t", ids));
-                sb.append('\n');
+                for (String id : ids) {
+                    sb.append(cluster.getId()).append('\t').append(id).append('\n');
+                }
             }
             writer.write(sb.toString());
         } catch (IOException e) {

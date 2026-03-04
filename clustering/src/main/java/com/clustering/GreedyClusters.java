@@ -65,7 +65,7 @@ public class GreedyClusters<V, C extends Cluster<V>> extends ClusteringAlgorithm
 
     static void main() {
         KmerLongSetBuckets<SeededCluster<KmerLongSet>> buckets = new KmerLongSetBuckets<>(5);
-        FastqIterator reads = new FastqIterator("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/simulation2/rw.fastq.gz");
+        FastqIterator reads = new FastqIterator("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/simulation/fw.fastq.gz");
         KmerLongSetEncoder enc = new KmerLongSetEncoder(17);
         Iterator<Element<KmerLongSet>> kmers = new ValueMappingIterator<>(reads, enc::encode);
         SeededCluster.ClusterSeedFactory<KmerLongSet> seedFactory = () -> new MinHashSeed<>(200);

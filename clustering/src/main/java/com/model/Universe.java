@@ -4,8 +4,6 @@ import com.bucket.SmartBuckets;
 import com.linkage.ClusterLinkage;
 import com.metrics.DistanceMetric;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
 
 public class Universe<V, C extends Cluster<V>>{
@@ -26,7 +24,7 @@ public class Universe<V, C extends Cluster<V>>{
     }
 
     public C createCluster(V key) {
-        C newCluster = factory.create(nextId);
+        C newCluster = factory.create(nextId++);
         buckets.add(key, newCluster);
         return newCluster;
     }

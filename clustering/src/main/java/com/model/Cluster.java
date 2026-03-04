@@ -33,5 +33,6 @@ public abstract class Cluster<V> {
         return elementIds;
     }
 
+
     protected abstract void onElementAdded(V value);
 }
