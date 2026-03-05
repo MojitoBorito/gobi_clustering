@@ -25,7 +25,7 @@ public class Validation {
                     continue;
                 }
                 for (String sequence: set){
-                    if (hamming.compute(line,  sequence) <= (int)(mutRate * sequence.length())){
+                    if (hamming.compute(line,  sequence) <= mutRate){
                         bw.write("possible merge:"+"\n"+line+"\n"+sequence+"\n\n");
                     }
                 }
@@ -52,14 +52,14 @@ public class Validation {
                 if (umi2seq.containsKey(umi)){
                     Set<String> set = umi2seq.get(umi);
                     for (String s: set){
-                        if(hamming.compute(s, seq) <= (int)(mutRate * seq.length())){
+                        if(hamming.compute(s, seq) <= mutRate){
                             bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n\n");
                         }
                     }
                 }else {
                     for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
                         for (String s: entry.getValue()){
-                            if(hamming.compute(s, seq) <= (int)(mutRate * seq.length()) &&
+                            if(hamming.compute(s, seq) <= mutRate &&
                                     hamming.compute(entry.getKey(), umi) <= 1){
                                 bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n"+
                                         "cause lies also in umi:\n"+entry.getKey()+"\n"+umi+"\n\n");
