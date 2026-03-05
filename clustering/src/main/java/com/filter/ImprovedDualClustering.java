@@ -1,7 +1,9 @@
 package com.filter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ImprovedDualClustering {
     HashMap<String, AnchorPartition> partitions = new HashMap<>();
@@ -42,5 +44,14 @@ public class ImprovedDualClustering {
 
     public HashMap<String, AnchorPartition> getPartitions() {
         return partitions;
+    }
+
+    public List<CorrectedUMICluster> getClusters(){
+        List<CorrectedUMICluster> clusters = new ArrayList<>();
+        for (AnchorPartition partition : partitions.values()) {
+            clusters.addAll(partition.umiMap.values());
+        }
+        clusters.sort((x,y) -> Integer.compare(y.getCount(), x.getCount()));
+        return clusters;
     }
 }

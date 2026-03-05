@@ -1,5 +1,7 @@
 package com.filter;
 
+import com.example.Statistics;
+
 import java.util.HashMap;
 
 public class AnchorPartition {
@@ -18,6 +20,7 @@ public class AnchorPartition {
         //Enumerate all 1-Hamming-distance neighbors.
         CorrectedUMICluster bestNeighbor = null;
         int bestNeighborCount = 0;
+        int editPos= 0;
 
         char[] umiChars = umiSeq.toCharArray();
 
@@ -33,6 +36,7 @@ public class AnchorPartition {
                     // Directional: only merge INTO larger clusters. erroneous copies are minorities
                     bestNeighbor = candidate;
                     bestNeighborCount = candidate.count;
+                    editPos = i;
                 }
                 umiChars[i] = original;
             }
@@ -43,6 +47,7 @@ public class AnchorPartition {
             bestNeighbor.absorb(umiSeq, umiPhred, readSeq, readPhred);
             //put UMI in neighbour cluster so that erroneous looks are fast
             umiMap.put(umiSeq, bestNeighbor);
+            Statistics.incrementUmiPos(editPos);
         } else {
             //No match at all -> new original molecule
             CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred);
