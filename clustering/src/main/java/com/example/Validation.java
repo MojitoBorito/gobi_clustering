@@ -1,7 +1,5 @@
 package com.example;
 
-import com.metrics.Hamming;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -10,6 +8,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.metrics.Hamming;
 
 public class Validation {
 
@@ -46,19 +46,22 @@ public class Validation {
                 String[] sequence = line.split("\t");
                 String umi = sequence[0];
                 String seq = sequence[1];
+                if(umi.equals("umi") && seq.equals("seq")){
+                    continue;
+                } 
                 if (umi2seq.containsKey(umi)){
                     Set<String> set = umi2seq.get(umi);
                     for (String s: set){
                         if(hamming.compute(s, seq) <= (int)(mutRate * seq.length())){
-                            bw.write("possible merge:"+"\n"+line+"\n"+seq+"\n\n");
+                            bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n\n");
                         }
                     }
                 }else {
                     for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
                         for (String s: entry.getValue()){
                             if(hamming.compute(s, seq) <= (int)(mutRate * seq.length()) &&
-                                    hamming.compute(entry.getKey(), umi) <= (int)(mutRate * seq.length())){
-                                bw.write("possible merge:"+"\n"+line+"\n"+seq+"\n"+
+                                    hamming.compute(entry.getKey(), umi) <= 1){
+                                bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n"+
                                         "cause lies also in umi:\n"+entry.getKey()+"\n"+umi+"\n\n");
                             }
                         }
@@ -69,5 +72,12 @@ public class Validation {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+    public static void main(String[] args) {
+        String readFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/clusters.txt";
+        String outputFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/validate.txt";
+        double mutRate = 0.01;
+        System.out.println((int)(mutRate * 150));
+        validateSequencesUMI(readFile, outputFile, mutRate);
     }
 }
