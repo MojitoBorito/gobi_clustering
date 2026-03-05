@@ -102,7 +102,7 @@ public class Validation {
     public static void main(String[] args) {
         String readFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/clusters.txt";
         String outputFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/validate.txt";
-        double mutRate = 0.01;
+        double mutRate = 0.02;
         System.out.println((int)(mutRate * 150));
         validateSequencesUMI(readFile, outputFile, mutRate);
     }
