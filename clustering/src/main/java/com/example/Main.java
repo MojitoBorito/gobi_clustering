@@ -9,15 +9,14 @@ import java.nio.charset.StandardCharsets;
 
 public class Main {
     static void main(String[] args) {
-        CmdParser cmdParser = new CmdParser("-umi", "-umiOut", "-reads", "-readsOut");
-        cmdParser.setFile("-umi", "-umiOut", "-reads", "-readsOut");
+        CmdParser cmdParser = new CmdParser("-umi", "-out", "-reads");
+        cmdParser.setFile("-umi", "-out", "-reads");
         cmdParser.parse(args);
 
         String umi = cmdParser.getValue("-umi");
-        String umiOut = cmdParser.getValue("-umiOut");
+        String umiOut = cmdParser.getValue("-out");
 
         String fw = cmdParser.getValue("-reads");
-        String fwOut = cmdParser.getValue("-readsOut");
 
         long starTime = System.currentTimeMillis();
 
@@ -28,35 +27,24 @@ public class Main {
 
         starTime = System.currentTimeMillis();
 
-        DualClustering dualClustering = new DualClustering(umiGroup, fw);
+        ImprovedDualClustering improvedDualClustering = new ImprovedDualClustering(umiGroup, fw);
 
         endTime = System.currentTimeMillis();
         long second = endTime - starTime;
-
+        int n = 0;
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(umiOut))){
-            writer.write("seq\tcounts\n");
-            for (ReadCluster reads : dualClustering.getReadClustering().getClusters().values()){
-                SubCluster seq = reads.getUmis();
-                seq.updateSequence();
-                writer.write(new String(seq.getConsensus(), StandardCharsets.US_ASCII) + "\t" + seq.getN() + "\n");
+            writer.write("umi\tseq\tcounts\n");
+            for (AnchorPartition reads : improvedDualClustering.getPartitions().values()){
+                for (CorrectedUMICluster cluster : reads.getUmiMap().values()){
+                    writer.write(cluster.getUmi()+"\t"+cluster.getRead()+"\t"+cluster.getCount()+"\n");
+                    n++;
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(fwOut))){
-            writer.write("seq\tcounts\n");
-            for (SubCluster seq : dualClustering.getUmiClustering().getSubClusters().values()){
-                seq.updateSequence();
-                writer.write(new String(seq.getConsensus(), StandardCharsets.US_ASCII) + "\t" + seq.getN() + "\n");
-            }
-        }catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        System.out.println("Umi cluster time: "+(first/1000));
-        System.out.println("Dual cluster time: "+(second/1000));
-
+        System.out.println("umi clustering time: "+first);
+        System.out.println("Dual clustering time: "+second);
+        System.out.println("Number of clusters: "+n);
     }
 }

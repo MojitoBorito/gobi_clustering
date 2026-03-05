@@ -6,11 +6,11 @@ import java.util.Objects;
 public class UMICluster {
     String seq;
     int n;
-    int[] phred;
+    byte[] phred;
 
     public UMICluster(String sequence, byte[] phredScore) {
         this.seq = sequence;
-        this.phred = new int[phredScore.length];
+        this.phred = new byte[phredScore.length];
         for (int i = 0; i < phredScore.length; i++) {
             phred[i] = phredScore[i];
         }
@@ -19,7 +19,7 @@ public class UMICluster {
     
     public void updatePhred(byte[] phred){
         for (int i = 0; i < phred.length; i++) {
-            this.phred[i] = ((this.phred[i]*n) + phred[i]) / (n+1);
+            this.phred[i] = (byte) (((this.phred[i]*n) + phred[i]) / (n+1));
         }
         this.n++;
     }
