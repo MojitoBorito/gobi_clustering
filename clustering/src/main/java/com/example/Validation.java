@@ -60,7 +60,7 @@ public class Validation {
                     for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
                         for (String s: entry.getValue()){
                             if(hamming.compute(s, seq) <= mutRate &&
-                                    hamming.compute(entry.getKey(), umi) <= 1){
+                                    (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
                                 bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n"+
                                         "cause lies also in umi:\n"+entry.getKey()+"\n"+umi+"\n\n");
                             }
