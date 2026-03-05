@@ -30,7 +30,7 @@ public class DualClustering {
 
                 String header = read.header;
                 UMICluster umiCluster = umis.header2Umis.get(header);
-                int[] umiPhred = umiCluster.phred;
+                byte[] umiPhred = umiCluster.phred;
 
                 //start by clustering the sequences within the UMIs
                 SubCluster cluster = umis.subClusters.computeIfAbsent(read.hash + umiCluster.seq,
