@@ -13,11 +13,32 @@ import com.metrics.Hamming;
 
 public class Validation {
 
+    private static String createMismatchMarker(String seq1, String seq2) {
+        StringBuilder marker = new StringBuilder();
+        int minLength = Math.min(seq1.length(), seq2.length());
+
+        for (int i = 0; i < minLength; i++) {
+            if (seq1.charAt(i) != seq2.charAt(i)) {
+                marker.append('*');
+            } else {
+                marker.append(' ');
+            }
+        }
+
+        // Handle length differences
+        int maxLength = Math.max(seq1.length(), seq2.length());
+        for (int i = minLength; i < maxLength; i++) {
+            marker.append('*');
+        }
+
+        return marker.toString();
+    }
+
     public static void validateSequences(String readFile, String outputFile, double mutRate){
         Hamming hamming = new Hamming();
         HashSet<String> set = new HashSet<>();
         try(BufferedReader br = new BufferedReader(new FileReader(readFile));
-        BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))){
+            BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))){
             String line;
             while ((line = br.readLine()) != null){
                 if (set.contains(line)){
@@ -25,8 +46,9 @@ public class Validation {
                     continue;
                 }
                 for (String sequence: set){
-                    if (hamming.compute(line,  sequence) <= mutRate){
-                        bw.write("possible merge:"+"\n"+line+"\n"+sequence+"\n\n");
+                    if (hamming.compute(line, sequence) <= mutRate){
+                        String mismatchMarker = createMismatchMarker(line, sequence);
+                        bw.write("possible merge:"+"\n"+line+"\n"+mismatchMarker+"\n"+sequence+"\n\n");
                     }
                 }
                 set.add(line);
@@ -48,31 +70,35 @@ public class Validation {
                 String seq = sequence[1];
                 if(umi.equals("umi") && seq.equals("seq")){
                     continue;
-                } 
+                }
                 if (umi2seq.containsKey(umi)){
                     Set<String> set = umi2seq.get(umi);
                     for (String s: set){
                         if(hamming.compute(s, seq) <= mutRate){
-                            bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n\n");
+                            String mismatchMarker = createMismatchMarker(s, seq);
+                            bw.write("possible merge:"+"\n"+s+"\n"+mismatchMarker+"\n"+seq+"\n\n");
                         }
                     }
-                }else {
-                    for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
-                        for (String s: entry.getValue()){
-                            if(hamming.compute(s, seq) <= mutRate &&
-                                    (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
-                                bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n"+
-                                        "cause lies also in umi:\n"+entry.getKey()+"\n"+umi+"\n\n");
-                            }
-                        }
-                    }
-                    umi2seq.computeIfAbsent(umi, _ -> new HashSet<>()).add(seq);
                 }
+                for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
+                    for (String s: entry.getValue()){
+                        if(hamming.compute(s, seq) <= mutRate &&
+                                (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
+                            String seqMismatchMarker = createMismatchMarker(s, seq);
+                            String umiMismatchMarker = createMismatchMarker(entry.getKey(), umi);
+                            bw.write("possible merge:"+"\n"+s+"\n"+seqMismatchMarker+"\n"+seq+"\n"+
+                                    "cause lies also in umi:\n"+entry.getKey()+"\n"+umiMismatchMarker+"\n"+umi+"\n\n");
+                        }
+                    }
+                }
+                umi2seq.computeIfAbsent(umi, _ -> new HashSet<>()).add(seq);
+
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+
     public static void main(String[] args) {
         String readFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/clusters.txt";
         String outputFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/validate.txt";
