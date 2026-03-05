@@ -56,18 +56,18 @@ public class Validation {
                             bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n\n");
                         }
                     }
-                }else {
-                    for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
-                        for (String s: entry.getValue()){
-                            if(hamming.compute(s, seq) <= mutRate &&
-                                    (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
-                                bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n"+
-                                        "cause lies also in umi:\n"+entry.getKey()+"\n"+umi+"\n\n");
-                            }
+                }
+                for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
+                    for (String s: entry.getValue()){
+                        if(hamming.compute(s, seq) <= mutRate &&
+                                (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
+                            bw.write("possible merge:"+"\n"+s+"\n"+seq+"\n"+
+                                    "cause lies also in umi:\n"+entry.getKey()+"\n"+umi+"\n\n");
                         }
                     }
-                    umi2seq.computeIfAbsent(umi, _ -> new HashSet<>()).add(seq);
                 }
+                umi2seq.computeIfAbsent(umi, _ -> new HashSet<>()).add(seq);
+
             }
         }catch (Exception e){
             e.printStackTrace();
