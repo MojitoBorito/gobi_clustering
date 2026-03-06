@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public class KmerLongSetBuckets <C extends Cluster<KmerLongSet>> implements SmartBuckets<KmerLongSet, C>{
+public class KmerLongSetBuckets <C extends Cluster<?>> implements SmartBuckets<KmerLongSet, C>{
 
     int n;
     HashMap<Long, HashSet<C>> clusters;
