@@ -41,14 +41,17 @@ public class Validation {
             BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile))){
             String line;
             while ((line = br.readLine()) != null){
-                if (set.contains(line)){
+                String[] split = line.split("\t");
+                String umi = split[0];
+                String seq = split[1];
+                if (set.contains(seq)){
                     System.out.println("Duplicate line "+line);
                     continue;
                 }
                 for (String sequence: set){
-                    if (hamming.compute(line, sequence) <= mutRate){
-                        String mismatchMarker = createMismatchMarker(line, sequence);
-                        bw.write("possible merge:"+"\n"+line+"\n"+mismatchMarker+"\n"+sequence+"\n\n");
+                    if (hamming.compute(seq, sequence) <= mutRate){
+                        String mismatchMarker = createMismatchMarker(seq, sequence);
+                        bw.write("possible merge:"+"\n"+seq+"\n"+mismatchMarker+"\n"+sequence+"\n\n");
                     }
                 }
                 set.add(line);
@@ -107,6 +110,6 @@ public class Validation {
         String outputFile = "/home/mojito/Desktop/Projects/Data/out/validate.txt";
         double mutRate = 0.02;
         System.out.println((int)(mutRate * 150));
-        validateSequencesUMI(readFile, outputFile, mutRate);
+        validateSequences(readFile, outputFile, mutRate);
     }
 }
