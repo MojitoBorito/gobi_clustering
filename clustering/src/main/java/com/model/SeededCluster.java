@@ -3,9 +3,9 @@ package com.model;
 public class SeededCluster<V> extends Cluster<V>{
 
     private ClusterSeed<V> seed;
-    private final ClusterSeedFactory<V> seedFactory;
+    private final SeedFactory<V> seedFactory;
 
-    public SeededCluster(int id, ClusterSeedFactory<V> seedFactory) {
+    public SeededCluster(int id, SeedFactory<V> seedFactory) {
         super(id);
         this.seedFactory = seedFactory;
     }
@@ -21,7 +21,7 @@ public class SeededCluster<V> extends Cluster<V>{
     }
 
     @FunctionalInterface
-    public interface ClusterSeedFactory<V> {
+    public interface SeedFactory<V> {
         ClusterSeed<V> create();
     }
 

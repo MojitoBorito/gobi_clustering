@@ -6,14 +6,15 @@ import com.metrics.DistanceMetric;
 
 import java.util.Set;
 
-public class Universe<V, C extends Cluster<V>>{
-    private final SmartBuckets<V, C> buckets;
+// Defined by key type K, value type V, Cluster type C
+public class Universe<K, V, C extends Cluster<V>>{
+    private final SmartBuckets<K, C> buckets;
     private final DistanceMetric<V> metric;
     private final ClusterLinkage<V, C> linkage;
     private final ClusterFactory<C> factory;
     private int nextId = 0;
 
-    public Universe(SmartBuckets<V, C> buckets,
+    public Universe(SmartBuckets<K, C> buckets,
                     ClusterFactory<C> factory,
                     DistanceMetric<V> metric,
                     ClusterLinkage<V, C> linkage) {
@@ -23,7 +24,7 @@ public class Universe<V, C extends Cluster<V>>{
         this.linkage = linkage;
     }
 
-    public C createCluster(V key) {
+    public C createCluster(K key) {
         C newCluster = factory.create(nextId++);
         buckets.add(key, newCluster);
         return newCluster;
@@ -37,7 +38,7 @@ public class Universe<V, C extends Cluster<V>>{
         return linkage.distanceBetweenClusters(a, b);
     }
 
-    public Set<C> getClusterCandidates(V key) {
+    public Set<C> getClusterCandidates(K key) {
         return buckets.getClusters(key);
     }
 
