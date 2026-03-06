@@ -13,10 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 
-public abstract class ClusteringAlgorithm<V, C extends Cluster<V>> {
-    protected final Universe<V, C> universe;
+public abstract class ClusteringAlgorithm<K, V, C extends Cluster<V>> {
+    protected final Universe<K, V, C> universe;
 
-    public ClusteringAlgorithm(SmartBuckets<V, C> buckets,
+    public ClusteringAlgorithm(SmartBuckets<K, C> buckets,
                                Universe.ClusterFactory<C> factory,
                                DistanceMetric<V> metric,
                                ClusterLinkage<V, C> linkage) {
