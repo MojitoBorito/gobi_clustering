@@ -35,12 +35,10 @@ public class Main {
         int n = 0;
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(umiOut))){
             writer.write("umi\tseq\tcounts\n");
-            for (AnchorPartition reads : improvedDualClustering.getPartitions().values()){
-                for (CorrectedUMICluster cluster : reads.getCanonicalClusters().values()){
+            for (CorrectedUMICluster cluster : improvedDualClustering.getClusters()){
                     writer.write(cluster.getUmi()+"\t"+cluster.getRead()+"\t"+cluster.getCount()+"\n");
                     n++;
 
-                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
