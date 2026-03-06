@@ -59,7 +59,7 @@ public class AnchorPartition {
             canonicalClusters.add(newCluster);
         }
         count++;
-        Statistics.incrementLargestAnchorCluster(position, readSeq);
+        Statistics.incrementLargestAnchorCluster(count, readSeq);
     }
 
     public HashMap<String, CorrectedUMICluster> getUmiMap() {
