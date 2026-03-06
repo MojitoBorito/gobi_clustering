@@ -1,5 +1,6 @@
 package com.clustering;
 
+import com.bucket.IntersectBuckets;
 import com.bucket.KmerLongSetBuckets;
 import com.bucket.SmartBuckets;
 import com.example.FastqIterator;
@@ -64,15 +65,16 @@ public class GreedyClusters<V, C extends Cluster<V>> extends ClusteringAlgorithm
     }
 
     static void main() {
-        KmerLongSetBuckets<SeededCluster<KmerLongSet>> buckets = new KmerLongSetBuckets<>(5);
-        FastqIterator reads = new FastqIterator("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/simulation/fw.fastq.gz");
+        KmerLongSetBuckets<SeededCluster<KmerLongSet>> buckets = new KmerLongSetBuckets<>(5, false);
+        //IntersectBuckets<SeededCluster<KmerLongSet>> buckets = new IntersectBuckets<>(5, false);
+        FastqIterator reads = new FastqIterator("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/simulation/mock_generation/gen_output/rw.fastq.gz");
         KmerLongSetEncoder enc = new KmerLongSetEncoder(17);
         Iterator<Element<KmerLongSet>> kmers = new ValueMappingIterator<>(reads, enc::encode);
         SeededCluster.ClusterSeedFactory<KmerLongSet> seedFactory = () -> new MinHashSeed<>(200);
         Universe.ClusterFactory<SeededCluster<KmerLongSet>> clusterFactory = (id) -> new SeededCluster<>(id, seedFactory);
         GreedyClusters<KmerLongSet, SeededCluster<KmerLongSet>> clusters =
-                new GreedyClusters<>(buckets, clusterFactory, new Jaccard<>(), new SeededLinkage<>(), 0.3);
+                new GreedyClusters<>(buckets, clusterFactory, new Jaccard<>(), new SeededLinkage<>(), 1);
         clusters.computeClusters(kmers);
-        clusters.writeClustersCompact(Path.of("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/clusters.txt"));
+        clusters.writeClustersCompact(Path.of("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/simulation/mock_generation/predicted_clusters/rw.tsv"));
     }
 }

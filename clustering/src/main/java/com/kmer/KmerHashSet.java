@@ -43,8 +43,4 @@ public class KmerHashSet<E> implements KmerSet<KmerHashSet<E>>{
     public HashSet<E> getSet() {
         return set;
     }
-
-    static void main() {
-
-    }
 }

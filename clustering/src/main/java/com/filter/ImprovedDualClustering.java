@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class ImprovedDualClustering {
-    HashMap<String, AnchorPartition> partitions = new HashMap<>();
+    HashMap<String, AnchorPartition> clusters = new HashMap<>();
 
     public ImprovedDualClustering(UMI umis, String readFile) {
         improvedDualCluster(umis, readFile);
@@ -23,12 +23,12 @@ public class ImprovedDualClustering {
                 UMICluster umiCluster = umis.header2Umis.get(read.header);
 
                 // Get or create partition for this anchor
-                AnchorPartition partition = partitions.computeIfAbsent(
+                AnchorPartition cluster = this.clusters.computeIfAbsent(
                         anchor, _ -> new AnchorPartition()
                 );
 
                 // Add to partition with UMI correction
-                partition.addRead(
+                cluster.addRead(
                         umiCluster.seq,
                         umiCluster.phred,
                         read.seq,
@@ -41,6 +41,6 @@ public class ImprovedDualClustering {
     }
 
     public HashMap<String, AnchorPartition> getPartitions() {
-        return partitions;
+        return clusters;
     }
 }

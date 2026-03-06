@@ -11,8 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public abstract class ClusteringAlgorithm<V, C extends Cluster<V>> {
     protected final Universe<V, C> universe;
@@ -35,7 +34,9 @@ public abstract class ClusteringAlgorithm<V, C extends Cluster<V>> {
             writer.write('\t');
             writer.write("read_id");
             writer.write('\n');
-            for (Cluster<V> cluster : universe.getAllClusters()) {
+            Set<C> clusters = universe.getAllClusters();
+            List<C> sortedClusters = clusters.stream().sorted(Comparator.comparingInt(Cluster::getId)).toList();
+            for (Cluster<V> cluster : sortedClusters) {
                 List<String> ids = cluster.getElementIds();
                 if (ids.isEmpty()) continue;
                 for (String id : ids) {

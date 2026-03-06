@@ -1,127 +1,74 @@
+#!/usr/bin/env python3
 
-import pandas as pd
-import networkx as nx
-import os
-
-print("A")
-
-def parse_reg_vec(rv: str):
-    out = []
-    for block in rv.split('|'):
-        try:
-            s, e = block.split('-')
-            out.append((int(s), int(e)))
-        except ValueError:
-            print(block)
-            raise ValueError
-    return out
+from collections import defaultdict
+import argparse
 
 
-def overlap_len_blocks(a_blocks, b_blocks) -> int:
-    # total bp overlap across all block pairs
-    i = j = 0
-    total = 0
-    a = sorted(a_blocks)
-    b = sorted(b_blocks)
+def get_clusters_dict(path: str):
+    clusters = defaultdict(set)
 
-    while i < len(a) and j < len(b):
-        a0, a1 = a[i]
-        b0, b1 = b[j]
+    with open(path) as f:
+        next(f)  # skip header
+        for line in f:
+            if not line.strip():
+                continue
 
-        left = max(a0, b0)
-        right = min(a1, b1)
-        if right >= left:
-            total += right - left + 1
+            cluster_id, read_id = line.strip().split("\t")
+            clusters[int(cluster_id)].add(int(read_id))
 
-        # advance the interval that ends first
-        if a1 <= b1:
-            i += 1
-        else:
-            j += 1
-    return total
-
-def total_len(blocks) -> int:
-    return sum(e - s + 1 for s, e in blocks)
-
-# Jaccard
-def overlap_jaccard(a_blocks, b_blocks) -> float:
-    ov = overlap_len_blocks(a_blocks, b_blocks)
-    len_a = total_len(a_blocks)
-    len_b = total_len(b_blocks)
-    denom = len_a + len_b - ov
-    return ov / denom if denom else 0.0
+    return clusters
 
 
-def get_all_clusters(input: str, output_dir: str, threshold: float):
-    if not 0 < threshold <= 1.0:
-        raise ValueError("Invalid threshold")
-    df = pd.read_csv(input, delimiter='\t')
-
-    fw_df = pd.DataFrame(df[['readid', 'chr_id', 'gene_id', 'transcript_id', 'fw_regvec', 't_fw_regvec']])
-    rw_df = pd.DataFrame(df[['readid', 'chr_id', 'gene_id', 'transcript_id', 'rw_regvec', 't_rw_regvec']])
-
-    fw_df['blocks'] = fw_df['fw_regvec'].map(parse_reg_vec)
-    rw_df['blocks'] = rw_df['rw_regvec'].map(parse_reg_vec)
-
-    fw_df["span_start"] = fw_df["blocks"].map(lambda bl: bl[0][0])
-    fw_df["span_end"]   = fw_df["blocks"].map(lambda bl: bl[-1][1])
-    
-    rw_df["span_start"] = rw_df["blocks"].map(lambda bl: bl[0][0])
-    rw_df["span_end"]   = rw_df["blocks"].map(lambda bl: bl[-1][1])
-
-    fw_clusters = get_clusters(fw_df, threshold)
-    rw_clusters = get_clusters(rw_df, threshold)
-    
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-
-    write_clusters(fw_clusters, os.path.join(output_dir, 'fw_clusters'))
-    write_clusters(rw_clusters, os.path.join(output_dir, 'rw_clusters'))
+def nC2(n):
+    return n * (n - 1) // 2
 
 
-def get_clusters(df: pd.DataFrame, threshold: float):
-    G = nx.Graph()
+def compute_stats(true_clusters, pred_clusters):
+    true_sets = list(true_clusters.values())
+    pred_sets = list(pred_clusters.values())
 
-    # Add all reads as nodes
-    G.add_nodes_from(df.index)
+    # True positives
+    tp = 0
+    for p in pred_sets:
+        for t in true_sets:
+            tp += nC2(len(p & t))
 
-    for (chr_, gene_), group in df.groupby(["chr_id", "gene_id"]):
-        
-        group = group.sort_values("span_start")
-        spans = group[["span_start", "span_end"]].values
-        blocks = group["blocks"].values
-        idxs = group.index.values
-        
-        for i in range(len(group)):
-            for j in range(i+1, len(group)):
-                
-                # early break if spans don't overlap
-                if spans[j][0] > spans[i][1]:
-                    break
-                
-                sim = overlap_jaccard(blocks[i], blocks[j])
-                
-                if sim >= threshold:
-                    G.add_edge(idxs[i], idxs[j])
-    return list(nx.connected_components(G))
-    
+    pred_pairs = sum(nC2(len(p)) for p in pred_sets)
+    true_pairs = sum(nC2(len(t)) for t in true_sets)
 
-def write_clusters(clusters, output_path):
-    rows = []
+    fp = pred_pairs - tp
+    fn = true_pairs - tp
 
-    for cluster in clusters:
-        # sort for reproducibility
-        readids = sorted(cluster)
-        rows.append({
-            "readids": ",".join(map(str, readids))
-        })
+    precision = tp / (tp + fp) if (tp + fp) else 0
+    recall = tp / (tp + fn) if (tp + fn) else 0
 
-    out_df = pd.DataFrame(rows)
-    out_df.to_csv(output_path, sep="\t", index=False)
+    return tp, fp, fn, precision, recall
 
 
+def main():
+    parser = argparse.ArgumentParser(
+        description="Evaluate clustering against ground truth"
+    )
 
-get_all_clusters('files/simulation/read.mappinginfo', 'files/ideal', 0.8)
+    parser.add_argument("model", help="Model cluster file")
+    parser.add_argument("predicted", help="Predicted cluster file")
+
+    args = parser.parse_args()
+
+    true_clusters = get_clusters_dict(args.model)
+    pred_clusters = get_clusters_dict(args.predicted)
+
+    tp, fp, fn, precision, recall, f1 = compute_stats(true_clusters, pred_clusters)
+
+    print("Clustering evaluation")
+    print("---------------------")
+    print(f"True Positives : {tp}")
+    print(f"False Positives: {fp}")
+    print(f"False Negatives: {fn}")
+    print()
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall   : {recall:.4f}")
 
 
-
+if __name__ == "__main__":
+    main()

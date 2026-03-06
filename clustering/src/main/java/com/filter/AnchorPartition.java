@@ -1,10 +1,13 @@
 package com.filter;
 
+import com.model.Element;
+
 import java.util.HashMap;
 
 public class AnchorPartition {
     HashMap<String, CorrectedUMICluster> umiMap = new HashMap<>();
     private static final char[] bases = {'A', 'C', 'G', 'T'};
+
 
     void addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
 

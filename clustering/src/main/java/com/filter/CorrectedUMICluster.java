@@ -1,5 +1,7 @@
 package com.filter;
 
+import com.model.Element;
+
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 

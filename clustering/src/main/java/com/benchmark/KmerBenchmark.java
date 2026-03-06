@@ -1,5 +1,6 @@
 package com.benchmark;
 import com.kmer.*;
+import com.metrics.Hamming;
 import org.openjdk.jmh.annotations.*;
 import java.util.concurrent.TimeUnit;
 import org.openjdk.jmh.infra.Blackhole;
@@ -9,19 +10,18 @@ import org.openjdk.jmh.infra.Blackhole;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Thread)
 public class KmerBenchmark {
-    private KmerHashSet<Long> set1;
-    private KmerHashSet<Long> set2;
-    private KmerBitEncoder encoder = new KmerBitEncoder(17);
+    String seq1;
+    String seq2;
+    Hamming dist = new Hamming();
 
     @Setup(Level.Trial)
     public void setup() {
-        set1 = encoder.encode(generateSequence(200));
-        set2 = encoder.encode(generateSequence(200));
+        seq1 = generateSequence(150);
+        seq2 = generateSequence(150);
     }
 
     @Benchmark
-    public void intersectKmers(Blackhole bh) {
-        bh.consume(set1.intersectSize(set2));
+    public void intersectKmers(Blackhole bh) {bh.consume(dist.compute(seq1, seq2));
     }
 
 
