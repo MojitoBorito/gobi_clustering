@@ -49,7 +49,7 @@ public class ImprovedDualClustering {
     public List<CorrectedUMICluster> getClusters(){
         List<CorrectedUMICluster> clusterList = new ArrayList<>();
         for (AnchorPartition partition : clusters.values()) {
-            clusterList.addAll(partition.canonicalClusters.values());
+            clusterList.addAll(partition.canonicalClusters);
         }
         clusterList.sort((x,y) -> Integer.compare(y.getCount(), x.getCount()));
         return clusterList;

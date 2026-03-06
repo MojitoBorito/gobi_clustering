@@ -1,5 +1,6 @@
 package com.filter;
 
+import com.example.Statistics;
 import com.model.Element;
 
 import java.nio.charset.StandardCharsets;
@@ -34,6 +35,7 @@ public class CorrectedUMICluster {
         updateConsensus(umiConsensus, umiBestScore, umiSeq, umiPhred);
         updateConsensus(readConsensus, readBestScore, readSeq, readPhred);
         count++;
+        Statistics.incrementLargestUmiAnchorCluster(count, umiConsensus, readConsensus);
     }
 
     private void updateConsensus(byte[] consensus, short[] bestScore, String seq, byte[] phred) {
