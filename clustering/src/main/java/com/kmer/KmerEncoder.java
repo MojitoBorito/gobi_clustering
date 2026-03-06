@@ -1,6 +1,8 @@
 package com.kmer;
 
-public abstract class KmerEncoder{
+import com.model.Encoder;
+
+public abstract class KmerEncoder<S extends KmerSet<S>> implements Encoder<String, S> {
     private final int k;
 
     protected KmerEncoder(int k) {
@@ -11,6 +13,7 @@ public abstract class KmerEncoder{
         return k;
     }
 
-    public abstract KmerSet encode(String sequence);
+
+    public abstract S encode(String sequence);
 
 }
