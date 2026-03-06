@@ -23,21 +23,19 @@ public class AnchorPartition {
             return;
         }
 
-        // Identify positions with low quality (likely errors)
-        // Phred+33 encoding: '?' = Q30 (1 in 1000 error rate). Tune this threshold.
-        final int PHRED_THRESHOLD = 20; // Q20 = 1% error rate; adjust as needed
+        // final int PHRED_THRESHOLD = 20; // 0.1% error rate -> stricter
+        final int PHRED_THRESHOLD = 20;
 
-        // Collect indices where quality is below threshold (error-prone positions)
+        // Collect low quality indices
         List<Integer> lowQualPositions = new ArrayList<>();
         for (int i = 0; i < umiPhred.length; i++) {
-            int q = (umiPhred[i] & 0xFF) - 33; // Convert ASCII Phred to quality score
+            int q = (umiPhred[i] & 0xFF) - 33;
             if (q < PHRED_THRESHOLD) {
                 lowQualPositions.add(i);
             }
         }
 
-        // Now enumerate neighbors — but ONLY mutate at low-quality positions
-        // Allow up to 2 errors (combinatorial: single + double mutations)
+        // Allow up to 2 errors -> first single then double
         CorrectedUMICluster bestNeighbor = null;
         int bestNeighborCount = 0;
         int[] bestPositions = new int[2];
@@ -45,7 +43,7 @@ public class AnchorPartition {
 
         char[] umiChars = umiSeq.toCharArray();
 
-        // --- 1-mismatch neighbors (only at low-quality positions) ---
+        // --- 1-mismatch neighbors ---
         for (int idx : lowQualPositions) {
             char original = umiChars[idx];
             for (char b : bases) {
@@ -64,7 +62,7 @@ public class AnchorPartition {
             }
         }
 
-        // --- 2-mismatch neighbors (only at pairs of low-quality positions) ---
+        // --- 2-mismatch neighbors  ---
         for (int a = 0; a < lowQualPositions.size(); a++) {
             int idx1 = lowQualPositions.get(a);
             char orig1 = umiChars[idx1];
@@ -108,7 +106,7 @@ public class AnchorPartition {
             canonicalClusters.add(newCluster);
         }
         count++;
-        Statistics.incrementLargestAnchorCluster(bestPositions[0], readSeq);
+        Statistics.incrementLargestAnchorCluster(canonicalClusters.size(), readSeq);
     }
 
     public HashMap<String, CorrectedUMICluster> getUmiMap() {
