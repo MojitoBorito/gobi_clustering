@@ -103,8 +103,10 @@ public class Validation {
     }
 
     public static void main(String[] args) {
-        String readFile = "/home/mojito/Desktop/Projects/Data/out/cluster.txt";
-        String outputFile = "/home/mojito/Desktop/Projects/Data/out/validate.txt";
+        //String readFile = "/home/mojito/Desktop/Projects/Data/out/cluster.txt";
+        //String outputFile = "/home/mojito/Desktop/Projects/Data/out/validate.txt";
+        String readFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/clusters.txt";
+        String outputFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/validate.txt";
         double mutRate = 0.02;
         System.out.println((int)(mutRate * 150));
         validateSequencesUMI(readFile, outputFile, mutRate);
