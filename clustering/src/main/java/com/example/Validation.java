@@ -81,6 +81,7 @@ public class Validation {
                     }
                 }
                 for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
+                    if (umi.equals(entry.getKey())){continue;}
                     for (String s: entry.getValue()){
                         if(hamming.compute(s, seq) <= mutRate &&
                                 (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
@@ -100,8 +101,8 @@ public class Validation {
     }
 
     public static void main(String[] args) {
-        String readFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/clusters.txt";
-        String outputFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/validate.txt";
+        String readFile = "/home/mojito/Desktop/Projects/Data/out/cluster.txt";
+        String outputFile = "//home/mojito/Desktop/Projects/Data/out/validate.txt";
         double mutRate = 0.02;
         System.out.println((int)(mutRate * 150));
         validateSequencesUMI(readFile, outputFile, mutRate);

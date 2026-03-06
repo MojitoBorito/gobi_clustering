@@ -5,7 +5,8 @@ import com.filter.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Main {
     static void main(String[] args) {
@@ -35,9 +36,12 @@ public class Main {
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(umiOut))){
             writer.write("umi\tseq\tcounts\n");
             for (AnchorPartition reads : improvedDualClustering.getPartitions().values()){
+                Set<CorrectedUMICluster> written = new HashSet<>(); //Set to avoid duplicate clusters being printed
                 for (CorrectedUMICluster cluster : reads.getUmiMap().values()){
-                    writer.write(cluster.getUmi()+"\t"+cluster.getRead()+"\t"+cluster.getCount()+"\n");
-                    n++;
+                    if (written.add(cluster)) {
+                        writer.write(cluster.getUmi()+"\t"+cluster.getRead()+"\t"+cluster.getCount()+"\n");
+                        n++;
+                    }
                 }
             }
         } catch (IOException e) {
