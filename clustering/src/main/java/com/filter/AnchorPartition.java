@@ -47,7 +47,7 @@ public class AnchorPartition {
             bestNeighbor.absorb(umiSeq, umiPhred, readSeq, readPhred);
             //put UMI in neighbour cluster so that erroneous looks are fast
             umiMap.put(umiSeq, bestNeighbor);
-            Statistics.incrementUmiPos(editPos);
+//            Statistics.incrementUmiPos(editPos);
         } else {
             //No match at all -> new original molecule
             CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred);
