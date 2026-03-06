@@ -1,5 +1,7 @@
 package com.filter;
 
+import com.example.Statistics;
+
 import java.util.Objects;
 
 
@@ -22,6 +24,7 @@ public class UMICluster {
             this.phred[i] = (byte) (((this.phred[i]*n) + phred[i]) / (n+1));
         }
         this.n++;
+        Statistics.incrementLargestUmiCluster(n, seq);
     }
 
     @Override

@@ -19,6 +19,9 @@ public class Main {
 
         String fw = cmdParser.getValue("-reads");
 
+        Statistics.umiEdits = new int[12];
+        Statistics.AnchorEdits = new int[150];
+
         long starTime = System.currentTimeMillis();
 
         UMI umiGroup = new UMI(umi);
@@ -46,5 +49,9 @@ public class Main {
         System.out.println("umi clustering time: "+first);
         System.out.println("Dual clustering time: "+second);
         System.out.println("Number of clusters: "+n);
+        System.out.println("Number of anchor clusters: "+improvedDualClustering.getPartitions().size());
+        System.out.println("largest Anchor Cluster size: "+Statistics.largestAnchorCluster);
+        System.out.println("largest Umi Cluster size: "+Statistics.largestUmiCluster);
+        System.out.println("largest Anchor Umi Cluster size: "+Statistics.largestUmiAnchorCluster);
     }
 }

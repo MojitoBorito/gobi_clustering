@@ -1,11 +1,16 @@
 package com.filter;
 
+import com.example.Statistics;
+import com.example.Validation;
+
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class AnchorPartition {
     HashMap<String, CorrectedUMICluster> umiMap = new HashMap<>();
     private static final char[] bases = {'A', 'C', 'G', 'T'};
-    HashMap<String, CorrectedUMICluster> canonicalClusters = new HashMap<>();
+    HashSet<CorrectedUMICluster> canonicalClusters = new HashSet<>();
+    int count = 0;
 
     void addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
 
@@ -19,6 +24,7 @@ public class AnchorPartition {
         //Enumerate all 1-Hamming-distance neighbors.
         CorrectedUMICluster bestNeighbor = null;
         int bestNeighborCount = 0;
+        int position = 0;
 
         char[] umiChars = umiSeq.toCharArray();
 
@@ -34,6 +40,7 @@ public class AnchorPartition {
                     // Directional: only merge INTO larger clusters. erroneous copies are minorities
                     bestNeighbor = candidate;
                     bestNeighborCount = candidate.count;
+                    position = i;
                 }
                 umiChars[i] = original;
             }
@@ -44,11 +51,15 @@ public class AnchorPartition {
             bestNeighbor.absorb(umiSeq, umiPhred, readSeq, readPhred);
             //put UMI in neighbour cluster so that erroneous looks are fast
             umiMap.put(umiSeq, bestNeighbor);
+            Statistics.incrementUmiPos(position);
         } else {
             //No match at all -> new original molecule
             CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred);
             umiMap.put(umiSeq, newCluster);
+            canonicalClusters.add(newCluster);
         }
+        count++;
+        Statistics.incrementLargestAnchorCluster(position, readSeq);
     }
 
     public HashMap<String, CorrectedUMICluster> getUmiMap() {
