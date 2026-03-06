@@ -80,19 +80,21 @@ public class Validation {
                         }
                     }
                 }
-                for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
-                    if (umi.equals(entry.getKey())){continue;}
-                    for (String s: entry.getValue()){
-                        if(hamming.compute(s, seq) <= mutRate &&
-                                (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
-                            String seqMismatchMarker = createMismatchMarker(s, seq);
-                            String umiMismatchMarker = createMismatchMarker(entry.getKey(), umi);
-                            bw.write("possible merge:"+"\n"+s+"\n"+seqMismatchMarker+"\n"+seq+"\n"+
-                                    "cause lies also in umi:\n"+entry.getKey()+"\n"+umiMismatchMarker+"\n"+umi+"\n\n");
+                else {
+                    for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
+                        if (umi.equals(entry.getKey())){continue;}
+                        for (String s: entry.getValue()){
+                            if(hamming.compute(s, seq) <= mutRate &&
+                                    (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
+                                String seqMismatchMarker = createMismatchMarker(s, seq);
+                                String umiMismatchMarker = createMismatchMarker(entry.getKey(), umi);
+                                bw.write("possible merge:"+"\n"+s+"\n"+seqMismatchMarker+"\n"+seq+"\n"+
+                                        "cause lies also in umi:\n"+entry.getKey()+"\n"+umiMismatchMarker+"\n"+umi+"\n\n");
+                            }
                         }
                     }
+                    umi2seq.computeIfAbsent(umi, _ -> new HashSet<>()).add(seq);
                 }
-                umi2seq.computeIfAbsent(umi, _ -> new HashSet<>()).add(seq);
 
             }
         }catch (Exception e){
@@ -102,7 +104,7 @@ public class Validation {
 
     public static void main(String[] args) {
         String readFile = "/home/mojito/Desktop/Projects/Data/out/cluster.txt";
-        String outputFile = "//home/mojito/Desktop/Projects/Data/out/validate.txt";
+        String outputFile = "/home/mojito/Desktop/Projects/Data/out/validate.txt";
         double mutRate = 0.02;
         System.out.println((int)(mutRate * 150));
         validateSequencesUMI(readFile, outputFile, mutRate);
