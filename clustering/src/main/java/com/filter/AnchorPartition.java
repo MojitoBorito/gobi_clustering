@@ -7,6 +7,7 @@ import java.util.HashMap;
 public class AnchorPartition {
     HashMap<String, CorrectedUMICluster> umiMap = new HashMap<>();
     private static final char[] bases = {'A', 'C', 'G', 'T'};
+    HashMap<String, CorrectedUMICluster> canonicalClusters = new HashMap<>();
 
     void addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
 
@@ -52,10 +53,15 @@ public class AnchorPartition {
             //No match at all -> new original molecule
             CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred);
             umiMap.put(umiSeq, newCluster);
+            canonicalClusters.put(umiSeq, newCluster);
         }
     }
 
     public HashMap<String, CorrectedUMICluster> getUmiMap() {
         return umiMap;
+    }
+
+    public HashMap<String, CorrectedUMICluster> getCanonicalClusters() {
+        return canonicalClusters;
     }
 }
