@@ -2,7 +2,7 @@ package com.kmer;
 
 import java.util.*;
 
-public class KmerBitEncoder extends KmerEncoder{
+public class KmerBitEncoder extends KmerEncoder<KmerHashSet<Long>>{
     // MASKS
     private static long A = 0;
     private static long T = 1;

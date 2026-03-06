@@ -5,7 +5,7 @@ import com.metrics.Jaccard;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class KmerLongSetEncoder extends KmerEncoder{
+public class KmerLongSetEncoder extends KmerEncoder<KmerLongSet>{
 
     private final long[] lookup;
 
@@ -16,9 +16,7 @@ public class KmerLongSetEncoder extends KmerEncoder{
         lookup['A'] = 0; lookup['T'] = 1; lookup['C'] = 2; lookup['G'] = 3;
     }
 
-    /**
-    Important: ASCII encoded
-     **/
+
     @Override
     public KmerLongSet encode(String sequence) {
         int k = k();
@@ -43,19 +41,5 @@ public class KmerLongSetEncoder extends KmerEncoder{
         }
         Arrays.sort(out);
         return new KmerLongSet(out);
-    }
-
-
-    static void main() {
-        KmerLongSetEncoder enc = new KmerLongSetEncoder(15);
-        Jaccard<KmerLongSet> jac = new Jaccard<>();
-        int shift = 15;
-        String seq1 = SequenceUtils.randomSequence(150, 0);
-        String seq2 = SequenceUtils.randomSequence(shift, 0 ) + seq1.substring(0, seq1.length() - shift);
-        System.out.println(seq1);
-        System.out.println(seq2);
-        KmerLongSet seq1e = enc.encode(seq1);
-        KmerLongSet seq2e = enc.encode(seq2);
-        System.out.println(jac.compute(seq1e, seq2e));
     }
 }
