@@ -1,5 +1,8 @@
 package com.example;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+
 public class Statistics {
     public static int[] umiEdits;
     public static int[] AnchorEdits;
@@ -10,6 +13,7 @@ public class Statistics {
     public static int largestUmiAnchorCluster = 0;
     public static byte[] mostCommonCombUmi;
     public static byte[] mostCommonCombAnchor;
+    public static HashMap<String, Integer> mutations = new HashMap<>();
 
     public static void incrementUmiPos(int position){
         umiEdits[position]++;
@@ -35,5 +39,10 @@ public class Statistics {
             mostCommonCombUmi = umi;
             mostCommonCombAnchor = anchor;
         }
+    }
+
+    public static void addMutation(byte from, byte to){
+        String mutation = new String(new byte[]{from,to}, StandardCharsets.US_ASCII);
+        mutations.put(mutation, mutations.getOrDefault(mutation, 0)+1);
     }
 }

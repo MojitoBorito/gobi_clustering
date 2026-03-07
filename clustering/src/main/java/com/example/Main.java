@@ -6,16 +6,17 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Main {
     static void main(String[] args) {
-        CmdParser cmdParser = new CmdParser("-umi", "-out", "-reads");
-        cmdParser.setFile("-umi", "-out", "-reads");
+        CmdParser cmdParser = new CmdParser("-umi", "-reads", "-outCluster");
+        cmdParser.setFile("-umi", "-outCluster", "-reads");
         cmdParser.parse(args);
 
         String umi = cmdParser.getValue("-umi");
-        String umiOut = cmdParser.getValue("-out");
+        String umiOut = cmdParser.getValue("-outCluster");
 
         String fw = cmdParser.getValue("-reads");
 
@@ -35,10 +36,15 @@ public class Main {
 
         endTime = System.currentTimeMillis();
         long second = endTime - starTime;
+
+        System.out.println("umi clustering time: "+first);
+        System.out.println("Dual clustering time: "+second);
+
         int n = 0;
+        List<CorrectedUMICluster> clusters = improvedDualClustering.getClusters();
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(umiOut))){
             writer.write("umi\tseq\tcounts\n");
-            for (CorrectedUMICluster cluster : improvedDualClustering.getClusters()){
+            for (CorrectedUMICluster cluster : clusters){
                     writer.write(cluster.getUmi()+"\t"+cluster.getRead()+"\t"+cluster.getCount()+"\n");
                     n++;
 
@@ -46,8 +52,11 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("umi clustering time: "+first);
-        System.out.println("Dual clustering time: "+second);
+
+//        try(){
+//
+//        }
+
         System.out.println("Number of clusters: "+n);
         System.out.println("Number of anchor clusters: "+improvedDualClustering.getPartitions().size());
         System.out.println("largest Anchor Cluster size: "+Statistics.largestAnchorCluster);
