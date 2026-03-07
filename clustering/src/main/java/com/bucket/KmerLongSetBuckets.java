@@ -3,9 +3,7 @@ package com.bucket;
 import com.kmer.KmerLongSet;
 import com.model.Cluster;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class KmerLongSetBuckets <C extends Cluster<?>> implements SmartBuckets<KmerLongSet, C>{
 
@@ -59,4 +57,24 @@ public class KmerLongSetBuckets <C extends Cluster<?>> implements SmartBuckets<K
         }
         return resCluster;
     }
+
+
+    @Override
+    public BucketStats getBucketStats() {
+        int max = 0;
+        int sum = 0;
+        long worstKmer = Long.MAX_VALUE;
+        for (Map.Entry<Long, HashSet<C>> entry : clusters.entrySet()) {
+            int bucketSize = entry.getValue().size();
+            long bucketKmer = entry.getKey();
+            sum += bucketSize;
+            if (max < bucketSize) {
+                max = bucketSize;
+                worstKmer = bucketKmer;
+            }
+        }
+        double avg = clusters.isEmpty() ? 0 : (double) sum / clusters.size();
+        return new BucketStats(clusters.size(), avg, max, worstKmer);
+    }
+
 }
