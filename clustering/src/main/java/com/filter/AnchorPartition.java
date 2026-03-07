@@ -13,9 +13,10 @@ public class AnchorPartition {
     private static final char[] bases = {'A', 'C', 'G', 'T'};
     HashSet<CorrectedUMICluster> canonicalClusters = new HashSet<>();
     int count = 0;
+    //static final int PHRED_THRESHOLD = 30; // 0.01% error rate -> stricter
+    static final int PHRED_THRESHOLD = 20; // 0.1% error rate -> more lax
 
     void addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
-
         // exact match first
         CorrectedUMICluster exact = umiMap.get(umiSeq);
         if (exact != null) {
@@ -23,11 +24,9 @@ public class AnchorPartition {
             return;
         }
 
-        // final int PHRED_THRESHOLD = 20; // 0.1% error rate -> stricter
-        final int PHRED_THRESHOLD = 20;
-
-        // Collect low quality indices
+        // Collect low quality positions
         List<Integer> lowQualPositions = new ArrayList<>();
+
         for (int i = 0; i < umiPhred.length; i++) {
             int q = (umiPhred[i] & 0xFF) - 33;
             if (q < PHRED_THRESHOLD) {
@@ -43,7 +42,7 @@ public class AnchorPartition {
 
         char[] umiChars = umiSeq.toCharArray();
 
-        // --- 1-mismatch neighbors ---
+        // 1-mismatch neighbors
         for (int idx : lowQualPositions) {
             char original = umiChars[idx];
             for (char b : bases) {
@@ -62,7 +61,7 @@ public class AnchorPartition {
             }
         }
 
-        // --- 2-mismatch neighbors  ---
+        // 2-mismatch neighbors
         for (int a = 0; a < lowQualPositions.size(); a++) {
             int idx1 = lowQualPositions.get(a);
             char orig1 = umiChars[idx1];

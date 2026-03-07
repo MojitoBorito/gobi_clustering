@@ -44,8 +44,11 @@ public class Validation {
                 String[] split = line.split("\t");
                 String umi = split[0];
                 String seq = split[1];
+                if(umi.equals("umi") && seq.equals("seq")){
+                    continue;
+                }
                 if (set.contains(seq)){
-                    System.out.println("Duplicate line "+line);
+                    bw.write("Duplicate line "+line+"\n\n");
                     continue;
                 }
                 for (String sequence: set){
@@ -54,7 +57,7 @@ public class Validation {
                         bw.write("possible merge:"+"\n"+seq+"\n"+mismatchMarker+"\n"+sequence+"\n\n");
                     }
                 }
-                set.add(line);
+                set.add(seq);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -85,7 +88,6 @@ public class Validation {
                 }
                 else {
                     for (Map.Entry<String, Set<String>> entry: umi2seq.entrySet()){
-                        if (umi.equals(entry.getKey())){continue;}
                         for (String s: entry.getValue()){
                             if(hamming.compute(s, seq) <= mutRate &&
                                     (int)(hamming.compute(entry.getKey(), umi) * umi.length()) <= 1){
@@ -96,9 +98,8 @@ public class Validation {
                             }
                         }
                     }
-                    umi2seq.computeIfAbsent(umi, _ -> new HashSet<>()).add(seq);
                 }
-
+                umi2seq.computeIfAbsent(umi, _ -> new HashSet<>()).add(seq);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -109,9 +110,9 @@ public class Validation {
         //String readFile = "/home/mojito/Desktop/Projects/Data/out/cluster.txt";
         //String outputFile = "/home/mojito/Desktop/Projects/Data/out/validate.txt";
         String readFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/clusters.txt";
-        String outputFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/validate.txt";
+        String outputFile = "/mnt/biocluster/praktikum/genprakt/patil/Blockteil/dual_out2/validateSeqs.txt";
         double mutRate = 0.02;
         System.out.println((int)(mutRate * 150));
-        validateSequences(readFile, outputFile, mutRate);
+        validateSequencesUMI(readFile, outputFile, mutRate);
     }
 }
