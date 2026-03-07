@@ -12,7 +12,7 @@ public class Universe<K, V, C extends Cluster<V>>{
     private final DistanceMetric<V> metric;
     private final ClusterLinkage<V, C> linkage;
     private final ClusterFactory<C> factory;
-    private int nextId = 0;
+    private int clusterCount = 0;
 
     public Universe(SmartBuckets<K, C> buckets,
                     ClusterFactory<C> factory,
@@ -25,7 +25,7 @@ public class Universe<K, V, C extends Cluster<V>>{
     }
 
     public C createCluster(K key) {
-        C newCluster = factory.create(nextId++);
+        C newCluster = factory.create(clusterCount++);
         buckets.add(key, newCluster);
         return newCluster;
     }
@@ -48,6 +48,10 @@ public class Universe<K, V, C extends Cluster<V>>{
 
     public SmartBuckets.BucketStats getBucketStats() {
         return buckets.getBucketStats();
+    }
+
+    public int getClusterCount() {
+        return clusterCount;
     }
 
     @FunctionalInterface

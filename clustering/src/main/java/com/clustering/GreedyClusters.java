@@ -36,7 +36,7 @@ public class GreedyClusters<K, V, C extends Cluster<V>> extends ClusteringAlgori
         int count = 0;
         int candidate_sum = 0;
         log.info("Starting clustering");
-        stats.info("{},{},{},{},{},{}", "reads", "avg_candidates", "total_buckets", "avg_bucket_size", "max_bucket_size", "worstKmer");
+        stats.info("{},{},{},{},{},{},{}", "reads", "avg_candidates", "total_clusters", "total_buckets", "avg_bucket_size", "max_bucket_size", "worstKmer");
 
         while (elements.hasNext()) {
             elem = elements.next();
@@ -69,7 +69,8 @@ public class GreedyClusters<K, V, C extends Cluster<V>> extends ClusteringAlgori
             if (count % 10_000 == 0) {
                 log.info("Reads processed: {}", count);
                 SmartBuckets.BucketStats bucketStats = universe.getBucketStats();
-                stats.info("{},{},{},{},{},{}", count, candidate_sum/10_000, bucketStats.totalBuckets(), Math.floor(bucketStats.avgBucketSize()), bucketStats.maxBucketSize(), bucketStats.worstKmer());
+                int clusterNum = universe.getClusterCount();
+                stats.info("{},{},{},{},{},{},{}", count, candidate_sum/10_000, clusterNum, bucketStats.totalBuckets(), Math.floor(bucketStats.avgBucketSize()), bucketStats.maxBucketSize(), bucketStats.worstKmer());
                 candidate_sum = 0;
             }
         }
