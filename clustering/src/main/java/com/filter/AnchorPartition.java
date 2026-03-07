@@ -17,7 +17,6 @@ public class AnchorPartition {
     static final int PHRED_THRESHOLD = 20; // 0.1% error rate -> more lax
 
     void addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
-
         // exact match first
         CorrectedUMICluster exact = umiMap.get(umiSeq);
         if (exact != null) {
@@ -27,8 +26,6 @@ public class AnchorPartition {
 
         // Collect low quality positions
         List<Integer> lowQualPositions = new ArrayList<>();
-        HashSet<String> possibilities = new HashSet<>();
-        boolean neighbourFound = false;
 
         for (int i = 0; i < umiPhred.length; i++) {
             int q = (umiPhred[i] & 0xFF) - 33;
@@ -59,10 +56,6 @@ public class AnchorPartition {
                     bestNeighborCount = candidate.count;
                     bestPositions[0] = idx;
                     bestMutCount = 1;
-                    neighbourFound = true;
-                }
-                if (!neighbourFound){
-                    possibilities.add(neighbor);
                 }
                 umiChars[idx] = original;
             }
@@ -91,10 +84,6 @@ public class AnchorPartition {
                             bestPositions[0] = idx1;
                             bestPositions[1] = idx2;
                             bestMutCount = 2;
-                            neighbourFound = true;
-                        }
-                        if (!neighbourFound){
-                            possibilities.add(neighbor);
                         }
                         umiChars[idx2] = orig2;
                     }
@@ -114,16 +103,9 @@ public class AnchorPartition {
             CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred);
             umiMap.put(umiSeq, newCluster);
             canonicalClusters.add(newCluster);
-            addErroneousVariants(possibilities, newCluster);
         }
         count++;
         Statistics.incrementLargestAnchorCluster(canonicalClusters.size(), readSeq);
-    }
-
-    private void addErroneousVariants(HashSet<String> possibilities, CorrectedUMICluster cluster){
-        for (String umi : possibilities) {
-            umiMap.put(umi, cluster);
-        }
     }
 
     public HashMap<String, CorrectedUMICluster> getUmiMap() {
