@@ -27,7 +27,7 @@ public class AnchorPartition {
 
         // Collect low quality positions
         List<Integer> lowQualPositions = new ArrayList<>();
-//        HashSet<String> possiblities = new HashSet<>();
+        HashSet<String> possibilities = new HashSet<>();
         boolean neighbourFound = false;
 
         for (int i = 0; i < umiPhred.length; i++) {
@@ -61,9 +61,9 @@ public class AnchorPartition {
                     bestMutCount = 1;
                     neighbourFound = true;
                 }
-//                if (!neighbourFound){
-//                    possiblities.add(neighbor);
-//                }
+                if (!neighbourFound){
+                    possibilities.add(neighbor);
+                }
                 umiChars[idx] = original;
             }
         }
@@ -93,9 +93,9 @@ public class AnchorPartition {
                             bestMutCount = 2;
                             neighbourFound = true;
                         }
-//                        if (!neighbourFound){
-//                            possiblities.add(neighbor);
-//                        }
+                        if (!neighbourFound){
+                            possibilities.add(neighbor);
+                        }
                         umiChars[idx2] = orig2;
                     }
                 }
@@ -114,7 +114,7 @@ public class AnchorPartition {
             CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred);
             umiMap.put(umiSeq, newCluster);
             canonicalClusters.add(newCluster);
-//            addErroneousVariants(possiblities, newCluster);
+            addErroneousVariants(possibilities, newCluster);
         }
         count++;
         Statistics.incrementLargestAnchorCluster(canonicalClusters.size(), readSeq);
