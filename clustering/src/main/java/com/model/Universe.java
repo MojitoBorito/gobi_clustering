@@ -46,6 +46,10 @@ public class Universe<K, V, C extends Cluster<V>>{
         return buckets.getAllClusters();
     }
 
+    public SmartBuckets.BucketStats getBucketStats() {
+        return buckets.getBucketStats();
+    }
+
     @FunctionalInterface
     public interface ClusterFactory<C> {
         C create(int id);
