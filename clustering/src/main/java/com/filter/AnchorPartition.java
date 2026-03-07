@@ -13,6 +13,8 @@ public class AnchorPartition {
     private static final char[] bases = {'A', 'C', 'G', 'T'};
     HashSet<CorrectedUMICluster> canonicalClusters = new HashSet<>();
     int count = 0;
+    //static final int PHRED_THRESHOLD = 30; // 0.01% error rate -> stricter
+    static final int PHRED_THRESHOLD = 20; // 0.1% error rate -> more lax
 
     void addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
 
@@ -23,11 +25,11 @@ public class AnchorPartition {
             return;
         }
 
-        // final int PHRED_THRESHOLD = 30; // 0.1% error rate -> stricter
-        final int PHRED_THRESHOLD = 20;
-
-        // Collect low quality indices
+        // Collect low quality positions
         List<Integer> lowQualPositions = new ArrayList<>();
+        HashSet<String> possiblities = new HashSet<>();
+        boolean neighbourFound = false;
+
         for (int i = 0; i < umiPhred.length; i++) {
             int q = (umiPhred[i] & 0xFF) - 33;
             if (q < PHRED_THRESHOLD) {
@@ -57,6 +59,10 @@ public class AnchorPartition {
                     bestNeighborCount = candidate.count;
                     bestPositions[0] = idx;
                     bestMutCount = 1;
+                    neighbourFound = true;
+                }
+                if (!neighbourFound){
+                    possiblities.add(neighbor);
                 }
                 umiChars[idx] = original;
             }
@@ -85,6 +91,10 @@ public class AnchorPartition {
                             bestPositions[0] = idx1;
                             bestPositions[1] = idx2;
                             bestMutCount = 2;
+                            neighbourFound = true;
+                        }
+                        if (!neighbourFound){
+                            possiblities.add(neighbor);
                         }
                         umiChars[idx2] = orig2;
                     }
@@ -104,9 +114,16 @@ public class AnchorPartition {
             CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred);
             umiMap.put(umiSeq, newCluster);
             canonicalClusters.add(newCluster);
+            addErroneousVariants(possiblities, newCluster);
         }
         count++;
         Statistics.incrementLargestAnchorCluster(canonicalClusters.size(), readSeq);
+    }
+
+    private void addErroneousVariants(HashSet<String> possibilities, CorrectedUMICluster cluster){
+        for (String umi : possibilities) {
+            umiMap.put(umi, cluster);
+        }
     }
 
     public HashMap<String, CorrectedUMICluster> getUmiMap() {
