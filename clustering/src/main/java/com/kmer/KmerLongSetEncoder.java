@@ -1,5 +1,6 @@
 package com.kmer;
 
+import com.example.Sequence;
 import com.metrics.Jaccard;
 
 import java.util.Arrays;
@@ -41,5 +42,10 @@ public class KmerLongSetEncoder extends KmerEncoder<KmerLongSet>{
         }
         Arrays.sort(out);
         return new KmerLongSet(out);
+    }
+
+
+    static void main() {
+
     }
 }
