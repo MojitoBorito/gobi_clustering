@@ -78,7 +78,7 @@ public class KmerBitEncoder extends KmerEncoder<KmerHashSet<Long>>{
     }
 
     static void main() {
-        long a = -1;
-        System.out.println(Long.toBinaryString(a));
+        KmerBitEncoder a = new KmerBitEncoder(17);
+        System.out.println(a.decodeKmer(1754231336L));
     }
 }

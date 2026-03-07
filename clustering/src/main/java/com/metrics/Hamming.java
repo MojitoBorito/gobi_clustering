@@ -2,6 +2,9 @@ package com.metrics;
 
 public class Hamming implements DistanceMetric<String>{
 
+    // TODO: Implement early exit
+    public Hamming() {}
+
     @Override
     public double compute(String e1, String e2) {
         if (e1.length() != e2.length()) throw new IllegalArgumentException("Unequal lengths");
