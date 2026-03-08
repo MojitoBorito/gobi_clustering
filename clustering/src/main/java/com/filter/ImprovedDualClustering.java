@@ -55,5 +55,16 @@ public class ImprovedDualClustering {
         return clusterList;
     }
 
+    public HashMap<String, Integer> getCorrectedUmis(){
+        HashMap<String, Integer> correctedUmis = new HashMap<>();
+        for (AnchorPartition partition : clusters.values()) {
+            for (CorrectedUMICluster cluster: partition.canonicalClusters) {
+                String umi = cluster.getUmi();
+                correctedUmis.put(umi,
+                        correctedUmis.getOrDefault(umi, 0) + cluster.getCount());
+            }
+        }
+        return correctedUmis;
+    }
 
 }
