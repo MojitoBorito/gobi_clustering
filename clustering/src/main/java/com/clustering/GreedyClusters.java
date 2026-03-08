@@ -5,10 +5,12 @@ import com.bucket.SmartBuckets;
 import com.model.*;
 import com.linkage.ClusterLinkage;
 import com.metrics.DistanceMetric;
-import java.util.Iterator;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
+import java.util.Set;
+
 
 // Is defined by key type K, value type V, cluster type V
 public class GreedyClusters<K, V, C extends Cluster<V>> extends ClusteringAlgorithm<K, V, C>{
