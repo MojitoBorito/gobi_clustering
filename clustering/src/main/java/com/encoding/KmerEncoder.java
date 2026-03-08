@@ -1,5 +1,6 @@
-package com.kmer;
+package com.encoding;
 
+import com.kmer.KmerSet;
 import com.model.Encoder;
 
 public abstract class KmerEncoder<S extends KmerSet<S>> implements Encoder<String, S> {

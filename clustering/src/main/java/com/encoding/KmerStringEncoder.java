@@ -1,9 +1,10 @@
-package com.kmer;
+package com.encoding;
+
+import com.kmer.KmerHashSet;
 
 import java.util.HashSet;
-import java.util.TreeSet;
 
-public class KmerStringEncoder extends KmerEncoder{
+public class KmerStringEncoder extends KmerEncoder {
     public KmerStringEncoder(int k) {
         super(k);
     }
