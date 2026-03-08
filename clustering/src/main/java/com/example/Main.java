@@ -69,7 +69,7 @@ public class Main {
             for (Map.Entry<String, AnchorPartition> entry : anchorMap.entrySet()){
                 writer.write(entry.getKey()+"\t"+
                         entry.getValue().getCount()+"\t"+
-                        entry.getValue().getUmiMap().size()+"\n");
+                        entry.getValue().getCanonicalClusters().size()+"\n");
             }
         }catch (IOException e) {
             throw new RuntimeException("Error at writing Anchor Out");
