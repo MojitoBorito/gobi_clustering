@@ -132,4 +132,8 @@ public class AnchorPartition {
     public HashMap<Long, CorrectedUMICluster> getUmiMap() {
         return umiMap;
     }
+
+    public int getCount() {
+        return count;
+    }
 }
