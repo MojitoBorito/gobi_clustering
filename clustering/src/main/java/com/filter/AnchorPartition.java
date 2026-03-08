@@ -40,6 +40,7 @@ public class AnchorPartition {
         initMultipliers(umiChars.length);
 
         long baseHash = hashChars(umiChars);
+        count++;
 
         // exact match first
         CorrectedUMICluster exact = umiMap.get(baseHash);
@@ -125,7 +126,6 @@ public class AnchorPartition {
             umiMap.put(baseHash, newCluster);
             canonicalClusters.add(newCluster);
         }
-        count++;
         Statistics.incrementLargestAnchorCluster(canonicalClusters.size(), readSeq);
     }
 
@@ -135,5 +135,9 @@ public class AnchorPartition {
 
     public int getCount() {
         return count;
+    }
+
+    public HashSet<CorrectedUMICluster> getCanonicalClusters() {
+        return canonicalClusters;
     }
 }
