@@ -2,7 +2,10 @@ package com.metrics;
 
 public class Hamming implements DistanceMetric<String>{
 
-    // TODO: Implement early exit
+    private int exitAfter = Integer.MAX_VALUE;
+    public Hamming(int exitAfter) {
+        this.exitAfter = exitAfter;
+    }
     public Hamming() {}
 
     @Override
@@ -13,6 +16,7 @@ public class Hamming implements DistanceMetric<String>{
 
         for (int i = 0; i < len; i++) {
             dist += (e1.charAt(i) == e2.charAt(i) ? 0 : 1);
+            if (dist >= exitAfter) return 1.0; // signal "exceeded threshold"
         }
         return (double) dist /len;
     }
