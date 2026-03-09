@@ -55,14 +55,14 @@ public class CorrectedUMICluster {
     private void updateConsensus(byte[] consensus, short[] bestScore, String seq, byte[] phred, int umiWeight) {
         for (int i = 0; i < seq.length(); i++) {
             byte base = (byte) seq.charAt(i);
-            long weightedQ = (long) (phred[i] & 0xFF) * umiWeight;
-
+            int q = phred[i] & 0xFF;
+            int weightedQ = Math.min(q * umiWeight, Short.MAX_VALUE);
             if (consensus[i] == 0 || consensus[i] == base) {
                 consensus[i] = base;
-                bestScore[i] = (short) Math.min(bestScore[i] + weightedQ, Short.MAX_VALUE);
+                bestScore[i] = (short) Math.min(bestScore[i] + q, Short.MAX_VALUE);
             } else if (weightedQ > bestScore[i]) {
                 consensus[i] = base;
-                bestScore[i] = (short) Math.min(weightedQ, Short.MAX_VALUE);
+                bestScore[i] = (short) weightedQ;
             }
         }
     }
