@@ -1,6 +1,5 @@
 package com.benchmark;
 
-import com.encoding.BitsetEncoder;
 import org.openjdk.jmh.annotations.*;
 import java.util.concurrent.TimeUnit;
 import java.util.Random;
@@ -29,8 +28,8 @@ public class HammingBenchmark {
         }
         seqA = new String(a);
         seqB = new String(b);
-        bitsA = BitsetEncoder.encode(seqA);
-        bitsB = BitsetEncoder.encode(seqB);
+//        bitsA = BitsetEncoder.encode(seqA);
+//        bitsB = BitsetEncoder.encode(seqB);
     }
 
     @Benchmark
