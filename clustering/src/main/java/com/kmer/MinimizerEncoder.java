@@ -1,5 +1,7 @@
 package com.kmer;
 
+import com.encoding.KmerEncoder;
+
 import java.util.Arrays;
 
 /**

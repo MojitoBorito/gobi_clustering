@@ -4,7 +4,7 @@ import com.bucket.KmerLongSetBuckets;
 import com.bucket.SmartBuckets;
 import com.example.FastqIterator;
 import com.kmer.KmerLongSet;
-import com.kmer.KmerLongSetEncoder;
+import com.encoding.KmerLongSetEncoder;
 import com.linkage.ClusterLinkage;
 import com.linkage.SeededLinkage;
 import com.metrics.DistanceMetric;
