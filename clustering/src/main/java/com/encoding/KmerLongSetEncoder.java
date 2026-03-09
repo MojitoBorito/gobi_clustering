@@ -1,12 +1,11 @@
-package com.kmer;
+package com.encoding;
 
-import com.example.Sequence;
-import com.metrics.Jaccard;
+import com.kmer.KmerLongSet;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class KmerLongSetEncoder extends KmerEncoder<KmerLongSet>{
+public class KmerLongSetEncoder extends KmerEncoder<KmerLongSet> {
 
     private final long[] lookup;
 

@@ -1,8 +1,10 @@
-package com.kmer;
+package com.encoding;
+
+import com.kmer.KmerHashSet;
 
 import java.util.*;
 
-public class KmerBitEncoder extends KmerEncoder<KmerHashSet<Long>>{
+public class KmerBitEncoder extends KmerEncoder<KmerHashSet<Long>> {
     // MASKS
     private static long A = 0;
     private static long T = 1;

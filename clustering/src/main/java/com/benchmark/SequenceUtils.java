@@ -1,4 +1,4 @@
-package com.kmer;
+package com.benchmark;
 
 import java.util.Random;
 
