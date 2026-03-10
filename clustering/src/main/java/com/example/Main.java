@@ -1,13 +1,25 @@
 package com.example;
 
+import com.bucket.UmiAwareBuckets;
+import com.bucket.UmiKey;
 import com.cli.CliParser;
 import com.cli.CmdOptions;
+import com.clustering.GreedyClusters;
+import com.encoding.UmiPosKmerBitEncoder;
 import com.filter.*;
+import com.linkage.ClusterLinkage;
+import com.linkage.SeededLinkage;
+import com.metrics.DistanceMetric;
+import com.metrics.UmiReadHamming;
+import com.model.*;
+import com.pipeline.ValueMappingIterator;
+import com.seeds.AnchorSeed;
 import org.apache.commons.cli.ParseException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -36,6 +48,40 @@ public class Main {
         System.out.println("Dual clustering time: "+second);
 
         writeOutput(options, improvedDualClustering);
+
+        List<CorrectedUMICluster> umiClusters = improvedDualClustering.getClusters();
+
+        // Part 2
+        runWithUmis(umiClusters, Paths.get(options.getOutDir(), "finer_clusters.txt"));
+    }
+
+    public static void runWithUmis(List<CorrectedUMICluster> umiClusters, Path output) {
+        Iterator<Element<UmiRead>> iteratorMap = new Iterator<>() {
+            final Iterator<CorrectedUMICluster> inner = umiClusters.iterator();
+
+            @Override
+            public boolean hasNext() { return inner.hasNext(); }
+
+            @Override
+            public Element<UmiRead> next() {
+                CorrectedUMICluster u = inner.next();
+                return new Element<>(String.valueOf(u.getClusterID()), new UmiRead(u.getUmi(), u.getRead()));
+            }
+        };
+
+        UmiAwareBuckets<SeededCluster<UmiRead>> buckets = new UmiAwareBuckets<>(5);
+        SeededCluster.SeedFactory<UmiRead> seedFactory = AnchorSeed::new;
+        Universe.ClusterFactory<SeededCluster<UmiRead>> clusterFactory = id -> new SeededCluster<>(id, seedFactory);
+        DistanceMetric<UmiRead> metric = new UmiReadHamming(5);
+        ClusterLinkage<UmiRead, SeededCluster<UmiRead>> linkage = new SeededLinkage<>();
+        Encoder<UmiRead, UmiKey> encoder = new UmiPosKmerBitEncoder(50);
+        double threshold = 0.03;
+
+        GreedyClusters<UmiKey, UmiRead, SeededCluster<UmiRead>> algorithm =
+                new GreedyClusters<>(buckets, clusterFactory, metric, linkage, encoder, threshold);
+
+        algorithm.computeClusters(iteratorMap);
+        algorithm.writeClustersCompact(output);
     }
 
 

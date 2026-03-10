@@ -2,6 +2,7 @@ package com.filter;
 
 import com.example.Statistics;
 import com.model.Element;
+import com.model.UmiRead;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
