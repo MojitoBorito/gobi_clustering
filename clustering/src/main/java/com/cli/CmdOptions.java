@@ -4,22 +4,13 @@ public class CmdOptions {
 
     private final String umi;
     private final String reads;
-    private final String outCluster;
-    private final String outUmi;
-    private final String outAnchor;
-    private final String outPos;
-    private final String outMut;
+    private final String outDir;
 
 
-    public CmdOptions(String umi, String reads, String outCluster,
-                      String outUmi, String outAnchor, String outPos, String outMut) {
+    public CmdOptions(String umi, String reads, String outDir) {
         this.umi = umi;
         this.reads = reads;
-        this.outCluster = outCluster;
-        this.outUmi = outUmi;
-        this.outAnchor = outAnchor;
-        this.outPos = outPos;
-        this.outMut = outMut;
+        this.outDir = outDir;
     }
 
     public String getUmi() {
@@ -30,23 +21,7 @@ public class CmdOptions {
         return reads;
     }
 
-    public String getOutCluster() {
-        return outCluster;
-    }
-
-    public String getOutUmi() {
-        return outUmi;
-    }
-
-    public String getOutAnchor() {
-        return outAnchor;
-    }
-
-    public String getOutPos() {
-        return outPos;
-    }
-
-    public String getOutMut() {
-        return outMut;
+    public String getOutDir() {
+        return outDir;
     }
 }

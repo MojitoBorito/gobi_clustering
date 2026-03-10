@@ -1,14 +1,16 @@
 package com.filter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ImprovedDualClustering {
     HashMap<String, AnchorPartition> clusters = new HashMap<>();
+    HashMap<Integer, Set<String>> clusterIDtoHeader = new HashMap<>();
+
+    int numReads;
 
     public ImprovedDualClustering(UMI umis, String readFile) {
+        numReads = 0;
         improvedDualCluster(umis, readFile);
     }
 
@@ -17,6 +19,7 @@ public class ImprovedDualClustering {
         try (HashReadsIterator fastq = new HashReadsIterator(readFile)) {
             while (fastq.hasNext()) {
                 HashReads read = fastq.next();
+                numReads++;
 
                 // read.hash = last 50bp (your existing anchor)
                 String anchor = read.hash;
@@ -30,13 +33,15 @@ public class ImprovedDualClustering {
                 );
 
                 // Add to partition with UMI correction
-                cluster.addRead(
+                int id = cluster.addRead(
                         umiCluster.seq,
                         umiCluster.phred,
                         read.seq,
                         read.phred,
                         umiCluster.n
                 );
+
+                clusterIDtoHeader.computeIfAbsent(id, _ -> new HashSet<>()).add(read.header);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -68,4 +73,11 @@ public class ImprovedDualClustering {
         return correctedUmis;
     }
 
+    public int getNumReads() {
+        return numReads;
+    }
+
+    public HashMap<Integer, Set<String>> getClusterIDtoHeader() {
+        return clusterIDtoHeader;
+    }
 }

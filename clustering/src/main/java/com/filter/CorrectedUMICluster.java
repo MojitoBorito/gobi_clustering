@@ -9,6 +9,8 @@ import java.util.HashMap;
 public class CorrectedUMICluster {
     int count = 0;
 
+    private static int idCounter = 0;
+
     // Phred-weighted consensus for the UMI itself
     short[] umiBestScore;
     byte[]  umiConsensus;
@@ -16,6 +18,8 @@ public class CorrectedUMICluster {
     // Phred-weighted consensus for the read
     short[] readBestScore;
     byte[]  readConsensus;
+
+    int clusterID;
 
     CorrectedUMICluster(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
         int umiLen = umiSeq.length();
@@ -25,6 +29,8 @@ public class CorrectedUMICluster {
         umiConsensus  = new byte[umiLen];
         readBestScore = new short[readLen];
         readConsensus = new byte[readLen];
+
+        clusterID = idCounter++;
 
         absorb(umiSeq, umiPhred, readSeq, readPhred, umiWeight);
     }
@@ -77,5 +83,9 @@ public class CorrectedUMICluster {
 
     public int getCount() {
         return count;
+    }
+
+    public int getClusterID() {
+        return clusterID;
     }
 }
