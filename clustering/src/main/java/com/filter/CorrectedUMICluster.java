@@ -17,7 +17,7 @@ public class CorrectedUMICluster {
     short[] readBestScore;
     byte[]  readConsensus;
 
-    CorrectedUMICluster(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
+    CorrectedUMICluster(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
         int umiLen = umiSeq.length();
         int readLen = readSeq.length();
 
@@ -26,14 +26,14 @@ public class CorrectedUMICluster {
         readBestScore = new short[readLen];
         readConsensus = new byte[readLen];
 
-        absorb(umiSeq, umiPhred, readSeq, readPhred);
+        absorb(umiSeq, umiPhred, readSeq, readPhred, umiWeight);
     }
 
     //Merge a new observation into this cluster.
 
-    void absorb(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
+    void absorb(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
         updateConsensus(umiConsensus, umiBestScore, umiSeq, umiPhred);
-        updateConsensus(readConsensus, readBestScore, readSeq, readPhred);
+        updateConsensus(readConsensus, readBestScore, readSeq, readPhred,  umiWeight);
         count++;
         Statistics.incrementLargestUmiAnchorCluster(count, umiConsensus, readConsensus);
     }
@@ -48,6 +48,21 @@ public class CorrectedUMICluster {
             } else if (q > bestScore[i]) {
                 consensus[i] = base;
                 bestScore[i] = (short) q;
+            }
+        }
+    }
+
+    private void updateConsensus(byte[] consensus, short[] bestScore, String seq, byte[] phred, int umiWeight) {
+        for (int i = 0; i < seq.length(); i++) {
+            byte base = (byte) seq.charAt(i);
+            int q = phred[i] & 0xFF;
+            int weightedQ = Math.min(q * umiWeight, Short.MAX_VALUE);
+            if (consensus[i] == 0 || consensus[i] == base) {
+                consensus[i] = base;
+                bestScore[i] = (short) Math.min(bestScore[i] + q, Short.MAX_VALUE);
+            } else if (weightedQ > bestScore[i]) {
+                consensus[i] = base;
+                bestScore[i] = (short) weightedQ;
             }
         }
     }

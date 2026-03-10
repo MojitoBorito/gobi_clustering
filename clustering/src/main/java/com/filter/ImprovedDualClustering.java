@@ -34,7 +34,8 @@ public class ImprovedDualClustering {
                         umiCluster.seq,
                         umiCluster.phred,
                         read.seq,
-                        read.phred
+                        read.phred,
+                        umiCluster.n
                 );
             }
         } catch (IOException e) {
