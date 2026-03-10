@@ -25,6 +25,7 @@ import java.nio.file.Path;
 
 public class Runner {
     static void main() {
+
         UmiAwareBuckets<SeededCluster<UmiRead>> buckets = new UmiAwareBuckets<>(5);
         SeededCluster.SeedFactory<UmiRead> seedFactory = AnchorSeed::new;
         Universe.ClusterFactory<SeededCluster<UmiRead>> clusterFactory = id -> new SeededCluster<>(id, seedFactory);
