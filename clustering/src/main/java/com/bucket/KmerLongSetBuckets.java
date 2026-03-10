@@ -4,20 +4,18 @@ import com.kmer.KmerLongSet;
 import com.model.Cluster;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class KmerLongSetBuckets <C extends Cluster<?>> implements SmartBuckets<KmerLongSet, C>{
 
     int n;
     HashMap<Long, HashSet<C>> buckets;
-//    HashSet<Long> BLACK_LIST = new HashSet<>();
-//    int MAX_BUCKET_SIZE;
     int clusterCount = 0;
-    boolean addAll;
+    private final HashMap<C, Integer> scoreBuffer = new HashMap<>();
 
-    public KmerLongSetBuckets(int n, boolean addAll) {
+    public KmerLongSetBuckets(int n) {
         this.n = n;
         buckets = new HashMap<>();
-        this.addAll = addAll;
     }
 
     @Override
@@ -30,25 +28,38 @@ public class KmerLongSetBuckets <C extends Cluster<?>> implements SmartBuckets<K
             resCluster.addAll(clusterSet);
         }
         return resCluster;
+//        scoreBuffer.clear();
+//        long[] set = key.getSet();
+//
+//        for (int i = 0; i < Math.min(n, set.length); i++) {
+//            HashSet<C> clusterSet = buckets.getOrDefault(set[i], null);
+//            if (clusterSet == null) continue;
+//            for (C cluster : clusterSet) {
+//                scoreBuffer.merge(cluster, 1, Integer::sum); // count shared kmers per cluster
+//            }
+//        }
+//
+//        // sort by shared kmer count descending
+//        return scoreBuffer.entrySet().stream()
+//                .sorted((a, b) -> b.getValue() - a.getValue())
+//                .map(Map.Entry::getKey)
+//                .collect(Collectors.toList());
     }
 
     @Override
     public void add(KmerLongSet key, C cluster) {
         clusterCount++;
-        int length = addAll ? key.getSet().length : n;
         long[] set = key.getSet();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < Math.min(set.length, n); i++) {
             Set<C> bucket = buckets.computeIfAbsent(set[i], _ -> new HashSet<>());
-            //if (bucket.size() > 0) continue;
             bucket.add(cluster);
         }
     }
 
     @Override
     public void removeCluster(KmerLongSet key, C cluster) {
-        int length = addAll ? key.getSet().length : n;
         long[] set = key.getSet();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < Math.min(set.length, n); i++) {
             HashSet<C> clusterSet = buckets.getOrDefault(set[i], null);
             if (cluster == null) continue;
             clusterSet.remove(cluster);
@@ -82,5 +93,7 @@ public class KmerLongSetBuckets <C extends Cluster<?>> implements SmartBuckets<K
         double avg = buckets.isEmpty() ? 0 : (double) sum / buckets.size();
         return new BucketStats(buckets.size(), avg, max, worstKmer);
     }
+
+
 
 }

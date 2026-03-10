@@ -1,9 +1,11 @@
 package com.model;
 
+import com.bucket.BucketStats;
 import com.bucket.SmartBuckets;
 import com.linkage.ClusterLinkage;
 import com.metrics.DistanceMetric;
 
+import java.util.List;
 import java.util.Set;
 
 // Defined by key type K, value type V, Cluster type C
@@ -46,7 +48,7 @@ public class Universe<K, V, C extends Cluster<V>>{
         return buckets.getAllClusters();
     }
 
-    public SmartBuckets.BucketStats getBucketStats() {
+    public BucketStats<?> getBucketStats() {
         return buckets.getBucketStats();
     }
 

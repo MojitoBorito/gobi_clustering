@@ -15,7 +15,7 @@ public class AnchorPartition {
     static final int PHRED_THRESHOLD = 20;
 
     // Precomputed per-position multipliers for rolling hash
-    private long[] positionMultipliers;
+    private static long[] positionMultipliers;
     private static final long HASH_BASE = 31L;
 
     private void initMultipliers(int len) {
@@ -140,4 +140,5 @@ public class AnchorPartition {
     public HashSet<CorrectedUMICluster> getCanonicalClusters() {
         return canonicalClusters;
     }
+
 }
