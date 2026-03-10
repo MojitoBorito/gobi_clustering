@@ -46,10 +46,11 @@ public class Main {
 
         System.out.println("umi clustering time: "+first);
         System.out.println("Dual clustering time: "+second);
-
-        writeOutput(options, improvedDualClustering);
-
         List<CorrectedUMICluster> umiClusters = improvedDualClustering.getClusters();
+
+
+        writeOutput(options, improvedDualClustering, umiClusters);
+
 
         // Part 2
         runWithUmis(umiClusters, Paths.get(options.getOutDir(), "finer_clusters.txt"));
@@ -74,7 +75,7 @@ public class Main {
         Universe.ClusterFactory<SeededCluster<UmiRead>> clusterFactory = id -> new SeededCluster<>(id, seedFactory);
         DistanceMetric<UmiRead> metric = new UmiReadHamming(5);
         ClusterLinkage<UmiRead, SeededCluster<UmiRead>> linkage = new SeededLinkage<>();
-        Encoder<UmiRead, UmiKey> encoder = new UmiPosKmerBitEncoder(50);
+        Encoder<UmiRead, UmiKey> encoder = new UmiPosKmerBitEncoder(30);
         double threshold = 0.03;
 
         GreedyClusters<UmiKey, UmiRead, SeededCluster<UmiRead>> algorithm =
@@ -85,10 +86,8 @@ public class Main {
     }
 
 
-    public static void writeOutput(CmdOptions options, ImprovedDualClustering improvedDualClustering) {
+    public static void writeOutput(CmdOptions options, ImprovedDualClustering improvedDualClustering, List<CorrectedUMICluster> clusters) {
         int n = 0;
-        List<CorrectedUMICluster> clusters = improvedDualClustering.getClusters();
-
         try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.getOutDir(), "clusters.txt"))) {
             writer.write("ID\tUMI\tseq\tcounts\n");
             for (CorrectedUMICluster cluster : clusters){
