@@ -17,7 +17,7 @@ public class AnchorPartition {
     int clusterID = idCounter++;
 
     // Precomputed per-position multipliers for rolling hash
-    private long[] positionMultipliers;
+    private static long[] positionMultipliers;
     private static final long HASH_BASE = 31L;
     private static int idCounter = 0;
 
@@ -149,4 +149,5 @@ public class AnchorPartition {
     public int getClusterID() {
         return clusterID;
     }
+
 }
