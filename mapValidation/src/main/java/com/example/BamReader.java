@@ -40,7 +40,6 @@ public class BamReader {
                         unmapped.add(rec.getReadName());
                         continue;
                     }
-                    System.out.println("not too strict");
 
                     Read first = mate.isFirstOfPair ? mate : processInterval(rec);
                     Read second =  !mate.isFirstOfPair ? mate : processInterval(rec);
