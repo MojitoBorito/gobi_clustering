@@ -23,6 +23,9 @@ public class BamReader {
         unmapped = new HashSet<>();
 
         readBam();
+
+        System.out.println("bam.pcrCluster: "+pcrCluster.size());
+        System.out.println("bam.unmapped: "+unmapped.size());
     }
 
     public void readBam(){
@@ -37,9 +40,12 @@ public class BamReader {
                         unmapped.add(rec.getReadName());
                         continue;
                     }
+                    System.out.println("not too strict");
+
                     Read first = mate.isFirstOfPair ? mate : processInterval(rec);
                     Read second =  !mate.isFirstOfPair ? mate : processInterval(rec);
                     ReadPair pair = new ReadPair(first, second);
+
                     pcrCluster.computeIfAbsent(pair, _ -> new HashSet<>()).add(rec.getReadName());
 
                     foundMate.remove(rec.getReadName());
