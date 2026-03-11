@@ -40,7 +40,6 @@ public class BamReader {
                         unmapped.add(rec.getReadName());
                         continue;
                     }
-                    System.out.println("not too strict");
 
                     Read first = mate.isFirstOfPair ? mate : processInterval(rec);
                     Read second =  !mate.isFirstOfPair ? mate : processInterval(rec);
@@ -57,7 +56,7 @@ public class BamReader {
                     if (rec.getReadUnmappedFlag() || rec.getMateUnmappedFlag()){
                         unmapped.add(rec.getReadName());
                     } else {
-                        foundMate.put(rec.getReadName(), mate);
+                        foundMate.put(rec.getReadName(), processInterval(rec));
                     }
                 }
             }

@@ -57,7 +57,7 @@ public class Runner {
         try (FastqIterator parser = new FastqIterator(path);
                 BufferedWriter writer = new BufferedWriter(new FileWriter(Path.of(out, "full_clusters.txt").toString()))) {
             algorithm.computeClustersLogged(parser, writer);
-            algorithm.writeClustersCompact(Path.of(out));
+            algorithm.writeClustersCompact(Path.of("/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering/clustering/files/cluster_out.txt"));
         } catch (Exception e) {
             System.out.println(e);
         }
