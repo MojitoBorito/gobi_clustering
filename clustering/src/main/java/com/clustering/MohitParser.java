@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class MohitParser implements Iterable<Element<UmiRead>>, Iterator<Element<UmiRead>>, Closeable {
+public class MohitParser implements Iterable<Element<String>>, Iterator<Element<String>>, Closeable {
 
     private final BufferedReader reader;
     private String nextLine;
@@ -53,7 +53,7 @@ public class MohitParser implements Iterable<Element<UmiRead>>, Iterator<Element
     }
 
     @Override
-    public Element<UmiRead> next() {
+    public Element<String> next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
@@ -62,19 +62,17 @@ public class MohitParser implements Iterable<Element<UmiRead>>, Iterator<Element
         advance();
 
         String[] fields = line.split("\t", -1);
-        if (fields.length != 3) {
-            throw new IllegalArgumentException("Expected 3 tab-separated columns, got " + fields.length + " in line: " + line);
-        }
 
-        String umi = fields[0];
-        String seq = fields[1];
+        String id = fields[0];
+        String umi = fields[1];
+        String seq = fields[2];
         UmiRead read = new UmiRead(umi, seq);
 
-        return new Element<>(String.valueOf(elementCount++), read);
+        return new Element<>(id, seq);
     }
 
     @Override
-    public Iterator<Element<UmiRead>> iterator() {
+    public Iterator<Element<String>> iterator() {
         if (iteratorTaken) {
             throw new IllegalStateException("This reader supports only one iterator");
         }
