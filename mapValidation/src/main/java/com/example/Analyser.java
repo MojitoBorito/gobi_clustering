@@ -129,4 +129,16 @@ public class Analyser {
         return true;
     }
 
+    public void writeBamClusterSizes(String outfile) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(outfile))) {
+            bw.write("bamClusterID\tbamClusterSize\n");
+            for (Map.Entry<Integer, Set<String>> entry : rp2Header.entrySet()) {
+                Integer bamClusterID = entry.getKey();
+                int size = entry.getValue().size();
+                bw.write(bamClusterID + "\t" + size + "\n");
+            }
+        } catch (Exception e) {
+            System.err.println("Error writing BAM cluster sizes: " + e.getMessage());
+        }
+    }
 }
