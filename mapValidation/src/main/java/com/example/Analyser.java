@@ -93,7 +93,8 @@ public class Analyser {
                 double bestJaccard = 0.0;
                 HashSet<Integer> processedBamIDs = new HashSet<>();
                 for (String header : predCluster) {
-                    int bamID = header2rp.get(header);
+                    Integer bamID = header2rp.getOrDefault(header, null);
+                    if (bamID == null) continue;
                     if (!processedBamIDs.add(bamID)) continue; // only process each BAM cluster once
                     Set<String> bamCluster = rp2Header.get(bamID);
                     Set<String> intersect = new HashSet<>(predCluster);
