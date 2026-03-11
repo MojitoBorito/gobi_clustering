@@ -12,6 +12,6 @@ public class Main {
         String out = parser.getValue("-out");
 
         Analyser analyser = new Analyser(pred, bam);
-        analyser.validate(out);
+        analyser.validateClusterLevel(out);
     }
 }

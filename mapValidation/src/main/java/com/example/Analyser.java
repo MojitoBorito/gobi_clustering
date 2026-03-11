@@ -82,6 +82,44 @@ public class Analyser {
         }
     }
 
+    public void validateClusterLevel(String out){
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(out))){
+            bw.write("clusterID\tpredSize\tbamID\tbamSize\tintersectCount\tfracPredInBam\tfracBamInPred\texactMatch\tjaccard\n");
+            for(Integer clusterID : cluster2Header.keySet()){
+                Set<String> predCluster = cluster2Header.get(clusterID);
+                int bestBamID = -1;
+                Set<String> bestBamCluster = Collections.emptySet();
+                int maxIntersect = 0;
+                double bestJaccard = 0.0;
+                HashSet<Integer> processedBamIDs = new HashSet<>();
+                for (String header : predCluster) {
+                    int bamID = header2rp.get(header);
+                    if (!processedBamIDs.add(bamID)) continue; // only process each BAM cluster once
+                    Set<String> bamCluster = rp2Header.get(bamID);
+                    Set<String> intersect = new HashSet<>(predCluster);
+                    intersect.retainAll(bamCluster);
+                    int intersectCount = intersect.size();
+                    double jaccard = intersectCount * 1.0 / (predCluster.size() + bamCluster.size() - intersectCount);
+                    if (intersectCount > maxIntersect || jaccard > bestJaccard) {
+                        bestBamID = bamID;
+                        bestBamCluster = bamCluster;
+                        maxIntersect = intersectCount;
+                        bestJaccard = jaccard;
+                    }
+                }
+                double fracPredInBam = maxIntersect * 1.0 / predCluster.size();
+                double fracBamInPred = bestBamCluster.isEmpty() ? 0 : maxIntersect * 1.0 / bestBamCluster.size();
+                boolean exactMatch = maxIntersect == predCluster.size() && predCluster.size() == bestBamCluster.size();
+                bw.write(clusterID + "\t" + predCluster.size() + "\t" + bestBamID + "\t" +
+                        bestBamCluster.size() + "\t" +
+                        maxIntersect + "\t" +
+                        fracPredInBam + "\t" + fracBamInPred + "\t" + exactMatch + "\t" + bestJaccard + "\n");
+            }
+        }catch (Exception e){
+            System.err.println("Error writing cluster file");
+        }
+    }
+
     public boolean intersect(Set<String> set1, Set<String> set2){
         for(String header : set1){
             if(!set2.contains(header)){
