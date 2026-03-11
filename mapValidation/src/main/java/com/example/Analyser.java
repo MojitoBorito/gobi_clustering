@@ -22,6 +22,11 @@ public class Analyser {
 
         buildClusterMaps(clusterFile);
         buildRpMaps(BAMFile);
+
+        System.out.println("cluster2Header: " + cluster2Header.size());
+        System.out.println("rp2Header: " + rp2Header.size());
+        System.out.println("header2cluster: " + header2cluster.size());
+        System.out.println("header2rp: " + header2rp.size());
     }
 
     public void buildClusterMaps(String clusterFile){
