@@ -50,6 +50,7 @@ public class Analyser {
     public void buildRpMaps(String BAMFile){
         BamReader bam = new BamReader(BAMFile);
         int i = 0;
+        System.out.println("bam.pcrCluster: "+bam.pcrCluster.size());
         for (Map.Entry<ReadPair, Set<String>> entry : bam.pcrCluster.entrySet()) {
             rp2Header.put(i, entry.getValue());
             for (String header : entry.getValue()) {
