@@ -117,6 +117,7 @@ public class Analyser {
             }
         }catch (Exception e){
             System.err.println("Error writing cluster file");
+            e.printStackTrace();
         }
     }
 
