@@ -16,7 +16,9 @@ public class UmiAwareBuckets<C extends Cluster<?>> implements SmartBuckets<UmiKe
 
     @Override
     public Set<C> getClusters(UmiKey key) {
-        return umiToBuckets.get(key.umi()).getClusters(key.kmers());
+        PosKmerBuckets<C> buckets = umiToBuckets.getOrDefault(key.umi(), null);
+        if (buckets == null) return null;
+        return buckets.getClusters(key.kmers());
     }
 
     @Override

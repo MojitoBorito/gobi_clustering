@@ -57,7 +57,7 @@ public class BamReader {
                     if (rec.getReadUnmappedFlag() || rec.getMateUnmappedFlag()){
                         unmapped.add(rec.getReadName());
                     } else {
-                        foundMate.put(rec.getReadName(), mate);
+                        foundMate.put(rec.getReadName(), processInterval(rec));
                     }
                 }
             }

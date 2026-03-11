@@ -44,7 +44,7 @@ public class GreedyClusters<K, V, C extends Cluster<V>> extends ClusteringAlgori
             K key = encoder.encode(value);
 
             Set<C> candidates = universe.getClusterCandidates(key);
-            candidate_sum += candidates.size();
+            candidate_sum += candidates == null ? 0 : candidates.size();
 
             C bestCluster = extractBestClusterCandidate(value, candidates, threshold);
             String id = elem.getId();
@@ -102,6 +102,9 @@ public class GreedyClusters<K, V, C extends Cluster<V>> extends ClusteringAlgori
         C bestCluster = null;
 
         double minDist = Double.POSITIVE_INFINITY;
+
+        if (candidates == null) return null;
+
         for (C cluster : candidates) {
             if (cluster.isEmpty()) continue;
             double currentDist = universe.distanceToCluster(value, cluster);
