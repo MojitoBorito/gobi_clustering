@@ -1,13 +1,12 @@
 package com.clustering;
 
-
+import com.bucket.BucketStats;
 import com.bucket.SmartBuckets;
 import com.model.*;
 import com.linkage.ClusterLinkage;
 import com.metrics.DistanceMetric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Iterator;
 import java.util.Set;
 
@@ -32,13 +31,12 @@ public class GreedyClusters<K, V, C extends Cluster<V>> extends ClusteringAlgori
         this.encoder = valueToKeyEncoder;
     }
 
-
-    public void computeClusters(Iterator<? extends Element<V>> elements) {
+    public void computeClustersLogged(Iterator<? extends Element<V>> elements, java.io.BufferedWriter output) {
         Element<V> elem;
         int count = 0;
         int candidate_sum = 0;
         log.info("Starting clustering");
-        stats.info("{},{},{},{},{},{},{}", "reads", "avg_candidates", "total_clusters", "total_buckets", "avg_bucket_size", "max_bucket_size", "worstKmer");
+        stats.info("{},{},{},{},{},{},{}", "reads", "avg_candidates","total_clusters", "total_buckets", "avg_bucket_size", "max_bucket_size", "worstKmer");
 
         while (elements.hasNext()) {
             elem = elements.next();
@@ -46,35 +44,75 @@ public class GreedyClusters<K, V, C extends Cluster<V>> extends ClusteringAlgori
             K key = encoder.encode(value);
 
             Set<C> candidates = universe.getClusterCandidates(key);
-
-            // Logging
             candidate_sum += candidates.size();
 
-            C bestCluster = null;
+            C bestCluster = extractBestClusterCandidate(value, candidates, threshold);
             String id = elem.getId();
 
-            double minDist = Double.POSITIVE_INFINITY;
-            for (C cluster : candidates) {
-                if (cluster.isEmpty()) continue;
-                double currentDist = universe.distanceToCluster(value, cluster);
-                if (currentDist < minDist) {
-                    minDist = currentDist;
-                    bestCluster = cluster;
-                }
+            if (bestCluster == null) {
+                bestCluster = universe.createCluster(key);
             }
-            if (bestCluster == null || minDist >= threshold) {
-                universe.createCluster(key).addElement(id, value);
-            } else {
-                bestCluster.addElement(id, value);
+            bestCluster.addElement(id, value);
+
+            // write to output
+            try {
+                output.write(bestCluster.getId() + "\t" + id + "\t" + value);
+                output.newLine();
+            } catch (java.io.IOException e) {
+                log.error("Failed to write output for read {}", id, e);
             }
+
             count++;
             if (count % 10_000 == 0) {
                 log.info("Reads processed: {}", count);
-                SmartBuckets.BucketStats bucketStats = universe.getBucketStats();
+                try {
+                    output.flush(); // flush periodically so file isn't empty if killed
+                } catch (java.io.IOException e) {
+                    log.error("Failed to flush output", e);
+                }
+                BucketStats<?> bucketStats = universe.getBucketStats();
                 int clusterNum = universe.getClusterCount();
-                stats.info("{},{},{},{},{},{},{}", count, candidate_sum/10_000, clusterNum, bucketStats.totalBuckets(), Math.floor(bucketStats.avgBucketSize()), bucketStats.maxBucketSize(), bucketStats.worstKmer());
+                stats.info("{},{},{},{},{},{},{}", count, candidate_sum/10_000, clusterNum, bucketStats.totalBuckets(), Math.floor(bucketStats.avgBucketSize()), bucketStats.maxBucketSize(), bucketStats.worstKey());
                 candidate_sum = 0;
             }
         }
+    }
+
+    @Override
+    public void computeClusters(Iterator<? extends Element<V>> elements) {
+        Element<V> elem;
+
+        while (elements.hasNext()) {
+            elem = elements.next();
+            V value = elem.getValue();
+            K key = encoder.encode(value);
+
+            Set<C> candidates = universe.getClusterCandidates(key);
+            C bestCluster = extractBestClusterCandidate(value, candidates, threshold);
+            String id = elem.getId();
+
+            if (bestCluster == null) {
+                bestCluster = universe.createCluster(key);
+            }
+            bestCluster.addElement(id, value);
+        }
+    }
+
+    public C extractBestClusterCandidate(V value, Set<C> candidates, double threshold) {
+        C bestCluster = null;
+
+        double minDist = Double.POSITIVE_INFINITY;
+        for (C cluster : candidates) {
+            if (cluster.isEmpty()) continue;
+            double currentDist = universe.distanceToCluster(value, cluster);
+            if (currentDist < minDist) {
+                minDist = currentDist;
+                bestCluster = cluster;
+            }
+        }
+        if (minDist >= threshold) {
+            return null;
+        }
+        return bestCluster;
     }
 }

@@ -24,42 +24,10 @@ public class CliParser {
                         .get());
 
         options.addOption(
-                Option.builder("outCluster")
+                Option.builder("outDir")
                         .hasArg()
                         .argName("file")
                         .desc("Output cluster file")
-                        .required()
-                        .get());
-
-        options.addOption(
-                Option.builder("outUmi")
-                        .hasArg()
-                        .argName("file")
-                        .desc("Corrected Umi Counts")
-                        .required()
-                        .get());
-
-        options.addOption(
-                Option.builder("outAnchor")
-                        .hasArg()
-                        .argName("file")
-                        .desc("Umi per Anchor counts")
-                        .required()
-                        .get());
-
-        options.addOption(
-                Option.builder("outPos")
-                        .hasArg()
-                        .argName("file")
-                        .desc("Number of times a position was Mutated")
-                        .required()
-                        .get());
-
-        options.addOption(
-                Option.builder("outMut")
-                        .hasArg()
-                        .argName("file")
-                        .desc("Number of times a Base Mutation happened")
                         .required()
                         .get());
 
@@ -69,12 +37,8 @@ public class CliParser {
 
         String umi = cmd.getOptionValue("umi");
         String reads = cmd.getOptionValue("reads");
-        String outCluster = cmd.getOptionValue("outCluster");
-        String outUmi = cmd.getOptionValue("outUmi");
-        String outAnchor = cmd.getOptionValue("outAnchor");
-        String outPos = cmd.getOptionValue("outPos");
-        String outMut = cmd.getOptionValue("outMut");
+        String outDir = cmd.getOptionValue("outDir");
 
-        return new CmdOptions(umi, reads, outCluster, outUmi, outAnchor, outPos, outMut);
+        return new CmdOptions(umi, reads, outDir);
     }
 }

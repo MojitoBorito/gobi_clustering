@@ -1,6 +1,7 @@
 package com.clustering;
 
 import com.model.Element;
+import com.model.UmiRead;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -11,30 +12,13 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class MohitParser implements Iterable<MohitParser.Record>, Iterator<MohitParser.Record>, Closeable {
-
-    public static class Record extends Element<String> {
-        private final String umi;
-        private final String seq;
-        private final int counts;
-
-        public Record(String umi, String seq, int counts) {
-            super(umi, seq);
-            this.umi = umi;
-            this.seq = seq;
-            this.counts = counts;
-        }
-
-        @Override
-        public String toString() {
-            return "Record{umi='" + umi + "', seq='" + seq + "', counts=" + counts + "}";
-        }
-    }
+public class MohitParser implements Iterable<Element<UmiRead>>, Iterator<Element<UmiRead>>, Closeable {
 
     private final BufferedReader reader;
     private String nextLine;
     private boolean finished = false;
     private boolean iteratorTaken = false;
+    private int elementCount = 0;
 
     public MohitParser(Path path) throws IOException {
         this.reader = Files.newBufferedReader(path);
@@ -49,6 +33,7 @@ public class MohitParser implements Iterable<MohitParser.Record>, Iterator<Mohit
 
         advance();
     }
+
 
     private void advance() {
         try {
@@ -68,7 +53,7 @@ public class MohitParser implements Iterable<MohitParser.Record>, Iterator<Mohit
     }
 
     @Override
-    public Record next() {
+    public Element<UmiRead> next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
@@ -83,13 +68,13 @@ public class MohitParser implements Iterable<MohitParser.Record>, Iterator<Mohit
 
         String umi = fields[0];
         String seq = fields[1];
-        int counts = Integer.parseInt(fields[2]);
+        UmiRead read = new UmiRead(umi, seq);
 
-        return new Record(umi, seq, counts);
+        return new Element<>(String.valueOf(elementCount++), read);
     }
 
     @Override
-    public Iterator<Record> iterator() {
+    public Iterator<Element<UmiRead>> iterator() {
         if (iteratorTaken) {
             throw new IllegalStateException("This reader supports only one iterator");
         }

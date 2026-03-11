@@ -8,15 +8,18 @@ import java.util.HashSet;
 import java.util.List;
 
 public class AnchorPartition {
+
     HashMap<Long, CorrectedUMICluster> umiMap = new HashMap<>();
     private static final char[] bases = {'A', 'C', 'G', 'T'};
     HashSet<CorrectedUMICluster> canonicalClusters = new HashSet<>();
     int count = 0;
     static final int PHRED_THRESHOLD = 20;
+    int clusterID = idCounter++;
 
     // Precomputed per-position multipliers for rolling hash
-    private long[] positionMultipliers;
+    private static long[] positionMultipliers;
     private static final long HASH_BASE = 31L;
+    private static int idCounter = 0;
 
     private void initMultipliers(int len) {
         if (positionMultipliers != null) return;
@@ -35,7 +38,7 @@ public class AnchorPartition {
         return h;
     }
 
-    void addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
+    int addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
         char[] umiChars = umiSeq.toCharArray();
         initMultipliers(umiChars.length);
 
@@ -46,7 +49,7 @@ public class AnchorPartition {
         CorrectedUMICluster exact = umiMap.get(baseHash);
         if (exact != null) {
             exact.absorb(umiSeq, umiPhred, readSeq, readPhred, umiWeight);
-            return;
+            return exact.getClusterID();
         }
 
         // Collect low quality positions
@@ -121,12 +124,14 @@ public class AnchorPartition {
                 Statistics.incrementUmiPos(bestPositions[i]);
                 Statistics.addMutation((byte) umiChars[bestPositions[i]], bestNeighbor.umiConsensus[bestPositions[i]]);
             }
+            return bestNeighbor.getClusterID();
         } else {
             CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred, umiWeight);
             umiMap.put(baseHash, newCluster);
             canonicalClusters.add(newCluster);
+            Statistics.incrementLargestAnchorCluster(canonicalClusters.size(), readSeq);
+            return newCluster.getClusterID();
         }
-        Statistics.incrementLargestAnchorCluster(canonicalClusters.size(), readSeq);
     }
 
     public HashMap<Long, CorrectedUMICluster> getUmiMap() {
@@ -140,4 +145,9 @@ public class AnchorPartition {
     public HashSet<CorrectedUMICluster> getCanonicalClusters() {
         return canonicalClusters;
     }
+
+    public int getClusterID() {
+        return clusterID;
+    }
+
 }
