@@ -1,18 +1,21 @@
 package com.example;
 
+import com.bucket.PosKmerBuckets;
 import com.bucket.UmiAwareBuckets;
 import com.bucket.UmiKey;
 import com.cli.CliParser;
 import com.cli.CmdOptions;
+import com.clustering.ClusteringAlgorithm;
 import com.clustering.GreedyClusters;
+import com.encoding.PosKmerBitEncoder;
 import com.encoding.UmiPosKmerBitEncoder;
 import com.filter.*;
 import com.linkage.ClusterLinkage;
 import com.linkage.SeededLinkage;
 import com.metrics.DistanceMetric;
+import com.metrics.Hamming;
 import com.metrics.UmiReadHamming;
 import com.model.*;
-import com.pipeline.ValueMappingIterator;
 import com.seeds.AnchorSeed;
 import org.apache.commons.cli.ParseException;
 
@@ -24,22 +27,56 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class Main {
-    static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException {
         CmdOptions options = CliParser.parse(args);
 
         Statistics.umiEdits = new int[12];
         Statistics.AnchorEdits = new int[150];
 
+        // Try to create output directory if it does not exist
+        try {
+            Files.createDirectories(Paths.get(options.outDir()));
+        } catch (IOException e) {
+            throw new RuntimeException("Could not create output directory", e);
+        }
+
+        // If no umi path is provided, perform clustering without them
+        if (options.umi() == null) {
+            long start = System.currentTimeMillis();
+            try {
+                FastqIterator reads = new FastqIterator(options.reads());
+                ClusteringAlgorithm<long[], String, SeededCluster<String>> algorithm =
+                        initSimpleClusteringAlgorithm(
+                                options.readLength(),
+                                options.kmerSize(),
+                                options.threshold()
+                        );
+                algorithm.computeClusters(reads);
+                algorithm.writeClustersCompact(Paths.get(options.outDir(), "simple_clusters.txt"));
+
+                long end = System.currentTimeMillis();
+                System.out.println("Simple clustering time: " + (end - start) + " ms");
+                System.out.println("Simple clustering time: " + ((end - start) / 1000.0) + " s");
+                return;
+            } catch (Exception e) {
+                throw new RuntimeException("Error during simple clustering", e);
+            } finally {
+                long end = System.currentTimeMillis();
+                System.out.println("Total runtime: " + (end - start) / 1000.0 + " s");
+                System.out.println("Total runtime: " + ((end - start) / (1000.0*60)) + "min");
+            }
+        }
+
         long starTime = System.currentTimeMillis();
 
-        UMI umiGroup = new UMI(options.getUmi());
+        UMI umiGroup = new UMI(options.umi());
 
         long endTime = System.currentTimeMillis();
         long first = endTime - starTime;
 
         starTime = System.currentTimeMillis();
 
-        ImprovedDualClustering improvedDualClustering = new ImprovedDualClustering(umiGroup, options.getReads());
+        ImprovedDualClustering improvedDualClustering = new ImprovedDualClustering(umiGroup, options.reads());
 
         endTime = System.currentTimeMillis();
         long second = endTime - starTime;
@@ -51,12 +88,13 @@ public class Main {
 
         writeOutput(options, improvedDualClustering, umiClusters);
 
-
         // Part 2
-        runWithUmis(umiClusters, Paths.get(options.getOutDir(), "finer_clusters.txt"));
+        if (options.secondCycle()) {
+            runWithUmis(umiClusters, Paths.get(options.outDir(), "finer_clusters.txt"), options.readLength(), options.kmerSize(), options.threshold());
+        }
     }
 
-    public static void runWithUmis(List<CorrectedUMICluster> umiClusters, Path output) {
+    private static void runWithUmis(List<CorrectedUMICluster> umiClusters, Path output, int readLength, int kmerSize, double threshold) {
         Iterator<Element<UmiRead>> iteratorMap = new Iterator<>() {
             final Iterator<CorrectedUMICluster> inner = umiClusters.iterator();
 
@@ -70,25 +108,46 @@ public class Main {
             }
         };
 
-        UmiAwareBuckets<SeededCluster<UmiRead>> buckets = new UmiAwareBuckets<>(5);
-        SeededCluster.SeedFactory<UmiRead> seedFactory = AnchorSeed::new;
-        Universe.ClusterFactory<SeededCluster<UmiRead>> clusterFactory = id -> new SeededCluster<>(id, seedFactory);
-        DistanceMetric<UmiRead> metric = new UmiReadHamming(5);
-        ClusterLinkage<UmiRead, SeededCluster<UmiRead>> linkage = new SeededLinkage<>();
-        Encoder<UmiRead, UmiKey> encoder = new UmiPosKmerBitEncoder(30);
-        double threshold = 0.03;
-
-        GreedyClusters<UmiKey, UmiRead, SeededCluster<UmiRead>> algorithm =
-                new GreedyClusters<>(buckets, clusterFactory, metric, linkage, encoder, threshold);
-
+        ClusteringAlgorithm<UmiKey, UmiRead, SeededCluster<UmiRead>> algorithm = initUmiAwareAlgorithm(readLength, kmerSize, threshold);
         algorithm.computeClusters(iteratorMap);
         algorithm.writeClustersCompact(output);
     }
 
 
+    private static ClusteringAlgorithm<UmiKey, UmiRead, SeededCluster<UmiRead>> initUmiAwareAlgorithm(int readLength, int kmerSize, double distanceThreshold) {
+        checkValid(kmerSize, readLength);
+        UmiAwareBuckets<SeededCluster<UmiRead>> buckets = new UmiAwareBuckets<>(readLength/kmerSize);
+        SeededCluster.SeedFactory<UmiRead> seedFactory = AnchorSeed::new;
+        Universe.ClusterFactory<SeededCluster<UmiRead>> clusterFactory = id -> new SeededCluster<>(id, seedFactory);
+        DistanceMetric<UmiRead> metric = new UmiReadHamming((int) (readLength*distanceThreshold) + 1);
+        ClusterLinkage<UmiRead, SeededCluster<UmiRead>> linkage = new SeededLinkage<>();
+        Encoder<UmiRead, UmiKey> encoder = new UmiPosKmerBitEncoder(kmerSize);
+        return new GreedyClusters<>(buckets, clusterFactory, metric, linkage, encoder, distanceThreshold);
+    }
+
+    private static ClusteringAlgorithm<long[], String, SeededCluster<String>> initSimpleClusteringAlgorithm(int readLength, int kmerSize, double distanceThreshold) {
+        checkValid(kmerSize, readLength);
+        PosKmerBuckets<SeededCluster<String>> buckets = new PosKmerBuckets<>(readLength/kmerSize);
+        SeededCluster.SeedFactory<String> seedFactory = AnchorSeed::new;
+        Universe.ClusterFactory<SeededCluster<String>> clusterFactory = id -> new SeededCluster<>(id, seedFactory);
+        DistanceMetric<String> metric = new Hamming((int) (readLength*distanceThreshold) + 1);
+        ClusterLinkage<String, SeededCluster<String>> linkage = new SeededLinkage<>();
+        Encoder<String, long[]> encoder = new PosKmerBitEncoder(kmerSize);
+
+        return new GreedyClusters<>(buckets, clusterFactory, metric, linkage, encoder, distanceThreshold);
+    }
+
+    private static void checkValid(int kmerSize, int readLength) {
+        if (kmerSize <= 0) throw new IllegalArgumentException("kmerSize must be > 0");
+        if (readLength <= 0) throw new IllegalArgumentException("readLength must be > 0");
+        if (kmerSize > readLength) throw new IllegalArgumentException("kmerSize cannot be larger than readLength");
+    }
+
+
+
     public static void writeOutput(CmdOptions options, ImprovedDualClustering improvedDualClustering, List<CorrectedUMICluster> clusters) {
         int n = 0;
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.getOutDir(), "clusters.txt"))) {
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.outDir(), "clusters.txt"))) {
             writer.write("ID\tUMI\tseq\tcounts\n");
             for (CorrectedUMICluster cluster : clusters){
                 writer.write(cluster.getClusterID()+"\t"+cluster.getUmi()+"\t"+cluster.getRead()+"\t"+cluster.getCount()+"\n");
@@ -99,7 +158,7 @@ public class Main {
             throw new RuntimeException("Error at writing Cluster Out");
         }
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.getOutDir(), "umi_counts.txt"))){
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.outDir(), "umi_counts.txt"))){
             HashMap<String, Integer> correctedUmis = improvedDualClustering.getCorrectedUmis();
             writer.write("corrected_UMI\tcounts\n");
             for (Map.Entry<String, Integer> entry : correctedUmis.entrySet()){
@@ -109,7 +168,7 @@ public class Main {
             throw new RuntimeException("Error at writing Umi Out");
         }
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.getOutDir(), "anchor_counts.txt"))){
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.outDir(), "anchor_counts.txt"))){
             HashMap<String, AnchorPartition> anchorMap = improvedDualClustering.getPartitions();
             writer.write("ID\tanchor_seq\tNum_Reads\tnumClusters\n");
             for (Map.Entry<String, AnchorPartition> entry : anchorMap.entrySet()){
@@ -122,7 +181,7 @@ public class Main {
             throw new RuntimeException("Error at writing Anchor Out");
         }
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.getOutDir(), "pos_mutations.txt"))){
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.outDir(), "pos_mutations.txt"))){
             writer.write("Position\tNum_Corrected\n");
             for (int i = 0; i < Statistics.umiEdits.length; i++) {
                 writer.write(i+"\t"+Statistics.umiEdits[i]+"\n");
@@ -131,7 +190,7 @@ public class Main {
             throw new RuntimeException("Error at writing Position Out");
         }
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.getOutDir(), "base_mutations.txt"))){
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.outDir(), "base_mutations.txt"))){
             writer.write("from\tto\tcount\n");
             for (Map.Entry<String, Integer> mutation : Statistics.mutations.entrySet()){
                 writer.write(mutation.getKey().charAt(0)+"\t"+
@@ -142,7 +201,7 @@ public class Main {
             throw new RuntimeException("Error at writing Mutation Out");
         }
 
-        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.getOutDir(), "clusterHeaders.txt"))){
+        try(BufferedWriter writer = Files.newBufferedWriter(Paths.get(options.outDir(), "clusterHeaders.txt"))){
             writer.write("ID\theaders\n");
             for (Map.Entry<Integer, Set<String>> clusterEntry : improvedDualClustering.getClusterIDtoHeader().entrySet()){
                 String result = String.join("|", clusterEntry.getValue());

@@ -1,27 +1,11 @@
 package com.cli;
 
-public class CmdOptions {
+public record CmdOptions(String umi,
+                         String reads,
+                         String outDir,
+                         boolean secondCycle,
+                         Integer kmerSize,
+                         Double threshold,
+                         Integer readLength) {
 
-    private final String umi;
-    private final String reads;
-    private final String outDir;
-
-
-    public CmdOptions(String umi, String reads, String outDir) {
-        this.umi = umi;
-        this.reads = reads;
-        this.outDir = outDir;
-    }
-
-    public String getUmi() {
-        return umi;
-    }
-
-    public String getReads() {
-        return reads;
-    }
-
-    public String getOutDir() {
-        return outDir;
-    }
 }
