@@ -11,8 +11,8 @@ public class CliParser {
                 Option.builder("umi")
                         .hasArg()
                         .argName("file")
-                        .desc("Path to UMI file (optional)")
-                        .build());
+                        .desc("Path to UMI file (required for UMI-based clustering)")
+                        .get());
 
         options.addOption(
                 Option.builder("reads")
@@ -20,7 +20,7 @@ public class CliParser {
                         .argName("file")
                         .desc("Path to reads file")
                         .required()
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("outDir")
@@ -28,28 +28,28 @@ public class CliParser {
                         .argName("dir")
                         .desc("Output directory")
                         .required()
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("kmer_size")
                         .hasArg()
                         .argName("int")
                         .desc("K-mer size (required for secondary clustering)")
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("threshold")
                         .hasArg()
                         .argName("double")
                         .desc("Threshold (required for secondary clustering)")
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("read_length")
                         .hasArg()
                         .argName("int")
                         .desc("Read length (required for secondary clustering)")
-                        .build());
+                        .get());
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
