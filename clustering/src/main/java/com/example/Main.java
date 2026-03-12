@@ -45,7 +45,7 @@ public class Main {
         long second = endTime - starTime;
 
         System.out.println("umi clustering time: "+first);
-        System.out.println("Dual clustering time: "+second);
+        System.out.println("Dual clustering time: "+second+"\n");
         List<CorrectedUMICluster> umiClusters = improvedDualClustering.getClusters();
 
 
