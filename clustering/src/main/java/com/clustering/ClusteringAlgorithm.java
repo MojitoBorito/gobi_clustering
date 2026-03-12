@@ -50,7 +50,7 @@ public abstract class ClusteringAlgorithm<K, V, C extends Cluster<V>> {
         }
     }
 
-    public void writeClustersWithSeqs(Path path) {
-
+    public Set<C> getAllClusters() {
+        return universe.getAllClusters();
     }
 }
