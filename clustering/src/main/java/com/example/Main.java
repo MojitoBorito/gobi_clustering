@@ -35,7 +35,7 @@ public class Main {
         Statistics.AnchorEdits = new int[150];
 
         // If no umi path is provided, perform clustering without them
-        if (options.umi() == null) {
+        if (options.runSecondaryClustering() && !options.runPrimaryClustering()) {
             long start = System.currentTimeMillis();
             try {
                 FastqIterator reads = new FastqIterator(options.reads());
@@ -61,6 +61,7 @@ public class Main {
             }
         }
 
+        // PRIMARY CLUSTERING
         long starTime = System.currentTimeMillis();
 
         UMI umiGroup = new UMI(options.umi());
@@ -82,8 +83,8 @@ public class Main {
 
         writeOutput(options, improvedDualClustering, umiClusters);
 
-        // Part 2
-        if (options.secondCycle()) {
+        // SECONDARY CLUSTERING
+        if (options.runSecondaryClustering()) {
             System.out.println("Starting finer clustering...");
             long start = System.currentTimeMillis();
             ClusteringAlgorithm<UmiKey, UmiRead, SeededCluster<UmiRead>> algorithm = runWithUmis(umiClusters, options.readLength(), options.kmerSize(), options.threshold());
