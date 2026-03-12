@@ -11,7 +11,7 @@ public class CliParser {
                 Option.builder("umi")
                         .hasArg()
                         .argName("file")
-                        .desc("Path to UMI file (optional)")
+                        .desc("Path to UMI file (required for UMI-based clustering)")
                         .get());
 
         options.addOption(
