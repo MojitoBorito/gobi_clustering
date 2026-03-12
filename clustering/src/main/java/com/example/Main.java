@@ -67,6 +67,8 @@ public class Main {
         long endTime = System.currentTimeMillis();
         long first = endTime - starTime;
 
+        System.out.println("umi clustering time: "+first);
+
         starTime = System.currentTimeMillis();
 
         ImprovedDualClustering improvedDualClustering = new ImprovedDualClustering(umiGroup, options.reads());
@@ -74,12 +76,12 @@ public class Main {
         endTime = System.currentTimeMillis();
         long second = endTime - starTime;
 
-        System.out.println("umi clustering time: "+first);
         System.out.println("Dual clustering time: "+second+"\n");
         List<CorrectedUMICluster> umiClusters = improvedDualClustering.getClusters();
 
-
         writeOutput(options, improvedDualClustering, umiClusters);
+
+        System.gc();
 
         // Part 2
         if (options.secondCycle()) {
