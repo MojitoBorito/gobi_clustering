@@ -21,7 +21,6 @@ import java.io.FileWriter;
 
 public class Runner {
     public static void main(String[] args) {
-        System.out.println("STARTING");
         // UmiAwareBuckets<SeededCluster<UmiRead>> buckets = new UmiAwareBuckets<>(5);
         // SeededCluster.SeedFactory<UmiRead> seedFactory = AnchorSeed::new;
         // Universe.ClusterFactory<SeededCluster<UmiRead>> clusterFactory = id -> new SeededCluster<>(id, seedFactory);
