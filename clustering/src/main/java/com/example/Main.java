@@ -34,6 +34,10 @@ public class Main {
         Statistics.umiEdits = new int[12];
         Statistics.AnchorEdits = new int[150];
 
+        System.out.println("Starting clustering...");
+        System.out.println("Perform umi clustering: " + options.runPrimaryClustering());
+        System.out.println("Perform secondary cycle: " + options.runSecondaryClustering());
+
         // If no umi path is provided, perform clustering without them
         if (options.runSecondaryClustering() && !options.runPrimaryClustering()) {
             long start = System.currentTimeMillis();
