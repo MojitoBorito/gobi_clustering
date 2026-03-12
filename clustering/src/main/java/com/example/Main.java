@@ -33,13 +33,6 @@ public class Main {
         Statistics.umiEdits = new int[12];
         Statistics.AnchorEdits = new int[150];
 
-        // Try to create output directory if it does not exist
-        try {
-            Files.createDirectories(Paths.get(options.outDir()));
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create output directory", e);
-        }
-
         // If no umi path is provided, perform clustering without them
         if (options.umi() == null) {
             long start = System.currentTimeMillis();
