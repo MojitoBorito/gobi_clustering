@@ -20,6 +20,7 @@ import com.seeds.AnchorSeed;
 import org.apache.commons.cli.ParseException;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,8 +34,12 @@ public class Main {
         Statistics.umiEdits = new int[12];
         Statistics.AnchorEdits = new int[150];
 
+        System.out.println("Starting clustering...");
+        System.out.println("Perform umi clustering: " + options.runPrimaryClustering());
+        System.out.println("Perform secondary cycle: " + options.runSecondaryClustering());
+
         // If no umi path is provided, perform clustering without them
-        if (options.umi() == null) {
+        if (options.runSecondaryClustering() && !options.runPrimaryClustering()) {
             long start = System.currentTimeMillis();
             try {
                 FastqIterator reads = new FastqIterator(options.reads());
@@ -56,10 +61,11 @@ public class Main {
             } finally {
                 long end = System.currentTimeMillis();
                 System.out.println("Total runtime: " + (end - start) / 1000.0 + " s");
-                System.out.println("Total runtime: " + ((end - start) / (1000.0*60)) + "min");
+                System.out.println("Total runtime: " + ((end - start) / (1000.0*60)) + " min");
             }
         }
 
+        // PRIMARY CLUSTERING
         long starTime = System.currentTimeMillis();
 
         UMI umiGroup = new UMI(options.umi());
@@ -83,13 +89,43 @@ public class Main {
 
         System.gc();
 
-        // Part 2
-        if (options.secondCycle()) {
-            runWithUmis(umiClusters, Paths.get(options.outDir(), "finer_clusters.txt"), options.readLength(), options.kmerSize(), options.threshold());
+        // SECONDARY CLUSTERING
+        if (options.runSecondaryClustering()) {
+            System.out.println("Starting finer clustering...");
+            long start = System.currentTimeMillis();
+            ClusteringAlgorithm<UmiKey, UmiRead, SeededCluster<UmiRead>> algorithm = runWithUmis(umiClusters, options.readLength(), options.kmerSize(), options.threshold());
+            long finerClusteringEnd = System.currentTimeMillis();
+            System.out.println("Finer clustering generation time: " + ((finerClusteringEnd - start) / (1000.0*60)) + " min");
+            System.out.println("Writing finer cluster output...");
+            long outputStart = System.currentTimeMillis();
+            Set<SeededCluster<UmiRead>> computedClusters = algorithm.getAllClusters();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(Path.of(options.outDir(), "finer_clusters.txt").toString()))) {
+                writer.write("cluster_id");
+                writer.write('\t');
+                writer.write("read_id");
+                writer.write('\n');
+                HashMap<Integer, Set<String>> subClusterIDToHeader= improvedDualClustering.getClusterIDtoHeader();
+                for (SeededCluster<UmiRead> cluster : computedClusters) {
+                    for (String subClusterId : cluster.getElementIds()) {
+                        for (String readId : subClusterIDToHeader.get(Integer.parseInt(subClusterId))) {
+                            writer.write(cluster.getId());
+                            writer.write('\t');
+                            writer.write(readId);
+                            writer.write('\n');
+                        }
+                    }
+                }
+                long outputEnd = System.currentTimeMillis();
+                System.out.println("Finer cluster write time: " + ((outputEnd-outputStart) / (1000.0)) + " ms");
+            } catch (Exception e) {
+                throw new RuntimeException("Error writing finer clusters", e);
+            }
+            long end = System.currentTimeMillis();
+            System.out.println("Total finer clustering time: " + ((end - start) / (1000.0*60)) + " min");
         }
     }
 
-    private static void runWithUmis(List<CorrectedUMICluster> umiClusters, Path output, int readLength, int kmerSize, double threshold) {
+    private static ClusteringAlgorithm<UmiKey, UmiRead, SeededCluster<UmiRead>> runWithUmis(List<CorrectedUMICluster> umiClusters, int readLength, int kmerSize, double threshold) {
         Iterator<Element<UmiRead>> iteratorMap = new Iterator<>() {
             final Iterator<CorrectedUMICluster> inner = umiClusters.iterator();
 
@@ -105,7 +141,7 @@ public class Main {
 
         ClusteringAlgorithm<UmiKey, UmiRead, SeededCluster<UmiRead>> algorithm = initUmiAwareAlgorithm(readLength, kmerSize, threshold);
         algorithm.computeClusters(iteratorMap);
-        algorithm.writeClustersCompact(output);
+        return algorithm;
     }
 
 
