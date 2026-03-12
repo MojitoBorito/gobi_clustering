@@ -72,13 +72,13 @@ public class Main {
         UMI umiGroup = new UMI(options.umi());
         long endTime = System.currentTimeMillis();
         long first = endTime - starTime;
-        System.out.println("umi clustering time: "+first);
+        System.out.println("umi clustering time: "+ first / (1000.0) + " sec");
         // GENERATE CLUSTERS
         starTime = System.currentTimeMillis();
         ImprovedDualClustering improvedDualClustering = new ImprovedDualClustering(umiGroup, options.reads());
         endTime = System.currentTimeMillis();
         long second = endTime - starTime;
-        System.out.println("Dual clustering time: "+second+"\n");
+        System.out.println("Dual clustering time: "+ second / (1000.0 * 60) + " min" +"\n");
 
         // Needed for second clustering cycle
         HashMap<Integer, Set<String>> subClusterIDToHeader= improvedDualClustering.getClusterIDtoHeader();
@@ -144,7 +144,7 @@ public class Main {
             for (SeededCluster<UmiRead> cluster : computedClusters) {
                 for (String subClusterId : cluster.getElementIds()) {
                     for (String readId : subClusterIDToHeader.get(Integer.parseInt(subClusterId))) {
-                        writer.write(cluster.getId());
+                        writer.write(String.valueOf(cluster.getId()));
                         writer.write('\t');
                         writer.write(readId);
                         writer.write('\n');
