@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class MohitParser implements Iterable<Element<String>>, Iterator<Element<String>>, Closeable {
+public class MohitParser implements Iterable<Element<UmiRead>>, Iterator<Element<UmiRead>>, Closeable {
 
     private final BufferedReader reader;
     private String nextLine;
@@ -53,7 +53,7 @@ public class MohitParser implements Iterable<Element<String>>, Iterator<Element<
     }
 
     @Override
-    public Element<String> next() {
+    public Element<UmiRead> next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
@@ -68,11 +68,11 @@ public class MohitParser implements Iterable<Element<String>>, Iterator<Element<
         String seq = fields[2];
         UmiRead read = new UmiRead(umi, seq);
 
-        return new Element<>(id, seq);
+        return new Element<>(id, read);
     }
 
     @Override
-    public Iterator<Element<String>> iterator() {
+    public Iterator<Element<UmiRead>> iterator() {
         if (iteratorTaken) {
             throw new IllegalStateException("This reader supports only one iterator");
         }

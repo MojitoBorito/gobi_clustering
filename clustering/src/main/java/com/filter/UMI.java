@@ -50,8 +50,8 @@ public class UMI {
             System.out.println("Error opening file: " + fileName);
             throw new RuntimeException(e);
         }
-        System.out.println("finished reading fastq file");
         umis = null;
+        System.gc();
     }
 
     public void addUMI(String sequence, String header, String phred){
