@@ -82,20 +82,29 @@ public class Analyser {
         }
     }
 
-    public void validateClusterLevel(String out){
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(out))){
+    public void validateClusterLevel(String out) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(out))) {
             bw.write("clusterID\tpredSize\tbamID\tbamSize\tintersectCount\tfracPredInBam\tfracBamInPred\texactMatch\tjaccard\n");
-            for(Integer clusterID : cluster2Header.keySet()){
+
+            // --- contingency accumulators (built while we iterate) ---
+            Map<Integer, Map<Integer, Integer>> contingency = new HashMap<>();
+            long totalMapped = 0;
+
+            for (Integer clusterID : cluster2Header.keySet()) {
                 Set<String> predCluster = cluster2Header.get(clusterID);
                 int bestBamID = -1;
                 Set<String> bestBamCluster = Collections.emptySet();
                 int maxIntersect = 0;
                 double bestJaccard = 0.0;
                 HashSet<Integer> processedBamIDs = new HashSet<>();
+
+                Map<Integer, Integer> bamHits = new HashMap<>(); // bamID -> hit count for this predCluster
+
                 for (String header : predCluster) {
                     Integer bamID = header2rp.getOrDefault(header, null);
                     if (bamID == null) continue;
-                    if (!processedBamIDs.add(bamID)) continue; // only process each BAM cluster once
+                    bamHits.merge(bamID, 1, Integer::sum); // accumulate for contingency
+                    if (!processedBamIDs.add(bamID)) continue;
                     Set<String> bamCluster = rp2Header.get(bamID);
                     Set<String> intersect = new HashSet<>(predCluster);
                     intersect.retainAll(bamCluster);
@@ -108,6 +117,13 @@ public class Analyser {
                         bestJaccard = jaccard;
                     }
                 }
+
+                // Fold bamHits into the global contingency table
+                if (!bamHits.isEmpty()) {
+                    contingency.put(clusterID, bamHits);
+                    totalMapped += bamHits.values().stream().mapToInt(Integer::intValue).sum();
+                }
+
                 double fracPredInBam = maxIntersect * 1.0 / predCluster.size();
                 double fracBamInPred = bestBamCluster.isEmpty() ? 0 : maxIntersect * 1.0 / bestBamCluster.size();
                 boolean exactMatch = maxIntersect == predCluster.size() && predCluster.size() == bestBamCluster.size();
@@ -116,10 +132,77 @@ public class Analyser {
                         maxIntersect + "\t" +
                         fracPredInBam + "\t" + fracBamInPred + "\t" + exactMatch + "\t" + bestJaccard + "\n");
             }
-        }catch (Exception e){
+
+            // --- global metrics from the contingency table we built above ---
+            if (totalMapped > 0) {
+                double[] metrics = computeMetricsFromContingency(contingency, totalMapped);
+                System.out.printf("Homogeneity=%.4f \n Completeness=%.4f \n V-measure=%.4f \n ARI=%.4f%n",
+                        metrics[0], metrics[1], metrics[2], metrics[3]);
+            }
+
+        } catch (Exception e) {
             System.err.println("Error writing cluster file");
             e.printStackTrace();
         }
+    }
+
+    private double[] computeMetricsFromContingency(Map<Integer, Map<Integer, Integer>> contingency, long N) {
+        Map<Integer, Long> predCounts = new HashMap<>();
+        Map<Integer, Long> bamCounts  = new HashMap<>();
+
+        for (var pe : contingency.entrySet()) {
+            for (var be : pe.getValue().entrySet()) {
+                predCounts.merge(pe.getKey(),    (long) be.getValue(), Long::sum);
+                bamCounts.merge(be.getKey(),     (long) be.getValue(), Long::sum);
+            }
+        }
+
+        double hClassGivenCluster = 0.0;
+        double hClusterGivenClass = 0.0;
+        double hClass   = 0.0;
+        double hCluster = 0.0;
+
+        // Reverse contingency for H(K|C)
+        Map<Integer, Map<Integer, Integer>> reverse = new HashMap<>();
+        for (var pe : contingency.entrySet())
+            for (var be : pe.getValue().entrySet())
+                reverse.computeIfAbsent(be.getKey(), k -> new HashMap<>())
+                        .merge(pe.getKey(), be.getValue(), Integer::sum);
+
+        for (var pe : contingency.entrySet()) {
+            long predTotal = predCounts.get(pe.getKey());
+            for (int count : pe.getValue().values()) {
+                double p = count / (double) N;
+                hClassGivenCluster -= p * (Math.log(count) - Math.log(predTotal));
+            }
+        }
+        for (var be : reverse.entrySet()) {
+            long bamTotal = bamCounts.get(be.getKey());
+            for (int count : be.getValue().values()) {
+                double p = count / (double) N;
+                hClusterGivenClass -= p * (Math.log(count) - Math.log(bamTotal));
+            }
+        }
+        for (long c : bamCounts.values())  { double p = c / (double) N; hClass   -= p * Math.log(p); }
+        for (long c : predCounts.values()) { double p = c / (double) N; hCluster -= p * Math.log(p); }
+
+        double homogeneity  = hClass   < 1e-10 ? 1.0 : 1.0 - hClassGivenCluster / hClass;
+        double completeness = hCluster < 1e-10 ? 1.0 : 1.0 - hClusterGivenClass / hCluster;
+        double vMeasure     = (homogeneity + completeness) < 1e-10 ? 0.0
+                : 2.0 * homogeneity * completeness / (homogeneity + completeness);
+
+        // ARI
+        long sumCij = 0, sumAi = 0, sumBj = 0;
+        for (var pe : contingency.entrySet())
+            for (int c : pe.getValue().values()) sumCij += (long) c * (c - 1) / 2;
+        for (long c : predCounts.values()) sumAi += c * (c - 1) / 2;
+        for (long c : bamCounts.values())  sumBj += c * (c - 1) / 2;
+        long total = N * (N - 1) / 2;
+        double expected = (double) sumAi * sumBj / total;
+        double maxPart  = (sumAi + sumBj) / 2.0;
+        double ari      = (maxPart - expected) < 1e-10 ? 1.0 : (sumCij - expected) / (maxPart - expected);
+
+        return new double[]{ homogeneity, completeness, vMeasure, ari };
     }
 
     public boolean intersect(Set<String> set1, Set<String> set2){
