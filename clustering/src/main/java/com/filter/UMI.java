@@ -11,6 +11,8 @@ public class UMI {
     HashMap<String, UMICluster> header2Umis = new HashMap<>();
     HashMap<String, SubCluster> subClusters = new HashMap<>();
 
+    int numUmis = 0;
+
     public UMI(String fileName){
         readFastq(fileName);
     }
@@ -50,6 +52,7 @@ public class UMI {
             System.out.println("Error opening file: " + fileName);
             throw new RuntimeException(e);
         }
+        numUmis = umis.size();
         umis = null;
         System.gc();
     }
@@ -76,5 +79,9 @@ public class UMI {
 
     public HashMap<String, SubCluster> getSubClusters() {
         return subClusters;
+    }
+
+    public int getNumUmis() {
+        return numUmis;
     }
 }
