@@ -93,7 +93,7 @@ public class Main {
         Path clusterHeadersPath = Path.of(options.outDir(), "clusterHeaders.txt");
 
         // WRITE OUTPUT/STATS
-        writePrimaryOutputs(primaryClusteringPath, umiCountsPath, anchorCountsPath, mutationsPath, baseMutationsPath, clusterHeadersPath, improvedDualClustering);
+        writePrimaryOutputs(primaryClusteringPath, umiCountsPath, anchorCountsPath, mutationsPath, baseMutationsPath, clusterHeadersPath, improvedDualClustering, umiGroup);
 
 
         // CLEAN UP
@@ -194,7 +194,8 @@ public class Main {
             Path mutationsPath,
             Path baseMutationsPath,
             Path clusterHeadersPath,
-            ImprovedDualClustering improvedDualClustering
+            ImprovedDualClustering improvedDualClustering,
+            UMI umis
     ) {
         // OUTPUT
         HashMap<String, Integer> correctedUmis = improvedDualClustering.getCorrectedUmis();
@@ -212,7 +213,9 @@ public class Main {
         int numOfReads = improvedDualClustering.getNumReads();
         int numOfCluster = correctedUMIClusters.size();
         int numOfAnchorClusters = improvedDualClustering.getPartitions().size();
-        printPrimaryClusteringLongs(numOfReads, numOfCluster, numOfAnchorClusters);
+        int numberOfUncorrectedUmis = umis.getNumUmis();
+        int numberOfCorrectedUmis = correctedUmis.size();
+        printPrimaryClusteringLongs(numOfReads, numOfCluster, numOfAnchorClusters, numberOfUncorrectedUmis, numberOfCorrectedUmis);
     }
 
     private static void writePrimaryClusteringOutput(Path outputPath, List<CorrectedUMICluster> clusters) {
@@ -290,9 +293,15 @@ public class Main {
         }
     }
 
-    private static void printPrimaryClusteringLongs(int numOfReads, int numOfClusters, int numOfAnchorClusters) {
+    private static void printPrimaryClusteringLongs(int numOfReads,
+                                                    int numOfClusters,
+                                                    int numOfAnchorClusters,
+                                                    int numUncorrectedUmis,
+                                                    int numCorrectedUmis) {
         System.out.println("Number of Reads: " + numOfReads);
         System.out.println("Number of clusters: " + numOfClusters);
+        System.out.println("Number of uncorrected UMIs clusters: " + numUncorrectedUmis);
+        System.out.println("Number of corrected UMIs: " + numCorrectedUmis);
         System.out.println("Number of anchor clusters: " + numOfAnchorClusters);
         System.out.println("largest Anchor Cluster size: "+Statistics.largestAnchorCluster);
         System.out.println("largest Umi Cluster size: "+Statistics.largestUmiCluster);
