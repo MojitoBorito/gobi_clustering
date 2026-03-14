@@ -136,7 +136,7 @@ public class Analyser {
             // --- global metrics from the contingency table we built above ---
             if (totalMapped > 0) {
                 double[] metrics = computeMetricsFromContingency(contingency, totalMapped);
-                System.out.printf("Homogeneity=%.4f \nCompleteness=%.4f \nV-measure=%.4f \nARI=%.4f%n \nprecision:%.4f \nrecall:%.4f",
+                System.out.printf("Homogeneity=%.4f \nCompleteness=%.4f \nV-measure=%.4f \nARI=%.4f \nprecision:%.4f \nrecall:%.4f%n",
                         metrics[0], metrics[1], metrics[2], metrics[3], metrics[4],  metrics[5]);
             }
 
