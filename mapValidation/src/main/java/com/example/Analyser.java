@@ -136,8 +136,8 @@ public class Analyser {
             // --- global metrics from the contingency table we built above ---
             if (totalMapped > 0) {
                 double[] metrics = computeMetricsFromContingency(contingency, totalMapped);
-                System.out.printf("Homogeneity=%.4f \n Completeness=%.4f \n V-measure=%.4f \n ARI=%.4f%n",
-                        metrics[0], metrics[1], metrics[2], metrics[3]);
+                System.out.printf("Homogeneity=%.4f \nCompleteness=%.4f \nV-measure=%.4f \nARI=%.4f \nprecision:%.4f \nrecall:%.4f%n",
+                        metrics[0], metrics[1], metrics[2], metrics[3], metrics[4],  metrics[5]);
             }
 
         } catch (Exception e) {
@@ -157,6 +157,7 @@ public class Analyser {
             }
         }
 
+        // --- Homogeneity/Completeness/V-measure as before ---
         double hClassGivenCluster = 0.0;
         double hClusterGivenClass = 0.0;
         double hClass   = 0.0;
@@ -191,7 +192,7 @@ public class Analyser {
         double vMeasure     = (homogeneity + completeness) < 1e-10 ? 0.0
                 : 2.0 * homogeneity * completeness / (homogeneity + completeness);
 
-        // ARI
+        // --- ARI as before ---
         long sumCij = 0, sumAi = 0, sumBj = 0;
         for (var pe : contingency.entrySet())
             for (int c : pe.getValue().values()) sumCij += (long) c * (c - 1) / 2;
@@ -202,7 +203,11 @@ public class Analyser {
         double maxPart  = (sumAi + sumBj) / 2.0;
         double ari      = (maxPart - expected) < 1e-10 ? 1.0 : (sumCij - expected) / (maxPart - expected);
 
-        return new double[]{ homogeneity, completeness, vMeasure, ari };
+        // --- Precision and Recall ---
+        double precision = sumAi == 0 ? 1.0 : (double) sumCij / sumAi;
+        double recall    = sumBj == 0 ? 1.0 : (double) sumCij / sumBj;
+
+        return new double[]{ homogeneity, completeness, vMeasure, ari, precision, recall };
     }
 
     public boolean intersect(Set<String> set1, Set<String> set2){
@@ -216,11 +221,11 @@ public class Analyser {
 
     public void writeBamClusterSizes(String outfile) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outfile))) {
-            bw.write("bamClusterID\tbamClusterSize\n");
+            bw.write("bamClusterID\theaders\tbamClusterSize\n");
             for (Map.Entry<Integer, Set<String>> entry : rp2Header.entrySet()) {
                 Integer bamClusterID = entry.getKey();
                 int size = entry.getValue().size();
-                bw.write(bamClusterID + "\t" + size + "\n");
+                bw.write(bamClusterID + "\t" + String.join("|", entry.getValue()) + "\t" + size + "\n");
             }
         } catch (Exception e) {
             System.err.println("Error writing BAM cluster sizes: " + e.getMessage());

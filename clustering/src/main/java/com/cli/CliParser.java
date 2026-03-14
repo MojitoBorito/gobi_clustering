@@ -12,7 +12,7 @@ public class CliParser {
                         .hasArg()
                         .argName("file")
                         .desc("Path to UMI file (required for primary clustering)")
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("reads")
@@ -20,7 +20,7 @@ public class CliParser {
                         .argName("file")
                         .desc("Path to reads file")
                         .required()
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("outDir")
@@ -28,28 +28,28 @@ public class CliParser {
                         .argName("dir")
                         .desc("Output directory")
                         .required()
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("kmer_size")
                         .hasArg()
                         .argName("int")
                         .desc("K-mer size (required for secondary clustering)")
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("threshold")
                         .hasArg()
                         .argName("double")
                         .desc("Threshold (required for secondary clustering)")
-                        .build());
+                        .get());
 
         options.addOption(
                 Option.builder("read_length")
                         .hasArg()
                         .argName("int")
                         .desc("Read length (required for secondary clustering)")
-                        .build());
+                        .get());
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -77,18 +77,15 @@ public class CliParser {
             );
         }
 
-        boolean runPrimaryClustering = hasUmi;
-        boolean runSecondaryClustering = hasAllSecondaryParams;
-
         // Must run at least one mode
-        if (!runPrimaryClustering && !runSecondaryClustering) {
+        if (!hasUmi && !hasAllSecondaryParams) {
             throw new ParseException(
                     "You must provide either -umi for primary clustering, or " +
                             "-kmer_size, -threshold, and -read_length for secondary clustering, or both."
             );
         }
 
-        if (runSecondaryClustering) {
+        if (hasAllSecondaryParams) {
             try {
                 kmerSize = Integer.parseInt(cmd.getOptionValue("kmer_size"));
             } catch (NumberFormatException e) {
@@ -112,8 +109,8 @@ public class CliParser {
                 umi,
                 reads,
                 outDir,
-                runPrimaryClustering,
-                runSecondaryClustering,
+                hasUmi,
+                hasAllSecondaryParams,
                 kmerSize,
                 threshold,
                 readLength

@@ -33,7 +33,6 @@ public class Main {
         CmdOptions options = CliParser.parse(args);
 
         Statistics.umiEdits = new int[12];
-        Statistics.AnchorEdits = new int[150];
 
         System.out.println("Starting clustering...");
         System.out.println("Perform umi clustering: " + options.runPrimaryClustering());
@@ -74,12 +73,14 @@ public class Main {
         long endTime = System.currentTimeMillis();
         long first = endTime - starTime;
         System.out.println("umi clustering time: "+ first / (1000.0) + " sec");
+//        System.out.print(first / (1000.0) + "\t");
         // GENERATE CLUSTERS
         starTime = System.currentTimeMillis();
         ImprovedDualClustering improvedDualClustering = new ImprovedDualClustering(umiGroup, options.reads());
         endTime = System.currentTimeMillis();
         long second = endTime - starTime;
         System.out.println("Dual clustering time: "+ second / (1000.0 * 60) + " min" +"\n");
+//        System.out.print(second / (1000.0) + "\t");
 
         // Needed for second clustering cycle
         HashMap<Integer, Set<String>> subClusterIDToHeader= improvedDualClustering.getClusterIDtoHeader();
@@ -104,12 +105,13 @@ public class Main {
         // FINER CLUSTERING
         if (options.runSecondaryClustering()) {
             // FINER CLUSTER GENERATION
-            System.out.println("Starting finer clustering...");
+//            System.out.println("Starting finer clustering...");
             long start = System.currentTimeMillis();
             ClusteringAlgorithm<UmiKey, UmiRead, SeededCluster<UmiRead>> algorithm = runWithUmis(primaryClusteringPath, options.readLength(), options.kmerSize(), options.threshold());
             long finerClusteringEnd = System.currentTimeMillis();
             System.out.println("Finer clustering generation time: " + ((finerClusteringEnd - start) / (1000.0*60)) + " min");
             System.out.println("Writing finer cluster output...");
+//            System.out.println((finerClusteringEnd - start)/(1000.0) + "\t"+ (first + second + (finerClusteringEnd - start))/(1000.0));
 
             // FINER CLUSTERING OUTPUT
             long outputStart = System.currentTimeMillis();
