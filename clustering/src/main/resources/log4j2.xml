@@ -1,0 +1,22 @@
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss} %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="RunLog" fileName="/mnt/biocluster/praktikum/genprakt/mitsopoulos/block/gobi_clustering/clustering/logs/run.log" append="false" immediateFlush="true">
+            <PatternLayout pattern="%d{HH:mm:ss} %-5level - %msg%n"/>
+        </File>
+        <File name="StatsLog" fileName="/mnt/biocluster/praktikum/genprakt/mitsopoulos/block/gobi_clustering/clustering/logs/stats.log" append="false" immediateFlush="true">
+            <PatternLayout pattern="%msg%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="stats" level="info" additivity="false">
+            <AppenderRef ref="StatsLog"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RunLog"/>
+        </Root>
+    </Loggers>
+</Configuration>
