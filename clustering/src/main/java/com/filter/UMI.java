@@ -9,8 +9,6 @@ public class UMI {
 
     HashMap<String, UMICluster> umis = new HashMap<>();
     HashMap<String, UMICluster> header2Umis = new HashMap<>();
-    HashMap<String, SubCluster> subClusters = new HashMap<>();
-
     int numUmis = 0;
 
     public UMI(String fileName){
@@ -75,10 +73,6 @@ public class UMI {
 
     public HashMap<String, UMICluster> getUmis() {
         return umis;
-    }
-
-    public HashMap<String, SubCluster> getSubClusters() {
-        return subClusters;
     }
 
     public int getNumUmis() {
