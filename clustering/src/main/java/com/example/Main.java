@@ -41,6 +41,7 @@ public class Main {
         // If no umi path is provided, perform clustering without them
         if (options.runSecondaryClustering() && !options.runPrimaryClustering()) {
             long start = System.currentTimeMillis();
+            System.out.println("Running simple clustering...");
             try {
                 FastqIterator reads = new FastqIterator(options.reads());
                 ClusteringAlgorithm<long[], String, SeededCluster<String>> algorithm =
