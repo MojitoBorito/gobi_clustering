@@ -216,11 +216,11 @@ public class Analyser {
 
     public void writeBamClusterSizes(String outfile) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(outfile))) {
-            bw.write("bamClusterID\tbamClusterSize\n");
+            bw.write("bamClusterID\theaders\tbamClusterSize\n");
             for (Map.Entry<Integer, Set<String>> entry : rp2Header.entrySet()) {
                 Integer bamClusterID = entry.getKey();
                 int size = entry.getValue().size();
-                bw.write(bamClusterID + "\t" + size + "\n");
+                bw.write(bamClusterID + "\t" + String.join("|", entry.getValue()) + "\t" + size + "\n");
             }
         } catch (Exception e) {
             System.err.println("Error writing BAM cluster sizes: " + e.getMessage());
