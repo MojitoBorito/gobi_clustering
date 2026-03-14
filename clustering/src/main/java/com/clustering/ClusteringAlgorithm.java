@@ -39,9 +39,9 @@ public abstract class ClusteringAlgorithm<K, V, C extends Cluster<V>> {
                 List<String> ids = cluster.getElementIds();
                 if (ids.isEmpty()) continue;
                 for (String id : ids) {
-                    writer.write(cluster.getId());
+                    writer.write(String.valueOf(cluster.getId()));
                     writer.write('\t');
-                    writer.write(id);
+                    writer.write(String.valueOf(id));
                     writer.write('\n');
                 }
             }

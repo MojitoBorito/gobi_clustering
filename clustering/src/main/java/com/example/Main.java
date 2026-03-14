@@ -148,7 +148,7 @@ public class Main {
                     for (String readId : subClusterIDToHeader.get(Integer.parseInt(subClusterId))) {
                         writer.write(String.valueOf(cluster.getId()));
                         writer.write('\t');
-                        writer.write(readId);
+                        writer.write(String.valueOf(readId));
                         writer.write('\n');
                     }
                 }
