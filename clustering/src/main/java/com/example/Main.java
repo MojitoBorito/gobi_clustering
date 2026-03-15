@@ -93,6 +93,7 @@ public class Main {
         Path mutationsPath = Path.of(options.outDir(), "pos_mutations.txt");
         Path baseMutationsPath = Path.of(options.outDir(), "base_mutations.txt");
         Path clusterHeadersPath = Path.of(options.outDir(), "clusterHeaders.txt");
+        Path finerClusteringPath = Path.of(options.outDir(), "finer_clusters.txt");
 
         // WRITE OUTPUT/STATS
         writePrimaryOutputs(primaryClusteringPath, umiCountsPath, anchorCountsPath, mutationsPath, baseMutationsPath, clusterHeadersPath, improvedDualClustering, umiGroup);
@@ -117,6 +118,7 @@ public class Main {
             long outputStart = System.currentTimeMillis();
             Set<SeededCluster<UmiRead>> computedClusters = algorithm.getAllClusters();
             writeSecondaryCycleOutput(secondaryClusteringPath, computedClusters, subClusterIDToHeader);
+            writeFinerClustersOutput(finerClusteringPath,  computedClusters);
             long outputEnd = System.currentTimeMillis();
             System.out.println("Finer clustering write time: " + ((outputEnd - outputStart) / (1000.0)) + " ms");
             System.out.println("Total finer clustering time: " + (outputEnd - start) / (1000.0 * 60) + " s");
@@ -156,6 +158,24 @@ public class Main {
             }
             long outputEnd = System.currentTimeMillis();
         } catch (Exception e) {
+            throw new RuntimeException("Error writing finer clusters", e);
+        }
+    }
+
+    private static void writeFinerClustersOutput(Path outputPath, Set<SeededCluster<UmiRead>> computedClusters) {
+        try(BufferedWriter writer = Files.newBufferedWriter(outputPath)){
+            writer.write("ID\tUMI\tseq\tcounts\n");
+            for (SeededCluster<UmiRead> cluster : computedClusters) {
+                writer.write(String.valueOf(cluster.getId()));
+                writer.write('\t');
+                writer.write(cluster.getSeed().umi());
+                writer.write('\t');
+                writer.write(cluster.getSeed().sequence());
+                writer.write('\t');
+                writer.write(String.valueOf(cluster.size()));
+                writer.write('\n');
+            }
+        }catch (Exception e){
             throw new RuntimeException("Error writing finer clusters", e);
         }
     }
