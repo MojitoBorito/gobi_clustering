@@ -118,7 +118,7 @@ public class Main {
             long outputStart = System.currentTimeMillis();
             Set<SeededCluster<UmiRead>> computedClusters = algorithm.getAllClusters();
             writeSecondaryCycleOutput(secondaryClusteringPath, computedClusters, subClusterIDToHeader);
-            writeFinerClustersOutput(finerClusteringPath,  computedClusters);
+            writeFinerClustersOutput(finerClusteringPath,  computedClusters, subClusterIDToHeader);
             long outputEnd = System.currentTimeMillis();
             System.out.println("Finer clustering write time: " + ((outputEnd - outputStart) / (1000.0)) + " ms");
             System.out.println("Total finer clustering time: " + (outputEnd - start) / (1000.0 * 60) + " s");
@@ -162,17 +162,22 @@ public class Main {
         }
     }
 
-    private static void writeFinerClustersOutput(Path outputPath, Set<SeededCluster<UmiRead>> computedClusters) {
+    private static void writeFinerClustersOutput(Path outputPath, Set<SeededCluster<UmiRead>> computedClusters, HashMap<Integer,
+            Set<String>> subClusterIDToHeader) {
         try(BufferedWriter writer = Files.newBufferedWriter(outputPath)){
             writer.write("ID\tUMI\tseq\tcounts\n");
             for (SeededCluster<UmiRead> cluster : computedClusters) {
+                int size = cluster.getElementIds().stream()
+                        .map(s -> subClusterIDToHeader.get(Integer.parseInt(s)))
+                        .mapToInt(Set::size)
+                        .sum();
                 writer.write(String.valueOf(cluster.getId()));
                 writer.write('\t');
                 writer.write(cluster.getSeed().umi());
                 writer.write('\t');
                 writer.write(cluster.getSeed().sequence());
                 writer.write('\t');
-                writer.write(String.valueOf(cluster.size()));
+                writer.write(String.valueOf(size));
                 writer.write('\n');
             }
         }catch (Exception e){
