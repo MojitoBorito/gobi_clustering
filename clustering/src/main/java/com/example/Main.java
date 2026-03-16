@@ -122,6 +122,7 @@ public class Main {
             long outputEnd = System.currentTimeMillis();
             System.out.println("Finer clustering write time: " + ((outputEnd - outputStart) / (1000.0)) + " ms");
             System.out.println("Total finer clustering time: " + (outputEnd - start) / (1000.0 * 60) + " s");
+            System.out.println("Final number of clusters: " + computedClusters.size());
         }
     }
 
