@@ -1,7 +1,14 @@
 # SUCC - Sequence and UMI Clustering-based correction
 
 Program Excecution:
-java -jar clustering.jar -reads <Read FASTQ> -umi <UMI FASTQ> -kmer_size <kmer_size> -threshold <Error rate> -read_length <read length> -outDir <Output directory>
+java -jar clustering.jar 
+  -reads \<Read FASTQ> 
+  -umi \<UMI FASTQ> 
+  -kmer_size \<kmer_size> 
+  -threshold \<Error rate> 
+  -read_length \<read length> 
+  -umi_length \<umi_length>
+  -outDir \<Output directory>
 
 Program Output:
 - clusters.txt: Consensus UMI, Read and cluster size after primary clustering.
