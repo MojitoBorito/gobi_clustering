@@ -37,9 +37,9 @@ java -jar clustering.jar \
 | Parameter        | Description                                               | Required |
 |------------------|----------------------------------------------------------|----------|
 | `-reads`         | Path to the FASTQ file containing read sequences          | Yes      |
-| `-umi`           | Path to the FASTQ file containing UMI sequences           | Yes      |
-| `-kmer_size`     | Length of positional k-mers for clustering (integer)      | Yes      |
-| `-read_length`   | Length of reads in the input FASTQ file (integer)         | Yes      |
-| `-umi_length`    | Length of UMIs in the input FASTQ file (integer)          | Yes      |
-| `-threshold`     | Maximum allowed error rate in the read sequence (float)   | Yes      |
+| `-umi`           | Path to the FASTQ file containing UMI sequences           | No     |
+| `-kmer_size`     | Length of positional k-mers for clustering (integer)      | No      |
+| `-read_length`   | Length of reads in the input FASTQ file (integer)         | No      |
+| `-umi_length`    | Length of UMIs in the input FASTQ file (integer)          | No      |
+| `-threshold`     | Maximum allowed error rate in the read sequence (float)   | No      |
 | `-outDir`        | Directory for output files                                | Yes      |
