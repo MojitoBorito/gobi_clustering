@@ -33,9 +33,11 @@ public class HashReadsIterator implements Iterator<HashReads>, Closeable {
             String line;
             String header = null;
             String sequence = null;
+            boolean spacer = false;
 
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("+") && header != null && sequence != null) {
+                    spacer = true;
                     continue;
                 }
 
@@ -52,7 +54,7 @@ public class HashReadsIterator implements Iterator<HashReads>, Closeable {
                     continue;
                 }
 
-                if (header != null && sequence != null) {
+                if (header != null && sequence != null && spacer) {
                     String phred = line;
                     nextRead = new HashReads(
                             header,
