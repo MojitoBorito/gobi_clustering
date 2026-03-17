@@ -7,6 +7,7 @@ public record CmdOptions(String umi,
                          boolean runSecondaryClustering,
                          Integer kmerSize,
                          Double threshold,
-                         Integer readLength) {
+                         Integer readLength,
+                         Integer umiLength) {
 
 }

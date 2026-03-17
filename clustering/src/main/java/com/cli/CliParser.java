@@ -51,6 +51,13 @@ public class CliParser {
                         .desc("Read length (required for secondary clustering)")
                         .get());
 
+        options.addOption(
+                Option.builder("umi_length")
+                        .hasArg()
+                        .argName("int")
+                        .desc("umi length (required for primary clustering)")
+                        .get());
+
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
 
@@ -58,7 +65,7 @@ public class CliParser {
         String reads = cmd.getOptionValue("reads");
         String outDir = cmd.getOptionValue("outDir");
 
-        boolean hasUmi = cmd.hasOption("umi");
+        boolean hasUmi = cmd.hasOption("umi") && cmd.hasOption("umi_length");
         boolean hasKmerSize = cmd.hasOption("kmer_size");
         boolean hasThreshold = cmd.hasOption("threshold");
         boolean hasReadLength = cmd.hasOption("read_length");
@@ -69,6 +76,7 @@ public class CliParser {
         Integer kmerSize = null;
         Double threshold = null;
         Integer readLength = null;
+        Integer umiLength = null;
 
         // Reject incomplete secondary configuration
         if (hasAnySecondaryParam && !hasAllSecondaryParams) {
@@ -80,9 +88,17 @@ public class CliParser {
         // Must run at least one mode
         if (!hasUmi && !hasAllSecondaryParams) {
             throw new ParseException(
-                    "You must provide either -umi for primary clustering, or " +
+                    "You must provide either -umi and -umi_length for primary clustering, or " +
                             "-kmer_size, -threshold, and -read_length for secondary clustering, or both."
             );
+        }
+
+        if (hasUmi){
+            try {
+                umiLength = Integer.parseInt(cmd.getOptionValue("umi_length"));
+            }catch (NumberFormatException e){
+                throw new ParseException("Invalid value for -umi_length: must be an integer");
+            }
         }
 
         if (hasAllSecondaryParams) {
@@ -113,7 +129,8 @@ public class CliParser {
                 hasAllSecondaryParams,
                 kmerSize,
                 threshold,
-                readLength
+                readLength,
+                umiLength
         );
     }
 }

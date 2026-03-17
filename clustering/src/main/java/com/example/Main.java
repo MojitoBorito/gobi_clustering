@@ -32,7 +32,7 @@ public class Main {
     public static void main(String[] args) throws ParseException {
         CmdOptions options = CliParser.parse(args);
 
-        Statistics.umiEdits = new int[12];
+        Statistics.umiEdits = new int[options.umiLength()];
 
         System.out.println("Starting clustering...");
         System.out.println("Perform umi clustering: " + options.runPrimaryClustering());
@@ -92,7 +92,7 @@ public class Main {
         Path anchorCountsPath = Path.of(options.outDir(), "anchor_counts.txt");
         Path mutationsPath = Path.of(options.outDir(), "pos_mutations.txt");
         Path baseMutationsPath = Path.of(options.outDir(), "base_mutations.txt");
-        Path clusterHeadersPath = Path.of(options.outDir(), "clusterHeaders.txt");
+        Path clusterHeadersPath = Path.of(options.outDir(), "cluster_headers.txt");
         Path finerClusteringPath = Path.of(options.outDir(), "finer_clusters.txt");
 
         // WRITE OUTPUT/STATS
