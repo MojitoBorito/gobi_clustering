@@ -36,7 +36,7 @@ public class HashReadsIterator implements Iterator<HashReads>, Closeable {
             boolean spacer = false;
 
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("+") && header != null && sequence != null) {
+                if (line.startsWith("+") && header != null && sequence != null && !spacer) {
                     spacer = true;
                     continue;
                 }
