@@ -1,75 +1,14 @@
-# Clustering
-  - Without UMIs
+# SUCC - Sequence and UMI Clustering-based correction
 
-## Simulation:
-The parameters are same as Readsimulator, but with 3 extra parameters. 
-1. -fragFreq: tells how often a fragment should appear
-2. -shift: tells how many fragments we want to produce for the fragment from transcript
-3. -diff: tells the offset between shifted fragments
+Program Excecution:
+java -jar -reads <Read FASTQ> -umi <UMI FASTQ> -kmer_size <kmer_size> -threshold <Error rate> -read_length <read length> -outDir <Output directory>
 
-Remember: ReadCounts needs to be reduced, because the the number of created Sequences per transcript is readcounts * fragFreq * shifted
-
-## Targets:
-- Decide meter of measurement
-  - Alignment
-  - Hamming distance
-  - K-mer
-
-## Decide clustering idea
-- K-means
-- Hierarchical clustering
-
-## Minimizers
-
-## Idea 1: 
-- Extract k-mers (Decide on fixed random positions or all)
-- look up k-mers in the bucket of each cluster, if buckets match:
-  - no: create new cluster with sequence as seed
-  - yes: compute hamming distance with each seed candidate
-    - If any sequence with hamming distance =< threshold:
-      - no: create new cluster with sequence as seed
-      - yes: add sequence to cluster( and then update the cluster seed, i.e. update consensus string to make step with hamming distance faster.)
-
-
-       New Read arrives
-                    │
-                    ▼
-              ┌─ Extract k-mers, look ─┐
-              │  up in bucket tables    │
-              └──────────┬─────────────┘
-                         │
-                         ▼
-                  Any buckets match?
-                   /           \
-                 NO             YES
-                 │               │
-                 ▼               ▼
-          Create new      Hamming vs candidate
-          cluster         CONSENSUS seeds
-          (init counts)        │
-                               ▼
-                        distance ≤ threshold?
-                         /            \
-                       NO              YES
-                       │                │
-                       ▼                ▼
-                 Create new       Assign to cluster
-                 cluster          │
-                                  ▼
-                            hamming == 0?
-                             /        \
-                           YES         NO
-                           │            │
-                           ▼            ▼
-                      Just update   Update counts AND
-                      counts        rebuild consensus
-                      (consensus    (seed may change)
-                       unchanged)        │
-                                         ▼
-                                  ┌──────────────────┐
-                                  │ Update k-mer     │
-                                  │ buckets if the   │
-                                  │ consensus changed │
-                                  │ at a sampled     │
-                                  │ k-mer position   │
-                                  └──────────────────┘
+Program Output:
+- clusters.txt: Consensus UMI, Read and cluster size after primary clustering.
+- finer_clusters.txt: Consensus UMI, Read and cluster size after secondary clustering.
+- umi_counts.txt: Consensus UMI and their counts
+- anchor_counts.txt: Anchor Sequence, Number of Corrected UMI clusters and number of reads clustered in the Anchor Cluster
+- pos_mutations.txt: Number of times a substitution was performed at that place.
+- base_mutations.txt: Number of times a the specifc base was replaced with the other.
+- cluster_headers.txt: reads clustered under same Cluster after primary clustering.
+- secondary_clusters.txt: reads clustered under same Cluster after secondary clustering.
