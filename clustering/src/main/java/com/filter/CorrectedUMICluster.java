@@ -40,7 +40,7 @@ public class CorrectedUMICluster {
     //Merge a new observation into this cluster.
 
     void absorb(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
-        updateConsensus(umiConsensus, umiBestScore, umiSeq, umiPhred, umiWeight);
+        updateConsensus(umiConsensus, umiBestScore, umiSeq, umiPhred);
         updateConsensus(readConsensus, readBestScore, readSeq, readPhred);
         count++;
         Statistics.incrementLargestUmiAnchorCluster(count, umiConsensus, readConsensus);
@@ -66,21 +66,6 @@ public class CorrectedUMICluster {
             System.out.println(Arrays.toString(phred));
             System.out.println(seq);
             throw new RuntimeException(e);
-        }
-    }
-
-    private void updateConsensus(byte[] consensus, short[] bestScore, String seq, byte[] phred, int umiWeight) {
-        for (int i = 0; i < seq.length(); i++) {
-            byte base = (byte) seq.charAt(i);
-            int q = phred[i] & 0xFF;
-            int weightedQ = Math.min(q * umiWeight, Short.MAX_VALUE);
-            if (consensus[i] == 0 || consensus[i] == base) {
-                consensus[i] = base;
-                bestScore[i] = (short) Math.min(bestScore[i] + q, Short.MAX_VALUE);
-            } else if (weightedQ > bestScore[i]) {
-                consensus[i] = base;
-                bestScore[i] = (short) weightedQ;
-            }
         }
     }
 
