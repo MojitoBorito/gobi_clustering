@@ -23,7 +23,7 @@ public class CorrectedUMICluster {
 
     int clusterID;
 
-    CorrectedUMICluster(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
+    CorrectedUMICluster(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
         int umiLen = umiSeq.length();
         int readLen = readSeq.length();
 
@@ -34,12 +34,12 @@ public class CorrectedUMICluster {
 
         clusterID = idCounter++;
 
-        absorb(umiSeq, umiPhred, readSeq, readPhred, umiWeight);
+        absorb(umiSeq, umiPhred, readSeq, readPhred);
     }
 
     //Merge a new observation into this cluster.
 
-    void absorb(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
+    void absorb(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
         updateConsensus(umiConsensus, umiBestScore, umiSeq, umiPhred);
         updateConsensus(readConsensus, readBestScore, readSeq, readPhred);
         count++;

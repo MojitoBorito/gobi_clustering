@@ -37,8 +37,7 @@ public class ImprovedDualClustering {
                         umiCluster.seq,
                         umiCluster.phred,
                         read.seq,
-                        read.phred,
-                        umiCluster.n
+                        read.phred
                 );
 
                 clusterIDtoHeader.computeIfAbsent(id, _ -> new HashSet<>()).add(read.header);

@@ -38,7 +38,7 @@ public class AnchorPartition {
         return h;
     }
 
-    int addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
+    int addRead(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred) {
         char[] umiChars = umiSeq.toCharArray();
         initMultipliers(umiChars.length);
 
@@ -48,7 +48,7 @@ public class AnchorPartition {
         // exact match first
         CorrectedUMICluster exact = umiMap.get(baseHash);
         if (exact != null) {
-            exact.absorb(umiSeq, umiPhred, readSeq, readPhred, umiWeight);
+            exact.absorb(umiSeq, umiPhred, readSeq, readPhred);
             return exact.getClusterID();
         }
 
@@ -118,7 +118,7 @@ public class AnchorPartition {
         }
 
         if (bestNeighbor != null) {
-            bestNeighbor.absorb(umiSeq, umiPhred, readSeq, readPhred, umiWeight);
+            bestNeighbor.absorb(umiSeq, umiPhred, readSeq, readPhred);
             umiMap.put(baseHash, bestNeighbor);
             for (int i = 0; i < bestMutCount; i++) {
                 Statistics.incrementUmiPos(bestPositions[i]);
@@ -126,7 +126,7 @@ public class AnchorPartition {
             }
             return bestNeighbor.getClusterID();
         } else {
-            CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred, umiWeight);
+            CorrectedUMICluster newCluster = new CorrectedUMICluster(umiSeq, umiPhred, readSeq, readPhred);
             umiMap.put(baseHash, newCluster);
             canonicalClusters.add(newCluster);
             Statistics.incrementLargestAnchorCluster(canonicalClusters.size(), readSeq);
