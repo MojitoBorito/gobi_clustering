@@ -5,6 +5,7 @@ import com.model.Element;
 import com.model.UmiRead;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class CorrectedUMICluster {
@@ -46,16 +47,25 @@ public class CorrectedUMICluster {
     }
 
     private void updateConsensus(byte[] consensus, short[] bestScore, String seq, byte[] phred) {
-        for (int i = 0; i < seq.length(); i++) {
-            byte base = (byte) seq.charAt(i);
-            int q = phred[i] & 0xFF;
-            if (consensus[i] == 0 || consensus[i] == base) {
-                consensus[i] = base;
-                bestScore[i] = (short) Math.min(bestScore[i] + q, Short.MAX_VALUE);
-            } else if (q > bestScore[i]) {
-                consensus[i] = base;
-                bestScore[i] = (short) q;
+        try {
+            for (int i = 0; i < seq.length(); i++) {
+                byte base = (byte) seq.charAt(i);
+                int q = phred[i] & 0xFF;
+                if (consensus[i] == 0 || consensus[i] == base) {
+                    consensus[i] = base;
+                    bestScore[i] = (short) Math.min(bestScore[i] + q, Short.MAX_VALUE);
+                } else if (q > bestScore[i]) {
+                    consensus[i] = base;
+                    bestScore[i] = (short) q;
+                }
             }
+        }catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            System.out.println(new String(consensus, StandardCharsets.UTF_8));
+            System.out.println(Arrays.toString(bestScore));
+            System.out.println(Arrays.toString(phred));
+            System.out.println(seq);
+            throw new RuntimeException(e);
         }
     }
 
