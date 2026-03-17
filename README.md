@@ -43,3 +43,33 @@ java -jar clustering.jar \
 | `-umi_length`    | Length of UMIs in the input FASTQ file (integer)          | No      |
 | `-threshold`     | Maximum allowed error rate in the read sequence (float)   | No      |
 | `-outDir`        | Directory for output files                                | Yes      |
+
+#### Example
+
+```sh
+java -jar clustering.jar \
+  -reads sample_reads.fastq \
+  -umi sample_umis.fastq \
+  -kmer_size 30 \
+  -read_length 150 \
+  -umi_length 12 \
+  -threshold 0.05 \
+  -outDir results/
+```
+
+---
+
+## Output Files
+
+Execution results are written to the directory specified by `-outDir`:
+
+| File                   | Description                                                                         |
+|------------------------|-------------------------------------------------------------------------------------|
+| `clusters.txt`         | Consensus UMI, Read, and cluster size after primary clustering                      |
+| `finer_clusters.txt`   | Consensus UMI, Read, and cluster size after secondary clustering                    |
+| `umi_counts.txt`       | Consensus UMIs and their counts                                                     |
+| `anchor_counts.txt`    | Anchor Sequence, number of corrected UMI clusters, and number of reads per anchor   |
+| `pos_mutations.txt`    | Number of times a substitution was performed at each position                       |
+| `base_mutations.txt`   | Number of times a specific base was replaced with another                           |
+| `cluster_headers.txt`  | List of reads clustered under each primary cluster                                  |
+| `secondary_clusters.txt`| List of reads clustered under each secondary cluster                                |
