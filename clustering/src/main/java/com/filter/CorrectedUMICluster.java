@@ -39,8 +39,8 @@ public class CorrectedUMICluster {
     //Merge a new observation into this cluster.
 
     void absorb(String umiSeq, byte[] umiPhred, String readSeq, byte[] readPhred, int umiWeight) {
-        updateConsensus(umiConsensus, umiBestScore, umiSeq, umiPhred);
-        updateConsensus(readConsensus, readBestScore, readSeq, readPhred,  umiWeight);
+        updateConsensus(umiConsensus, umiBestScore, umiSeq, umiPhred, umiWeight);
+        updateConsensus(readConsensus, readBestScore, readSeq, readPhred);
         count++;
         Statistics.incrementLargestUmiAnchorCluster(count, umiConsensus, readConsensus);
     }
