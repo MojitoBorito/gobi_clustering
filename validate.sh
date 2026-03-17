@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-set -euo pipefail
 
 RESULTS_BASE="/mnt/biocluster/praktikum/genprakt/gruppe_g/dual_clustering"
 BAM_DIR="/mnt/raidbio2/extdata/praktikum/genprakt/genprakt-ws25/Block/pig-data-rnaseq/mapped/minimap2"
@@ -26,7 +24,7 @@ find "$RESULTS_BASE" -type f -name 'clusterHeaders.txt' | while read -r cluster_
 
     # Run validation JAR
     echo "Validating sample $sample_id in $dir"
-    java -Xmx50g -jar "$VALIDATION_JAR" \
+    java -Xmx100g -jar "$VALIDATION_JAR" \
         -predicted "$cluster_file" \
         -bam "$bam_path" \
         -out "$out_txt" \

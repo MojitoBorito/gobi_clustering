@@ -39,10 +39,14 @@ for UMI in "$FASTQ_DIR"/H*-T2_R2_001.fastq.gz; do
     echo "  Reads: $R1"
     echo "  Out:   $R1_OUT_DIR"
 
-    java -Xmx100g -jar "$JAR" \
+    java -Xmx150g -jar "$JAR" \
         -umi   "$UMI" \
         -reads "$R1" \
         -outDir "$R1_OUT_DIR" \
+        -kmer_size "30" \
+        -threshold "0.03" \
+        -read_length "150" \
+        -umi_length "12" \
         2>&1 | tee "$R1_OUT_DIR/log.txt"
 
     # ── Run for R3 (reverse reads) ──
@@ -51,10 +55,14 @@ for UMI in "$FASTQ_DIR"/H*-T2_R2_001.fastq.gz; do
     echo "  Reads: $R3"
     echo "  Out:   $R3_OUT_DIR"
 
-    java -Xmx100g -jar "$JAR" \
+    java -Xmx150g -jar "$JAR" \
         -umi   "$UMI" \
         -reads "$R3" \
         -outDir "$R3_OUT_DIR" \
+        -kmer_size "30" \
+        -threshold "0.03" \
+        -read_length "150" \
+        -umi_length "12" \
         2>&1 | tee "$R3_OUT_DIR/log.txt"
 
     echo ""
