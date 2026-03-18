@@ -73,3 +73,13 @@ Execution results are written to the directory specified by `-outDir`:
 | `base_mutations.txt`   | Number of times a specific base was replaced with another                           |
 | `cluster_headers.txt`  | List of reads clustered under each primary cluster                                  |
 | `secondary_clusters.txt`| List of reads clustered under each secondary cluster                                |
+
+## Results:
+- The results of the applicaiton of the program and the plots can be found on the biocluster under:
+```
+/mnt/biocluster/praktikum/genprakt/gruppe_g
+```
+- plots contains all generated plots
+- times cotanins the benchmark results
+- dual_clustering contains all output files from application of the program on the Sus. Scrofa data.
+- simulated_data contains the input and output files from the pcr duplication simulation
