@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="ReadSimulator2:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="610cc826-80f3-4fde-aa3c-b1e34234f1ab" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ReadSimulator2" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ReadSimulator2" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ReadSimulator2" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="$USER_HOME$/.gradle/wrapper/dists/gradle-8.14-bin/38aieal9i53h9rfe7vjup95b9/gradle-8.14" javaHome="$USER_HOME$/.jdks/openjdk-23.0.2" gradleVersion="8.14" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="35edLi662vGcr4MMddZynHT69ki" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.ReadSimulator.executor&quot;: &quot;Profiler#1&quot;,
+    &quot;Gradle.Build ReadSimulator2.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ReadSimulator2 [:ReadSimulation.ReadSimulator.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ReadSimulator2 [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ReadSimulator2 [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ReadSimulator2 [jar].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/Clustering&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;/home/nikmits/Desktop/uni/WS2526/GoBi/Projects/ReadSimulator2/src/main/java/org/example/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src/main/java" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.ReadSimulator2 [build]">
+    <configuration name="ReadSimulator" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="ReadSimulation.ReadSimulator" />
+      <module name="ReadSimulator2.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="ReadSimulation.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ReadSimulator2 [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="ReadSimulator2 [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="ReadSimulator2 [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="jar" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.ReadSimulator" />
+      <item itemvalue="Gradle.ReadSimulator2 [clean]" />
+      <item itemvalue="Gradle.ReadSimulator2 [build]" />
+      <item itemvalue="Gradle.ReadSimulator2 [jar]" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.ReadSimulator2 [build]" />
+        <item itemvalue="Gradle.ReadSimulator2 [clean]" />
+        <item itemvalue="Gradle.ReadSimulator2 [jar]" />
+        <item itemvalue="Application.ReadSimulator" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="610cc826-80f3-4fde-aa3c-b1e34234f1ab" name="Changes" comment="" />
+      <created>1763474419085</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763474419085</updated>
+      <workItem from="1763474419999" duration="1699000" />
+      <workItem from="1763476134310" duration="612000" />
+      <workItem from="1763487381828" duration="4244000" />
+      <workItem from="1763550256080" duration="8080000" />
+      <workItem from="1763636971977" duration="26000" />
+      <workItem from="1763644432418" duration="5410000" />
+      <workItem from="1763728717347" duration="3527000" />
+      <workItem from="1763817514545" duration="2254000" />
+      <workItem from="1764081793852" duration="162000" />
+      <workItem from="1764171429681" duration="54000" />
+      <workItem from="1764254196127" duration="21000" />
+      <workItem from="1764254584141" duration="623000" />
+      <workItem from="1764269891189" duration="1098000" />
+      <workItem from="1764416476789" duration="1560000" />
+      <workItem from="1764775442712" duration="696000" />
+      <workItem from="1764784258379" duration="56000" />
+      <workItem from="1771859276630" duration="1037000" />
+      <workItem from="1771949834808" duration="975000" />
+      <workItem from="1771950944841" duration="40000" />
+      <workItem from="1771952452812" duration="73000" />
+      <workItem from="1772044644467" duration="157000" />
+      <workItem from="1772121383764" duration="314000" />
+      <workItem from="1772122440841" duration="8000" />
+      <workItem from="1772123164355" duration="14000" />
+      <workItem from="1772444748631" duration="869000" />
+      <workItem from="1772446713274" duration="714000" />
+      <workItem from="1772448196708" duration="5000" />
+      <workItem from="1772453680161" duration="74000" />
+      <workItem from="1772453781273" duration="77000" />
+      <workItem from="1772454129248" duration="637000" />
+      <workItem from="1772548176361" duration="351000" />
+      <workItem from="1772562279705" duration="106000" />
+      <workItem from="1773418617713" duration="1096000" />
+      <workItem from="1773487578615" duration="5530000" />
+      <workItem from="1773497408781" duration="2214000" />
+      <workItem from="1773522280335" duration="16853000" />
+      <workItem from="1773595506416" duration="4040000" />
+      <workItem from="1773670673065" duration="43000" />
+      <workItem from="1773674983286" duration="162000" />
+      <workItem from="1773755570027" duration="222000" />
+      <workItem from="1773755845593" duration="756000" />
+      <workItem from="1773757266376" duration="2226000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/Main.java</url>
+          <line>13</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
